@@ -3,6 +3,10 @@
 import os
 import sys
 
+# Prevent Python from writing .pyc files and creating __pycache__ when
+# running the development server. This is equivalent to running Python
+# with -B or setting PYTHONDONTWRITEBYTECODE=1 in the environment.
+sys.dont_write_bytecode = True
 
 def main():
     """Run administrative tasks."""
