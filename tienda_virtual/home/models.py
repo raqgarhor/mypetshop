@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 class Articulo(models.Model):
@@ -19,45 +20,34 @@ class Escaparate(models.Model):
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True)
-    stock = models.IntegerField(default=0)
-    disponible = models.BooleanField(default=True)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
-    num_pedido = models.IntegerField(default=0)
-    class Estado(models.TextChoices):
-        NUEVO = 'nuevo', 'Nuevo'
-        PENDIENTE_DE_PAGO = 'pendiente_pago', 'Pendiente de Pago'
-        LISTO_ENVIO = 'listo_envio', 'Listo para Envío'
-        ENVIADO = 'enviado', 'Enviado'
-        EN_REPARTO = 'reparto', 'Reparto'
-        ENTREGADO = 'entregado', 'Entregado'
-        CANCELADO = 'cancelado', 'Cancelado'
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    precio_oferta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    class Especie(models.TextChoices):
+        PERRO = 'perro', 'Perro'
+        GATO = 'gato', 'Gato'
+        AVE = 'ave', 'Ave'
+        ROEDOR = 'roedor', 'Roedor'
+        REPTIL = 'reptil', 'Reptil'
+        PECERA = 'pecera', 'Pecera'
+        OTRO = 'otro', 'Otro'
 
-    estado = models.CharField(max_length=20, choices=Estado.choices, default=Estado.NUEVO)
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    impuestos = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    coste_entrega = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    descuento = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    # precio_total no almacenado: se calcula dinámicamente desde subtotal, impuestos, coste_entrega y descuento
-    metodo_pago = models.CharField(max_length=50, default='No especificado')
-    direccion_envio = models.CharField(max_length=255, blank=True)
-    telefono_contacto = models.CharField(max_length=20, blank=True)
+    genero = models.CharField(max_length=20, choices=Especie.choices, default=Especie.PERRO)
+    color = models.CharField(max_length=50, blank=True)
+    material = models.CharField(max_length=100, blank=True)
+    imagen = models.ImageField(upload_to='productos/', blank=True, null=True)
+    stock = models.IntegerField(default=0)
+    esta_disponible = models.BooleanField(default=True)
+    fecha_creacion = models.DateTimeField(default=timezone.now)
+    fecha_actualizacion = models.DateTimeField(default=timezone.now)
+    es_destacado = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Producto'
         verbose_name_plural = 'Productos'
 
-    def calcular_precio_total(self) -> Decimal:
-      
-        subtotal = Decimal(str(self.subtotal)) if self.subtotal is not None else Decimal('0.00')
-        impuestos = Decimal(str(self.impuestos)) if self.impuestos is not None else Decimal('0.00')
-        coste_entrega = Decimal(str(self.coste_entrega)) if self.coste_entrega is not None else Decimal('0.00')
-        descuento = Decimal(str(self.descuento)) if self.descuento is not None else Decimal('0.00')
-        total = subtotal + impuestos + coste_entrega - descuento
-        return total.quantize(Decimal('0.01'))
+    def save(self, *args, **kwargs):
+        self.fecha_actualizacion = timezone.now()
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.nombre} ({self.precio_total})"
-
-    @property
-    def precio_total(self) -> Decimal:
-        return self.calcular_precio_total()
+        return self.nombre
