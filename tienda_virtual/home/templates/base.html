@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}My Pet Shop{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'home/style.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'home/bunny2.png' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="/">My Pet Shop</a>
+            <form class="search" action="/" method="get">
+                <input name="q" placeholder="Buscar productos, categorías o marcas..." aria-label="Buscar">
+                <button type="submit">Buscar</button>
+            </form>
+            <nav class="header-actions">
+                <a class="cart" href="{% url 'cart' %}">🛒 <span class="cart-count">{{ cart_count|default:0 }}</span></a>
+            </nav>
+        </div>
+    </header>
+
+
+    <main class="site-main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">© {{ now|default:2025 }} My Pet Shop</div>
+    </footer>
+</body>
+</html>

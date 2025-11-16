@@ -2,9 +2,49 @@
 <html>
 <head>
     <title>My Pet Shop</title>
-</head>
-<body>
-    <h1>Bienvenidos a My Pet Shop</h1>
-    <p>Nombre del artículo: {{ nombre_articulo }}</p>
-</body>
-</html> 
+{% extends 'base.html' %}
+
+{% block title %}Inicio - My Pet Shop{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <div class="hero-inner">
+            <h1>Bienvenidos a My Pet Shop</h1>
+            <p>Los mejores productos para tus mascotas. Encuentra comida, juguetes y accesorios.</p>
+            <a class="btn" href="#catalog">Ver catálogo</a>
+        </div>
+    </section>
+
+    <section id="catalog" class="catalog">
+        {% if query %}
+            <h2>Resultados para "{{ query }}"</h2>
+        {% else %}
+            <h2>Productos destacados</h2>
+        {% endif %}
+        <div class="cards">
+            {% if productos %}
+                {% for p in productos %}
+                    <article class="card">
+                        {% if p.imagen %}
+                            <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
+                        {% else %}
+                            <div class="placeholder">Sin imagen</div>
+                        {% endif %}
+                        <h3>{{ p.nombre }}</h3>
+                        <p class="price">{{ p.precio }} €</p>
+                        <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn small">Añadir al carrito</button>
+                        </form>
+                    </article>
+                {% endfor %}
+            {% else %}
+                {% if query %}
+                    <p>No hay productos que coincidan con "{{ query }}".</p>
+                {% else %}
+                    <p>No hay productos destacados por ahora.</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}
