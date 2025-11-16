@@ -246,3 +246,113 @@ class ItemPedido(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} x{self.cantidad}"
+
+
+class Carrito(models.Model):
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.CASCADE,
+        related_name="carritos",
+        blank=True,
+        null=True,
+    )
+    fecha_creacion = models.DateTimeField(default=timezone.now)
+    fecha_actualizacion = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = "Carrito"
+        verbose_name_plural = "Carritos"
+
+    def save(self, *args, **kwargs):
+        self.fecha_actualizacion = timezone.now()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Carrito #{self.pk} - {self.cliente or 'Anónimo'}"
+
+    def add_producto(self, producto, talla="", cantidad=1):
+        """
+        Añade un producto al carrito. Si ya existe un ItemCarrito con el mismo producto y talla,
+        incrementa la cantidad; en caso contrario crea uno nuevo.
+        Devuelve (item, created_bool).
+        """
+        if cantidad <= 0:
+            raise ValueError("La cantidad debe ser mayor que 0")
+
+        item, created = ItemCarrito.objects.get_or_create(
+            carrito=self, producto=producto, talla=talla or ""
+        )
+        if not created:
+            item.cantidad = item.cantidad + cantidad
+        else:
+            item.cantidad = cantidad
+        item.save()
+        # actualizar timestamp del carrito
+        self.save(update_fields=["fecha_actualizacion"])
+        return item, created
+
+    def remove_producto(self, producto, talla=""):
+        """Elimina el item correspondiente al producto/talla si existe."""
+        ItemCarrito.objects.filter(carrito=self, producto=producto, talla=talla or "").delete()
+        self.save(update_fields=["fecha_actualizacion"])
+
+    def set_cantidad(self, producto, talla, cantidad):
+        """Fija la cantidad de un item; si cantidad <= 0 elimina el item."""
+        qs = ItemCarrito.objects.filter(carrito=self, producto=producto, talla=talla or "")
+        if cantidad <= 0:
+            qs.delete()
+        else:
+            qs.update(cantidad=cantidad)
+        self.save(update_fields=["fecha_actualizacion"])
+
+    def total_items(self) -> int:
+        """Suma las cantidades de los items del carrito."""
+        from django.db.models import Sum
+
+        return self.items.aggregate(total=Sum("cantidad"))["total"] or 0
+
+    def get_total(self) -> Decimal:
+        """Suma los subtotales (usa precio_oferta cuando exista)."""
+        total = Decimal("0.00")
+        for item in self.items.select_related("producto").all():
+            precio = item.producto.precio_oferta or item.producto.precio or Decimal("0.00")
+            total += Decimal(item.cantidad) * precio
+        return total.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+    def clear(self):
+        """Vacía el carrito."""
+        self.items.all().delete()
+        self.save(update_fields=["fecha_actualizacion"])
+
+
+class ItemCarrito(models.Model):
+    carrito = models.ForeignKey(
+        Carrito,
+        on_delete=models.CASCADE,
+        related_name="items",
+    )
+    producto = models.ForeignKey(
+        Producto,
+        on_delete=models.PROTECT,
+        related_name="items_carrito",
+    )
+    talla = models.CharField(max_length=50, blank=True)
+    cantidad = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        verbose_name = "Item de carrito"
+        verbose_name_plural = "Items de carrito"
+
+    @property
+    def precio_unitario(self) -> Decimal:
+        """Devuelve el precio unitario aplicable (oferta o normal)."""
+        return self.producto.precio_oferta or self.producto.precio or Decimal("0.00")
+
+    @property
+    def subtotal(self) -> Decimal:
+        """Subtotal = cantidad * precio_unitario (redondeado a 2 decimales)."""
+        val = Decimal(self.cantidad) * self.precio_unitario
+        return val.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+    def __str__(self):
+        return f"{self.producto.nombre} x{self.cantidad} ({self.talla})"

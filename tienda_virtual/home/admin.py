@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.db.models import Sum
 
 from .models import (
     Articulo,
@@ -12,6 +13,8 @@ from .models import (
     Marca,
     Categoria,
     TallaProducto,
+    Carrito, 
+    ItemCarrito
 )
 
 #Inlines
@@ -30,6 +33,7 @@ class TallaProductoInline(admin.TabularInline):
     model = TallaProducto
     extra = 1
     fields = ("talla", "stock")
+
 
 
 
@@ -131,6 +135,42 @@ class ItemPedidoAdmin(admin.ModelAdmin):
 class ClienteAdmin(admin.ModelAdmin):
     list_display = ("nombre", "apellidos", "email", "telefono", "fecha_creacion")
     search_fields = ("nombre", "apellidos", "email")
+
+
+class ItemCarritoInline(admin.TabularInline):
+    model = ItemCarrito
+    extra = 0
+    fields = ("producto", "talla", "cantidad")
+    readonly_fields = ()
+
+
+@admin.register(Carrito)
+class CarritoAdmin(admin.ModelAdmin):
+    list_display = ("id", "cliente", "fecha_creacion", "fecha_actualizacion", "total_items")
+    search_fields = ("cliente__nombre", "cliente__email")
+    list_filter = ("fecha_creacion",)
+    readonly_fields = ("fecha_creacion", "fecha_actualizacion")
+    inlines = [ItemCarritoInline]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # Anotar la suma de cantidades para mostrar en la lista
+        from django.db.models import Sum
+
+        return qs.annotate(_total_items=Sum("items__cantidad"))
+
+    def total_items(self, obj):
+        total = getattr(obj, "_total_items", None)
+        if total is not None:
+            return total or 0
+        return obj.items.aggregate(total=Sum("cantidad"))["total"] or 0
+    total_items.short_description = "Items"
+
+
+@admin.register(ItemCarrito)
+class ItemCarritoAdmin(admin.ModelAdmin):
+    list_display = ("carrito", "producto", "talla", "cantidad")
+    search_fields = ("producto__nombre", "carrito__cliente__nombre")
 
 
 admin.site.register(Articulo)
