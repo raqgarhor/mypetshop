@@ -24,6 +24,10 @@ class Producto(models.Model):
     descripcion = models.TextField(blank=True)
     precio = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     precio_oferta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+    marca = models.ForeignKey('Marca', on_delete=models.PROTECT, related_name='productos')
+    categoria = models.ForeignKey('Categoria', on_delete=models.PROTECT, blank=True, null=True, related_name='productos')
+
     class Especie(models.TextChoices):
         PERRO = 'perro', 'Perro'
         GATO = 'gato', 'Gato'
@@ -36,7 +40,8 @@ class Producto(models.Model):
     genero = models.CharField(max_length=20, choices=Especie.choices, default=Especie.PERRO)
     color = models.CharField(max_length=50, blank=True)
     material = models.CharField(max_length=100, blank=True)
-    imagen = models.ImageField(upload_to='productos/', blank=True, null=True)
+
+    ###imagen = models.ImageField(upload_to='productos/', blank=True, null=True) -> hay que quitarlo
     stock = models.IntegerField(default=0)
     esta_disponible = models.BooleanField(default=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)
@@ -50,6 +55,41 @@ class Producto(models.Model):
     def save(self, *args, **kwargs):
         self.fecha_actualizacion = timezone.now()
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.nombre
+
+class TallaProducto(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='tallas', null=True, blank=True)
+    talla = models.CharField(max_length=50)
+    stock = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.producto.nombre} - Talla: {self.talla}"
+
+class ImagenProducto(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='imagenes', null=True, blank=True)
+    imagen = models.ImageField(upload_to='productos/imagenes/')
+    es_principal = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Imagen de {self.producto.nombre}"
+    
+    class Meta:
+        # Mostrar primero las imágenes marcadas como principales
+        ordering = ['-es_principal', 'id']
+
+class Marca(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    imagen = models.ImageField(upload_to='marcas/imagenes/')
+
+    def __str__(self):
+        return self.nombre
+
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    descripcion = models.TextField(blank=True)
+    imagen = models.ImageField(upload_to='categorias/imagenes/')
 
     def __str__(self):
         return self.nombre
@@ -127,6 +167,7 @@ class Pedido(models.Model):
     metodo_pago = models.CharField(max_length=100, blank=True)
     direccion_envio = models.CharField(max_length=255, blank=True)
     telefono = models.CharField(max_length=20, blank=True)
+
 
     class Meta:
         verbose_name = "Pedido"

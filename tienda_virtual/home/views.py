@@ -26,15 +26,18 @@ def add_to_cart(request, product_id):
     if request.method != 'POST':
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
+    # Allow selecting a talla (size). Expect POST param 'size'
+    size = (request.POST.get('size') or '').strip()
     producto = get_object_or_404(Producto, pk=product_id, esta_disponible=True)
-    cart = request.session.get('cart', {})
 
+    cart = request.session.get('cart', {})
     if not isinstance(cart, dict):
         cart = {}
-    key = str(product_id)
+
+    # use composite key productid:size (size may be empty string)
+    key = f"{product_id}:{size}"
     cart[key] = int(cart.get(key, 0)) + 1
     request.session['cart'] = cart
-   
     request.session.modified = True
 
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
@@ -46,14 +49,22 @@ def cart_view(request):
     items = []
     total = 0
     if isinstance(cart, dict):
-        for pid, qty in cart.items():
+        for composite_key, qty in cart.items():
+            # composite_key can be "<product_id>:<size>" or legacy "<product_id>"
+            if isinstance(composite_key, str) and ':' in composite_key:
+                pid_str, size = composite_key.split(':', 1)
+            else:
+                pid_str = str(composite_key)
+                size = ''
+
             try:
-                producto = Producto.objects.get(pk=int(pid))
+                producto = Producto.objects.get(pk=int(pid_str))
             except Producto.DoesNotExist:
                 continue
+
             cantidad = int(qty)
             subtotal = producto.precio * cantidad
-            items.append({'producto': producto, 'cantidad': cantidad, 'subtotal': subtotal})
+            items.append({'producto': producto, 'cantidad': cantidad, 'subtotal': subtotal, 'size': size})
             total += subtotal
 
     contexto = {'items': items, 'total': total}
@@ -65,9 +76,15 @@ def cart_decrement(request, product_id):
     if request.method != 'POST':
         return redirect(request.META.get('HTTP_REFERER', reverse('cart')))
 
+    # Expect optional 'size' param from the form so we decrement the correct item
+    size = (request.POST.get('size') or '').strip()
     cart = request.session.get('cart', {})
     if isinstance(cart, dict):
-        key = str(product_id)
+        key = f"{product_id}:{size}"
+        # support legacy key without size
+        if key not in cart and str(product_id) in cart:
+            key = str(product_id)
+
         if key in cart:
             try:
                 qty = int(cart.get(key, 0)) - 1
@@ -88,9 +105,16 @@ def cart_remove(request, product_id):
     if request.method != 'POST':
         return redirect(request.META.get('HTTP_REFERER', reverse('cart')))
 
+    size = (request.POST.get('size') or '').strip()
     cart = request.session.get('cart', {})
     if isinstance(cart, dict):
-        cart.pop(str(product_id), None)
+        key = f"{product_id}:{size}"
+        if key in cart:
+            cart.pop(key, None)
+        else:
+            # fallback to legacy key
+            cart.pop(str(product_id), None)
+
         request.session['cart'] = cart
         request.session.modified = True
 
@@ -104,6 +128,7 @@ def cart_update(request):
 
     product_id = request.POST.get('product_id')
     quantity = request.POST.get('quantity')
+    size = (request.POST.get('size') or '').strip()
     if not product_id:
         return redirect(reverse('cart'))
 
@@ -116,7 +141,11 @@ def cart_update(request):
     if not isinstance(cart, dict):
         cart = {}
 
-    key = str(product_id)
+    key = f"{product_id}:{size}"
+    # if key not present but legacy key exists, use legacy
+    if key not in cart and str(product_id) in cart and size == '':
+        key = str(product_id)
+
     if q > 0:
         cart[key] = q
     else:

@@ -12,28 +12,32 @@
             <tbody>
                 {% for it in items %}
                     <tr>
-                        <td>{{ it.producto.nombre }}</td>
+                            <td>{{ it.producto.nombre }}{% if it.size %} - Talla: {{ it.size }}{% endif %}</td>
                         <td>
                             <form action="{% url 'cart_update' %}" method="post" style="display:inline">
                                 {% csrf_token %}
-                                <input type="hidden" name="product_id" value="{{ it.producto.id }}">
+                                    <input type="hidden" name="product_id" value="{{ it.producto.id }}">
+                                    <input type="hidden" name="size" value="{{ it.size }}">
                                 <input type="number" name="quantity" value="{{ it.cantidad }}" min="0" style="width:60px"> 
                                 <button type="submit" class="btn">Actualizar</button>
                             </form>
                         </td>
                         <td>
-                            <form action="{% url 'add_to_cart' it.producto.id %}" method="post" style="display:inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn small">+</button>
-                            </form>
-                            <form action="{% url 'cart_decrement' it.producto.id %}" method="post" style="display:inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn small">-</button>
-                            </form>
-                            <form action="{% url 'cart_remove' it.producto.id %}" method="post" style="display:inline">
-                                {% csrf_token %}
-                                <button type="submit" class="btn danger small">Eliminar</button>
-                            </form>
+                                <form action="{% url 'add_to_cart' it.producto.id %}" method="post" style="display:inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="size" value="{{ it.size }}">
+                                    <button type="submit" class="btn small">+</button>
+                                </form>
+                                <form action="{% url 'cart_decrement' it.producto.id %}" method="post" style="display:inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="size" value="{{ it.size }}">
+                                    <button type="submit" class="btn small">-</button>
+                                </form>
+                                <form action="{% url 'cart_remove' it.producto.id %}" method="post" style="display:inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="size" value="{{ it.size }}">
+                                    <button type="submit" class="btn danger small">Eliminar</button>
+                                </form>
                         </td>
                         <td>{{ it.subtotal }} €</td>
                     </tr>
