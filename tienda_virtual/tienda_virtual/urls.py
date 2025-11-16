@@ -22,6 +22,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('cart/add/<int:product_id>/', home_views.add_to_cart, name='add_to_cart'),
+    path('cart/decrement/<int:product_id>/', home_views.cart_decrement, name='cart_decrement'),
+    path('cart/remove/<int:product_id>/', home_views.cart_remove, name='cart_remove'),
+    path('cart/update/', home_views.cart_update, name='cart_update'),
+    path('cart/', home_views.cart_view, name='cart'),
     path('', home_views.index, name='home'),
 ]
 
