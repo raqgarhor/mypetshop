@@ -25,15 +25,26 @@
             {% if productos %}
                 {% for p in productos %}
                     <article class="card">
-                        {% if p.imagen %}
-                            <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
-                        {% else %}
-                            <div class="placeholder">Sin imagen</div>
-                        {% endif %}
+                        {% with ip=p.imagenes.first %}
+                            {% if ip %}
+                                <img src="{{ ip.imagen.url }}" alt="{{ p.nombre }}">
+                            {% else %}
+                                <div class="placeholder">Sin imagen</div>
+                            {% endif %}
+                        {% endwith %}
                         <h3>{{ p.nombre }}</h3>
                         <p class="price">{{ p.precio }} €</p>
                         <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
                             {% csrf_token %}
+                            {% if p.tallas.exists %}
+                                <label for="size-{{ p.id }}">Talla</label>
+                                <select name="size" id="size-{{ p.id }}" required>
+                                    <option value="" disabled selected>Selecciona</option>
+                                    {% for t in p.tallas.all %}
+                                        <option value="{{ t.talla }}">{{ t.talla }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
                             <button type="submit" class="btn small">Añadir al carrito</button>
                         </form>
                     </article>
