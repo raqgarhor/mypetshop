@@ -1,7 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Pet Shop</title>
 {% extends 'base.html' %}
 
 {% block title %}Inicio - My Pet Shop{% endblock %}
@@ -14,6 +10,33 @@
             <a class="btn" href="#catalog">Ver catálogo</a>
         </div>
     </section>
+
+    {% if cart_count > 0 %}
+    <section class="mini-cart" style="position:fixed;right:20px;bottom:20px;top:auto;width:260px;max-width:calc(100% - 40px);max-height:50vh;overflow:auto;background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 6px 18px rgba(0,0,0,0.08);border-radius:8px;padding:8px;z-index:9999;box-sizing:border-box;font-size:13px;">
+        <h2>Carrito ({{ cart_count }})</h2>
+        <ul class="mini-cart-list">
+            {% for it in cart_items %}
+                <li class="mini-cart-item">
+                    {% with ip=it.producto.imagenes.first %}
+                        {% if ip %}
+                            <img class="mini-cart-thumb" src="{{ ip.imagen.url }}" alt="{{ it.producto.nombre }}" style="width:40px;height:40px;object-fit:cover;">
+                        {% else %}
+                            <div class="mini-cart-thumb placeholder">Sin imagen</div>
+                        {% endif %}
+                    {% endwith %}
+                    <div class="mini-cart-info">
+                        <span class="mini-cart-name">{{ it.producto.nombre }}</span>
+                        {% if it.size %}<span class="mini-cart-size"> - Talla: {{ it.size }}</span>{% endif %}
+                        <span class="mini-cart-qty"> × {{ it.cantidad }}</span>
+                        <span class="mini-cart-sub"> — {{ it.subtotal }} €</span>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        <p class="mini-cart-total">Total: {{ cart_total }} €</p>
+        <p><a class="btn" href="{% url 'cart' %}">Ver carrito</a></p>
+    </section>
+    {% endif %}
 
     <section id="catalog" class="catalog">
         {% if query %}
