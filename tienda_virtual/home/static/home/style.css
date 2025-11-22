@@ -2,7 +2,8 @@
 body{font-family:Arial,Helvetica,sans-serif;color:#222;margin:0}
 .site-header{background:#fff;border-bottom:1px solid #eee}
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
-.brand{font-weight:700;color:#2c3e50;text-decoration:none;font-size:20px}
+.brand{font-weight:700;color:#2c3e50;text-decoration:none;font-size:20px;display:flex;align-items:center;gap:8px}
+.brand-icon{height:60px;width:auto;display:inline-block;object-fit:contain}
 .main-tabs{background:transparent;border-bottom:1px solid rgba(0,0,0,0.06)}
 .tabs-inner{display:flex;gap:32px;align-items:center;padding:10px 0}
 .main-tabs .tab{color:#333;text-decoration:none;padding:10px 16px;border-radius:6px;font-weight:600}
