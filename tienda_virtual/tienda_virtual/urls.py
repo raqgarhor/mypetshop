@@ -27,6 +27,10 @@ urlpatterns = [
     path('cart/remove/<int:product_id>/', home_views.cart_remove, name='cart_remove'),
     path('cart/update/', home_views.cart_update, name='cart_update'),
     path('cart/', home_views.cart_view, name='cart'),
+    path('novedades/', home_views.novedades, name='novedades'),
+    path('productos/', home_views.productos, name='productos'),
+    path('producto/<int:product_id>/', home_views.product_detail, name='product_detail'),
+    path('ofertas/', home_views.ofertas, name='ofertas'),
     path('', home_views.index, name='home'),
 ]
 

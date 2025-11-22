@@ -2,6 +2,8 @@ from decimal import Decimal, ROUND_HALF_UP
 
 from django.db import models
 from django.utils import timezone
+from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 
 
 class Articulo(models.Model):
@@ -22,8 +24,10 @@ class Escaparate(models.Model):
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True)
-    precio = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
-    precio_oferta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    precio = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'),
+                                 validators=[MinValueValidator(Decimal('0.00'))])
+    precio_oferta = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True,
+                                        validators=[MinValueValidator(Decimal('0.00'))])
 
     marca = models.ForeignKey('Marca', on_delete=models.PROTECT, related_name='productos')
     categoria = models.ForeignKey('Categoria', on_delete=models.PROTECT, blank=True, null=True, related_name='productos')
@@ -40,9 +44,7 @@ class Producto(models.Model):
     genero = models.CharField(max_length=20, choices=Especie.choices, default=Especie.PERRO)
     color = models.CharField(max_length=50, blank=True)
     material = models.CharField(max_length=100, blank=True)
-
-    ###imagen = models.ImageField(upload_to='productos/', blank=True, null=True) -> hay que quitarlo
-    stock = models.IntegerField(default=0)
+    stock = models.PositiveIntegerField(default=0)
     esta_disponible = models.BooleanField(default=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)
     fecha_actualizacion = models.DateTimeField(default=timezone.now)
@@ -54,7 +56,26 @@ class Producto(models.Model):
 
     def save(self, *args, **kwargs):
         self.fecha_actualizacion = timezone.now()
+        self.full_clean()
         super().save(*args, **kwargs)
+
+    def clean(self):
+        errors = {}
+        if self.precio is not None and self.precio < Decimal('0.00'):
+            errors['precio'] = 'El precio no puede ser negativo.'
+        if self.precio_oferta is not None:
+            if self.precio_oferta < Decimal('0.00'):
+                errors['precio_oferta'] = 'El precio de oferta no puede ser negativo.'
+            elif self.precio_oferta >= self.precio:
+                errors['precio_oferta'] = 'El precio de oferta debe ser menor que el precio normal.'
+        if self.stock is not None and self.stock < 0:
+            errors['stock'] = 'El stock no puede ser negativo.'
+
+        if errors:
+            raise ValidationError(errors)
+        if self.fecha_creacion and self.fecha_actualizacion:
+            if self.fecha_actualizacion < self.fecha_creacion:
+                raise ValidationError({'fecha_actualizacion': 'La fecha de actualización no puede ser anterior a la fecha de creación.'})
 
     def __str__(self):
         return self.nombre
@@ -76,7 +97,6 @@ class ImagenProducto(models.Model):
         return f"Imagen de {self.producto.nombre}"
     
     class Meta:
-        # Mostrar primero las imágenes marcadas como principales
         ordering = ['-es_principal', 'id']
 
 class Marca(models.Model):
