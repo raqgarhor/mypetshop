@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.urls import reverse
+from django.utils import timezone
+import datetime
 
 from .models import Articulo, Escaparate
 from .models import Producto
@@ -74,7 +76,7 @@ def cart_view(request):
 def cart_decrement(request, product_id):
     """Decrementa la cantidad de `product_id` en el carrito de sesión."""
     if request.method != 'POST':
-        return redirect(request.META.get('HTTP_REFERER', reverse('cart')))
+        return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     # Expect optional 'size' param from the form so we decrement the correct item
     size = (request.POST.get('size') or '').strip()
@@ -97,13 +99,13 @@ def cart_decrement(request, product_id):
             request.session['cart'] = cart
             request.session.modified = True
 
-    return redirect(reverse('cart'))
+    return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
 
 def cart_remove(request, product_id):
     """Elimina completamente `product_id` del carrito de sesión."""
     if request.method != 'POST':
-        return redirect(request.META.get('HTTP_REFERER', reverse('cart')))
+        return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     size = (request.POST.get('size') or '').strip()
     cart = request.session.get('cart', {})
@@ -118,19 +120,19 @@ def cart_remove(request, product_id):
         request.session['cart'] = cart
         request.session.modified = True
 
-    return redirect(reverse('cart'))
+    return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
 
 def cart_update(request):
     """Actualiza la cantidad de un item a un valor específico (POST)."""
     if request.method != 'POST':
-        return redirect(reverse('cart'))
+        return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     product_id = request.POST.get('product_id')
     quantity = request.POST.get('quantity')
     size = (request.POST.get('size') or '').strip()
     if not product_id:
-        return redirect(reverse('cart'))
+        return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     try:
         q = int(quantity)
@@ -153,4 +155,40 @@ def cart_update(request):
 
     request.session['cart'] = cart
     request.session.modified = True
-    return redirect(reverse('cart'))
+    return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+
+
+def novedades(request):
+    """Muestra productos ordenados por fecha de creación (más recientes primero)."""
+    # show only products created within the last 30 days
+    cutoff = timezone.now() - datetime.timedelta(days=30)
+    productos = Producto.objects.filter(esta_disponible=True, fecha_creacion__gte=cutoff).order_by('-fecha_creacion')[:24]
+    contexto = {'productos': productos, 'title': 'Novedades'}
+    return render(request, 'products.html', contexto)
+
+
+def productos(request):
+    """Muestra productos destacados."""
+    destacados = Producto.objects.filter(esta_disponible=True, es_destacado=True).order_by('-fecha_creacion')
+    productos = Producto.objects.filter(esta_disponible=True).exclude(es_destacado=True).order_by('-fecha_creacion')
+    contexto = {'destacados': destacados, 'productos': productos, 'title': 'Productos'}
+    return render(request, 'products.html', contexto)
+
+
+def ofertas(request):
+    """Muestra productos que tienen precio de oferta definido."""
+    productos = Producto.objects.filter(esta_disponible=True, precio_oferta__isnull=False).order_by('-fecha_creacion')
+    contexto = {'productos': productos, 'title': 'Ofertas'}
+    return render(request, 'products.html', contexto)
+
+
+def product_detail(request, product_id):
+    """Muestra la página de detalle de un producto."""
+    producto = get_object_or_404(Producto, pk=product_id, esta_disponible=True)
+
+    # prepare context for template
+    contexto = {
+        'producto': producto,
+        'title': producto.nombre,
+    }
+    return render(request, 'product_detail.html', contexto)

@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.db.models import Sum
+from django.db import models
+from django.forms import NumberInput
 
 from .models import (
     Articulo,
@@ -53,6 +55,12 @@ class ProductoAdmin(admin.ModelAdmin):
     list_filter = ("esta_disponible", "es_destacado", "marca", "categoria")
     search_fields = ("nombre", "descripcion", "color", "material", "genero")
     inlines = [ImagenProductoInline, TallaProductoInline]
+
+   
+    formfield_overrides = {
+        models.DecimalField: {'widget': NumberInput(attrs={'min': '0', 'step': '0.01'})},
+        models.IntegerField: {'widget': NumberInput(attrs={'min': '0', 'step': '1'})},
+    }
 
     def imagen_preview(self, obj):
         if obj.imagen:
