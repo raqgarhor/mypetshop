@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load cart_extras %}
 
 {% block title %}Inicio - My Pet Shop{% endblock %}
 
@@ -18,44 +19,7 @@
         </div>
     </section>
 
-    {% if cart_count > 0 %}
-    <section class="mini-cart" style="position:fixed;right:20px;bottom:20px;top:auto;width:260px;max-width:calc(100% - 40px);max-height:50vh;overflow:auto;background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 6px 18px rgba(0,0,0,0.08);border-radius:8px;padding:8px;z-index:9999;box-sizing:border-box;font-size:13px;">
-        <h2>Carrito ({{ cart_count }})</h2>
-        <ul class="mini-cart-list">
-            {% for it in cart_items %}
-                <li class="mini-cart-item">
-                    {% with ip=it.producto.imagenes.first %}
-                        {% if ip %}
-                            <img class="mini-cart-thumb" src="{{ ip.imagen.url }}" alt="{{ it.producto.nombre }}" style="width:40px;height:40px;object-fit:cover;">
-                        {% else %}
-                            <div class="mini-cart-thumb placeholder">Sin imagen</div>
-                        {% endif %}
-                    {% endwith %}
-                    <div class="mini-cart-info">
-                        <span class="mini-cart-name">{{ it.producto.nombre }}</span>
-                        {% if it.size %}<span class="mini-cart-size"> - Talla: {{ it.size }}</span>{% endif %}
-                        <div class="mini-cart-controls">
-                            <form action="{% url 'add_to_cart' it.producto.id %}" method="post" style="display:inline-block; margin-right:6px">
-                                {% csrf_token %}
-                                <input type="hidden" name="size" value="{{ it.size }}">
-                                <button type="submit" class="btn small">+</button>
-                            </form>
-
-                            <form action="{% url 'cart_decrement' it.producto.id %}" method="post" style="display:inline-block">
-                                {% csrf_token %}
-                                <input type="hidden" name="size" value="{{ it.size }}">
-                                <button type="submit" class="btn small">-</button>
-                            </form>
-
-                            <div style="margin-top:6px;font-size:13px;color:#444">Cantidad: {{ it.cantidad }} — {{ it.subtotal }} €</div>
-                        </div>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-        <p class="mini-cart-total">Total: {{ cart_total }} €</p>
-    </section>
-    {% endif %}
+    {# Mini-cart moved to base.html so it appears on all pages. #}
 
     <section id="catalog" class="catalog">
         {% if query %}
@@ -76,19 +40,45 @@
                         {% endwith %}
                         <h3>{{ p.nombre }}</h3>
                         <p class="price">{{ p.precio }} €</p>
-                        <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
-                            {% csrf_token %}
+                        {% with in_cart=cart_qty_by_product|get_item:p.id|default:0 %}
                             {% if p.tallas.exists %}
-                                <label for="size-{{ p.id }}">Talla</label>
-                                <select name="size" id="size-{{ p.id }}" required>
-                                    <option value="" disabled selected>Selecciona</option>
-                                    {% for t in p.tallas.all %}
-                                        <option value="{{ t.talla }}">{{ t.talla }}</option>
-                                    {% endfor %}
-                                </select>
+                                {% with remaining=p.available_stock|default:p.stock|sub:in_cart %}
+                                    {% if remaining > 0 %}
+                                        <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
+                                            {% csrf_token %}
+                                            <label for="size-{{ p.id }}">Talla</label>
+                                            <select name="size" id="size-{{ p.id }}" required>
+                                                <option value="" disabled selected>Selecciona</option>
+                                                {% for t in p.tallas.all %}
+                                                    {% with key=p.id|stringformat:"s"|add:":"|add:t.talla %}
+                                                        {% with taken=cart_qty_by_item|get_item:key %}
+                                                            {% if not taken %}{% with taken=0 %}{% endwith %}{% endif %}
+                                                            {% with rem_size=t.stock|sub:taken %}
+                                                                <option value="{{ t.talla }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (sin stock){% endif %}</option>
+                                                            {% endwith %}
+                                                        {% endwith %}
+                                                    {% endwith %}
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="btn small">Añadir al carrito</button>
+                                        </form>
+                                    {% else %}
+                                        <div style="color:#c62828;font-weight:700">No disponible</div>
+                                    {% endif %}
+                                {% endwith %}
+                            {% else %}
+                                {% with remaining=p.stock|sub:in_cart %}
+                                    {% if remaining > 0 %}
+                                        <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn small">Añadir al carrito</button>
+                                        </form>
+                                    {% else %}
+                                        <div style="color:#c62828;font-weight:700">No disponible</div>
+                                    {% endif %}
+                                {% endwith %}
                             {% endif %}
-                            <button type="submit" class="btn small">Añadir al carrito</button>
-                        </form>
+                        {% endwith %}
                     </article>
                 {% endfor %}
             {% else %}
