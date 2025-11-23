@@ -58,6 +58,7 @@ class Producto(models.Model):
         self.fecha_actualizacion = timezone.now()
         self.full_clean()
         super().save(*args, **kwargs)
+        
 
     def clean(self):
         errors = {}
@@ -232,7 +233,7 @@ class ItemPedido(models.Model):
         on_delete=models.PROTECT,
         related_name="items_pedido",
     )
-    talla = models.CharField(max_length=50, blank=True)
+    talla = models.CharField(max_length=50, blank=True, null=True)
     cantidad = models.PositiveIntegerField(default=1)
     precio_unitario = models.DecimalField(
         max_digits=12,
@@ -356,7 +357,7 @@ class ItemCarrito(models.Model):
         on_delete=models.PROTECT,
         related_name="items_carrito",
     )
-    talla = models.CharField(max_length=50, blank=True)
+    talla = models.CharField(max_length=50, blank=True, null=True)
     cantidad = models.PositiveIntegerField(default=1)
 
     class Meta:

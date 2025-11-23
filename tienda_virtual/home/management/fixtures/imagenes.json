@@ -1,0 +1,182 @@
+[
+  {
+    "producto": "Pienso Premium Adulto",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+    {
+    "producto": "Pienso Premium Adulto",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": false
+  },
+  {
+    "producto": "Pienso cachorro",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Chuches de Jamón",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Latas de Pavo para Gatos",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Alpiste de Calidad",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+    {
+    "producto": "Alpiste de Calidad",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": false
+  },
+    {
+    "producto": "Alpiste de Calidad",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": false
+  },
+  {
+    "producto": "snack de pato para perros",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Comida de peces en lata",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Anti parásitos",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Condrovet Force HA",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "PetCaps",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Diptron aves",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Abrigo Muflón",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+    {
+    "producto": "Abrigo Muflón",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": false
+  },
+    {
+    "producto": "Abrigo Muflón",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": false
+  },
+    {
+    "producto": "Abrigo Muflón",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": false
+  },
+  {
+    "producto": "Sueter para gatos",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Conjunto chaleco y falda",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Pelota",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Ratón",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Hamaca",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Champoo natural",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Correa para perros",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Bebedero portatil",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Trasportín",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Terrario",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+    {
+    "producto": "Terrario",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": false
+  },
+    {
+    "producto": "Terrario",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": false
+  },
+  {
+    "producto": "Jaula",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Acuario grande",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Camita",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  },
+    {
+    "producto": "Camita",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": false
+  },
+    {
+    "producto": "Camita",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": false
+  },
+  {
+    "producto": "Escalera",
+    "imagen": "productos/imagenes/producto.jpg",
+    "es_principal": true
+  }
+]

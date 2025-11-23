@@ -1,0 +1,62 @@
+[
+  {
+    "nombre": "Cliente 1",
+    "apellidos": "Prueba 1",
+    "email": "cliente1@example.com",
+    "telefono": "111111111",
+    "direccion": "Calle Falsa 1",
+    "ciudad": "Ciudad Ejemplo",
+    "codigo_postal": "11111",
+    "password": "hashed_password_1"  
+  },
+  {
+    "nombre": "Cliente 2",
+    "apellidos": "Prueba 2",
+    "email": "cliente2@example.com",
+    "telefono": "222222222",
+    "direccion": "Calle Falsa 2",
+    "ciudad": "Ciudad Ejemplo",
+    "codigo_postal": "22222",
+    "password": "hashed_password_2"  
+  },
+  {
+    "nombre": "Cliente 3",
+    "apellidos": "Prueba 3",
+    "email": "cliente3@example.com",
+    "telefono": "333333333",
+    "direccion": "Calle Falsa 3",
+    "ciudad": "Ciudad Ejemplo",
+    "codigo_postal": "33333",
+    "password": "hashed_password_3"  
+  },
+  {
+    "nombre": "Cliente 4",
+    "apellidos": "Prueba 4",
+    "email": "cliente4@example.com",
+    "telefono": "444444444",
+    "direccion": "Calle Falsa 4",
+    "ciudad": "Ciudad Ejemplo",
+    "codigo_postal": "44444",
+    "password": "hashed_password_4"  
+  },
+  {
+    "nombre": "Cliente 5",
+    "apellidos": "Prueba 5",
+    "email": "cliente5@example.com",
+    "telefono": "555555555",
+    "direccion": "Calle Falsa 5",
+    "ciudad": "Ciudad Ejemplo",
+    "codigo_postal": "55555",
+    "password": "hashed_password_5"  
+  },
+  {
+    "nombre": "Cliente 6",
+    "apellidos": "Prueba 6",
+    "email": "cliente6@example.com",
+    "telefono": "666666666",
+    "direccion": "Calle Falsa 6",
+    "ciudad": "Ciudad Ejemplo",
+    "codigo_postal": "66666",
+    "password": "hashed_password_6"  
+  }
+]

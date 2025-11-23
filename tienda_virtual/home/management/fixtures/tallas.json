@@ -1,0 +1,72 @@
+[
+  {
+    "producto": "Abrigo Muflón",
+    "talla": "S",
+    "stock": 20
+  },
+  {
+    "producto": "Abrigo Muflón",
+    "talla": "M",
+    "stock": 10
+  },
+  {
+    "producto": "Abrigo Muflón",
+    "talla": "L",
+    "stock": 10
+  },
+  {
+    "producto": "Sueter para gatos",
+    "talla": "S",
+    "stock": 10
+  },
+  {
+    "producto": "Sueter para gatos",
+    "talla": "M",
+    "stock": 7
+  },
+  {
+    "producto": "Conjunto chaleco y falda",
+    "talla": "S",
+    "stock": 3
+  },
+  {
+    "producto": "Conjunto chaleco y falda",
+    "talla": "M",
+    "stock": 4
+  },
+  {
+    "producto": "Correa para perros",
+    "talla": "S",
+    "stock": 7
+  },
+  {
+    "producto": "Correa para perros",
+    "talla": "M",
+    "stock": 8
+  },
+    {
+    "producto": "Correa para perros",
+    "talla": "L",
+    "stock": 10
+  },
+  {
+    "producto": "Trasportín",
+    "talla": "M",
+    "stock": 40
+  },
+  {
+    "producto": "Trasportín",
+    "talla": "L",
+    "stock": 16
+  },
+  {
+    "producto": "Camita",
+    "talla": "M",
+    "stock": 30
+  },
+  {
+    "producto": "Camita",
+    "talla": "L",
+    "stock": 15
+  }
+]

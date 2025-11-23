@@ -1,0 +1,104 @@
+[
+  {
+    "carrito": "Cliente 1",
+    "producto": "Pienso Premium Adulto",
+    "talla": null,
+    "cantidad": 3
+  },
+  {
+    "carrito": "Cliente 1",
+    "producto": "Chuches de Jamón",
+    "talla": null,
+    "cantidad": 10
+  },
+  {
+    "carrito": "Cliente 1",
+    "producto": "Latas de Pavo para Gatos",
+    "talla": null,
+    "cantidad": 5
+  },
+  {
+    "carrito": "Cliente 2",
+    "producto": "Correa para perros",
+    "talla": "S",
+    "cantidad": 1
+  },
+    {
+    "carrito": "Cliente 3",
+    "producto": "Camita",
+    "talla": "M",
+    "cantidad": 1
+  },
+  {
+    "carrito": "Cliente 4",
+    "producto": "Chuches de Jamón",
+    "talla": null,
+    "cantidad": 5
+  },
+    {
+    "carrito": "Cliente 5",
+    "producto": "Conjunto chaleco y falda",
+    "talla": "M",
+    "cantidad": 1
+  },
+    {
+    "carrito": "Cliente 5",
+    "producto": "Sueter para gatos",
+    "talla": "M",
+    "cantidad": 1
+  },
+  {
+    "carrito": "Cliente 5",
+    "producto": "Latas de Pavo para Gatos",
+    "talla": null,
+    "cantidad": 10
+  },
+  {
+    "carrito": "Cliente 6",
+    "producto": "Anti parásitos",
+    "talla": null,
+    "cantidad": 3
+  },
+     {
+    "carrito": "Cliente 4",
+    "producto": "Condrovet Force HA",
+    "talla": null,
+    "cantidad": 2
+  },
+    {
+    "carrito": "Cliente 3",
+    "producto": "PetCaps",
+    "talla": null,
+    "cantidad": 20
+  },
+  {
+    "carrito": "Cliente 2",
+    "producto": "Latas de Pavo para Gatos",
+    "talla": null,
+    "cantidad": 5
+  },
+  {
+    "carrito": "Cliente 5",
+    "producto": "Sueter para gatos",
+    "talla": "S",
+    "cantidad": 5
+  },
+    {
+    "carrito": "Cliente 6",
+    "producto": "Abrigo Muflón",
+    "talla": ",M",
+    "cantidad": 1
+  },
+  {
+    "carrito": "Cliente 1",
+    "producto": "Abrigo Muflón",
+    "talla": "L",
+    "cantidad": 1
+  },
+    {
+    "carrito": "Cliente 2",
+    "producto": "Acuario grande",
+    "talla": null,
+    "cantidad": 2
+  }
+]
