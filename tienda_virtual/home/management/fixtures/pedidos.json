@@ -1,0 +1,79 @@
+[
+  {
+    "cliente": "Cliente 1",
+    "numero_pedido": "PED-0001",
+    "estado": "pendiente",
+    "impuestos": "4.80",
+    "coste_entrega": "3.99",
+    "descuento": "0.00",
+    "metodo_pago": "tarjeta",
+    "direccion_envio": "Calle Falsa 123",
+    "telefono": "600112233"
+  },
+    {
+    "cliente": "Cliente 1",
+    "numero_pedido": "PED-0012",
+    "estado": "pagado",
+    "impuestos": "4.80",
+    "coste_entrega": "3.99",
+    "descuento": "0.00",
+    "metodo_pago": "tarjeta",
+    "direccion_envio": "Calle Falsa 123",
+    "telefono": "600112233"
+  },
+    {
+    "cliente": "Cliente 1",
+    "numero_pedido": "PED-0013",
+    "estado": "en_proceso",
+    "impuestos": "4.80",
+    "coste_entrega": "3.99",
+    "descuento": "0.00",
+    "metodo_pago": "tarjeta",
+    "direccion_envio": "Calle Falsa 123",
+    "telefono": "600112233"
+  },
+    {
+    "cliente": "Cliente 1",
+    "numero_pedido": "PED-0014",
+    "estado": "enviado",
+    "impuestos": "4.80",
+    "coste_entrega": "3.99",
+    "descuento": "0.00",
+    "metodo_pago": "tarjeta",
+    "direccion_envio": "Calle Falsa 123",
+    "telefono": "600112233"
+  },
+    {
+    "cliente": "Cliente 1",
+    "numero_pedido": "PED-0015",
+    "estado": "entregado",
+    "impuestos": "4.80",
+    "coste_entrega": "3.99",
+    "descuento": "0.00",
+    "metodo_pago": "tarjeta",
+    "direccion_envio": "Calle Falsa 123",
+    "telefono": "600112233"
+  },
+    {
+    "cliente": "Cliente 1",
+    "numero_pedido": "PED-0016",
+    "estado": "cancelado",
+    "impuestos": "4.80",
+    "coste_entrega": "3.99",
+    "descuento": "0.00",
+    "metodo_pago": "tarjeta",
+    "direccion_envio": "Calle Falsa 123",
+    "telefono": "600112233"
+  },
+    {
+    "cliente": "Cliente 2",
+    "numero_pedido": "PED-0002",
+    "estado": "pendiente",
+    "impuestos": "4.80",
+    "coste_entrega": "3.99",
+    "descuento": "1.00",
+    "metodo_pago": "tarjeta",
+    "direccion_envio": "Calle Falsa 123",
+    "telefono": "600112233"
+  }
+]
