@@ -3,6 +3,7 @@ import random
 import json
 import os
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
@@ -22,6 +23,12 @@ from home.models import (
 )
 
 User = get_user_model()
+
+
+def generar_numero_pedido():
+    """Genera un número de pedido con el formato MP-YYYYMMDDHHMMSS-XXXX"""
+    return f"MP-{timezone.now().strftime('%Y%m%d%H%M%S')}-{get_random_string(4).upper()}"
+
 
 class Command(BaseCommand):
     help = 'Seed the database with initial data for development'
@@ -324,9 +331,14 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING(f'Cliente no encontrado para pedido: {item.get("cliente")}'))
                 continue
 
+            # Usar numero_pedido del JSON si existe, sino generar uno nuevo
+            numero_pedido = item.get("numero_pedido")
+            if not numero_pedido:
+                numero_pedido = generar_numero_pedido()
+
             pedido = Pedido.objects.create(
                 cliente=cliente_obj,
-                numero_pedido=item["numero_pedido"],
+                numero_pedido=numero_pedido,
                 estado=item["estado"],
                 subtotal=Decimal(str(item.get('subtotal') or '0').replace(',', '.')),
                 impuestos=Decimal(str(item.get('impuestos') or '0').replace(',', '.')),

@@ -1,7 +1,7 @@
 [
   {
     "cliente": "Cliente 1",
-    "numero_pedido": "PED-0001",
+    "numero_pedido": "MP-20241124100001-TEST",
     "estado": "pendiente",
     "impuestos": "4.80",
     "coste_entrega": "3.99",
@@ -12,7 +12,7 @@
   },
     {
     "cliente": "Cliente 1",
-    "numero_pedido": "PED-0012",
+    "numero_pedido": "MP-20241124100002-PAID",
     "estado": "pagado",
     "impuestos": "4.80",
     "coste_entrega": "3.99",
@@ -23,7 +23,7 @@
   },
     {
     "cliente": "Cliente 1",
-    "numero_pedido": "PED-0013",
+    "numero_pedido": "MP-20241124100003-PROC",
     "estado": "en_proceso",
     "impuestos": "4.80",
     "coste_entrega": "3.99",
@@ -34,7 +34,7 @@
   },
     {
     "cliente": "Cliente 1",
-    "numero_pedido": "PED-0014",
+    "numero_pedido": "MP-20241124100004-SHIP",
     "estado": "enviado",
     "impuestos": "4.80",
     "coste_entrega": "3.99",
@@ -45,7 +45,7 @@
   },
     {
     "cliente": "Cliente 1",
-    "numero_pedido": "PED-0015",
+    "numero_pedido": "MP-20241124100005-DELV",
     "estado": "entregado",
     "impuestos": "4.80",
     "coste_entrega": "3.99",
@@ -56,7 +56,7 @@
   },
     {
     "cliente": "Cliente 1",
-    "numero_pedido": "PED-0016",
+    "numero_pedido": "MP-20241124100006-CANC",
     "estado": "cancelado",
     "impuestos": "4.80",
     "coste_entrega": "3.99",
@@ -67,7 +67,7 @@
   },
     {
     "cliente": "Cliente 2",
-    "numero_pedido": "PED-0002",
+    "numero_pedido": "MP-20241124100007-DEMO",
     "estado": "pendiente",
     "impuestos": "4.80",
     "coste_entrega": "3.99",
