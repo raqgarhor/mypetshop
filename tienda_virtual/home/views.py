@@ -12,6 +12,10 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.http import url_has_allowed_host_and_scheme
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
 
 from .forms import (
     ClienteEnvioForm,
@@ -541,6 +545,30 @@ def pago_ok(request, pedido_id):
     pedido = get_object_or_404(Pedido, id_pedido=pedido_id)
     pedido.estado = Pedido.Estados.PAGADO
     pedido.save()
+
+    # --- Email de confirmación ---
+
+    mensaje = Mail(
+        from_email=settings.EMAIL_FROM,
+        to_emails=pedido.cliente.email,
+        subject=f"Confirmación de tu pedido #{pedido.numero_pedido}",
+        html_content=f"""
+            <h2>¡Gracias por tu compra, {pedido.cliente.nombre}!</h2>
+            <p>Tu pedido <strong>#{pedido.numero_pedido}</strong> ha sido registrado correctamente.</p>
+            <p>Total pagado: <strong>{pedido.total} €</strong></p>
+            <p>Te avisaremos cuando sea enviado.</p>
+            <hr>
+            <p>My Pet Shop 🐾</p>
+        """
+    )
+
+    try:
+        sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+        sg.send(mensaje)
+        print("✔ Email enviado correctamente")
+    except Exception as e:
+        print("❌ Error enviando email:", e)
+
 
     # vaciar carrito
     request.session["cart"] = {}
