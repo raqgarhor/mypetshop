@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Datos del cliente{% endblock %}
+
+{% block content %}
+<h2>Datos del cliente y envío</h2>
+
+<form action="" method="post" class="checkout-form">
+    {% csrf_token %}
+
+    <label>Nombre *</label>
+    <input type="text" name="nombre" value="{{ cliente.nombre }}" required>
+
+    <label>Apellidos</label>
+    <input type="text" name="apellidos" value="{{ cliente.apellidos }}">
+
+    <label>Email *</label>
+    <input type="email" name="email" value="{{ cliente.email }}" required>
+
+    <label>Teléfono</label>
+    <input type="text" name="telefono" value="{{ cliente.telefono }}">
+
+    <label>Dirección *</label>
+    <input type="text" name="direccion" value="{{ cliente.direccion }}" required>
+
+    <label>Ciudad *</label>
+    <input type="text" name="ciudad" value="{{ cliente.ciudad }}" required>
+
+    <label>Código postal *</label>
+    <input type="text" name="codigo_postal" value="{{ cliente.codigo_postal }}" required>
+
+    {% if not cliente %}
+        <h3>Crear contraseña</h3>
+
+        <label>Contraseña *</label>
+        <input type="password" name="password1" required>
+
+        <label>Repite la contraseña *</label>
+        <input type="password" name="password2" required>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">Continuar al pago</button>
+</form>
+
+{% endblock %}

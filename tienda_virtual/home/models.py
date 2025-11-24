@@ -354,7 +354,7 @@ class ItemCarrito(models.Model):
     )
     producto = models.ForeignKey(
         Producto,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="items_carrito",
     )
     talla = models.CharField(max_length=50, blank=True, null=True)

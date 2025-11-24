@@ -1,11 +1,15 @@
+from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
 import datetime
-
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Cliente, Producto, Carrito, ItemCarrito, Pedido, ItemPedido
+from django.conf import settings
+import stripe
 from .models import Articulo, Escaparate
-from .models import Producto
 
 
 def index(request):
@@ -192,3 +196,288 @@ def product_detail(request, product_id):
         'title': producto.nombre,
     }
     return render(request, 'product_detail.html', contexto)
+
+
+def checkout_datos_cliente_envio(request):
+    print("---- ENTRANDO A CHECKOUT_DATOS ----")
+    print("Método:", request.method)
+
+    cart = request.session.get("cart", {})
+    if not cart:
+        print("Carrito vacío")
+        messages.error(request, "Tu carrito está vacío.")
+        return redirect("cart")
+    
+    # SI ESTÁ AUTENTICADO
+    # TODO: AÑADIR AQUÍ SI SE IMPLEMENTA AUTHENTICACIÓN 
+
+    # SI NO ESTA LOGGEADO
+    cliente_id = request.session.get("cliente_id")
+    cliente = Cliente.objects.filter(id=cliente_id).first() if cliente_id else None
+    print("Cliente en sesión:", cliente)
+
+    if request.method == "POST":
+        print("POST recibido:", request.POST)
+
+        nombre = request.POST.get("nombre", "").strip()
+        apellidos = request.POST.get("apellidos", "").strip()
+        email = request.POST.get("email", "").strip()
+        telefono = request.POST.get("telefono", "").strip()
+        direccion = request.POST.get("direccion", "").strip()
+        ciudad = request.POST.get("ciudad", "").strip()
+        codigo_postal = request.POST.get("codigo_postal", "").strip()
+
+        password1 = request.POST.get("password1")
+        password2 = request.POST.get("password2")
+
+        if cliente is None:
+            print("Cliente nuevo")
+            if password1 != password2:
+                print("Error: contraseñas distintas")
+                messages.error(request, "Contraseñas no coinciden")
+                return render(request, "checkout_datos.html", {"cliente": None})
+
+            if Cliente.objects.filter(email=email).exists():
+                print("Error: email repetido")
+                messages.error(request, "Email repetido")
+                return render(request, "checkout_datos.html", {"cliente": None})
+
+            cliente = Cliente.objects.create(
+                nombre=nombre, apellidos=apellidos, email=email,
+                telefono=telefono, direccion=direccion, ciudad=ciudad,
+                codigo_postal=codigo_postal, password=password1,
+            )
+            request.session["cliente_id"] = cliente.id
+            print("Cliente creado correctamente:", cliente.id)
+
+        else:
+            print("Cliente existente")
+            cliente.nombre = nombre
+            cliente.apellidos = apellidos
+            cliente.telefono = telefono
+            cliente.direccion = direccion
+            cliente.ciudad = ciudad
+            cliente.codigo_postal = codigo_postal
+            cliente.save()
+            print("Cliente actualizado")
+
+        print("HACIENDO REDIRECT A detalles_pago")
+        return redirect("detalles_pago")
+
+    print("GET - mostrando formulario")
+    return render(request, "checkout_datos.html", {"cliente": cliente})
+
+from decimal import Decimal
+from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+
+
+
+def detalles_pago(request):
+    cliente_id = request.session.get("cliente_id")
+    if not cliente_id:
+        messages.error(request, "Primero debes introducir tus datos de cliente.")
+        return redirect("checkout_datos")
+
+    cliente = get_object_or_404(Cliente, id=cliente_id)
+
+    cart = request.session.get("cart", {})
+    if not cart:
+        messages.error(request, "Tu carrito está vacío.")
+        return redirect("cart")
+
+    items = []
+    subtotal = Decimal("0.00")
+
+    for key, cantidad in cart.items():
+        # key debería ser "product_id:talla"
+        key_str = str(key)
+        if ":" in key_str:
+            pid_str, talla = key_str.split(":", 1)
+        else:
+            pid_str = key_str
+            talla = ""
+
+        try:
+            producto = Producto.objects.get(pk=int(pid_str))
+        except Producto.DoesNotExist:
+            # DEBUG: ver qué id está fallando
+            print("⚠ Producto no encontrado, id =", pid_str, "key completa =", key_str)
+            continue  # saltamos este item
+
+        cantidad = int(cantidad)
+        precio_unitario = producto.precio_oferta or producto.precio
+        total_item = precio_unitario * cantidad
+
+        items.append({
+            "producto": producto,
+            "cantidad": cantidad,
+            "talla": talla,
+            "subtotal": total_item,
+        })
+        subtotal += total_item
+
+    # Si después de limpiar no queda nada, vaciamos carrito
+    if not items:
+        request.session["cart"] = {}
+        request.session.modified = True
+        messages.error(
+            request,
+            "Tu carrito se ha vaciado porque algunos productos ya no están disponibles."
+        )
+        return redirect("cart")
+
+    impuestos = Decimal("0.00")
+    coste_entrega = Decimal("0.00")
+    descuento = Decimal("0.00")
+    total = subtotal + impuestos + coste_entrega - descuento
+
+    return render(request, "detalles_pago.html", {
+        "cliente": cliente,
+        "items": items,
+        "subtotal": subtotal,
+        "impuestos": impuestos,
+        "coste_entrega": coste_entrega,
+        "descuento": descuento,
+        "total": total,
+    })
+
+
+
+from django.utils.crypto import get_random_string
+import stripe
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+def generar_numero_pedido():
+    return f"MP-{timezone.now().strftime('%Y%m%d%H%M%S')}-{get_random_string(4).upper()}"
+
+
+def checkout_stripe(request):
+    if request.method != "POST":
+        return redirect("detalles_pago")
+
+    cart = request.session.get("cart", {})
+    if not cart:
+        messages.error(request, "Tu carrito está vacío.")
+        return redirect("cart")
+
+    cliente_id = request.session.get("cliente_id")
+    if not cliente_id:
+        messages.error(request, "Primero debes introducir tus datos de cliente.")
+        return redirect("checkout_datos")
+
+    cliente = get_object_or_404(Cliente, id=cliente_id)
+
+    # Calcular totales y preparar items
+    subtotal = Decimal("0.00")
+    impuestos = Decimal("0.00")
+    coste_entrega = Decimal("0.00")
+    descuento = Decimal("0.00")
+
+    line_items = []          # para Stripe
+    items_lista = []         # para crear ItemPedido
+
+    for key, cantidad in cart.items():
+        key_str = str(key)
+        if ":" in key_str:
+            pid_str, talla = key_str.split(":", 1)
+        else:
+            pid_str = key_str
+            talla = ""
+
+        try:
+            producto = Producto.objects.get(pk=int(pid_str))
+        except Producto.DoesNotExist:
+            # Debug opcional:
+            # print("⚠ Producto no encontrado en checkout_stripe, id =", pid_str)
+            continue
+
+        cantidad = int(cantidad)
+        precio_unitario = producto.precio_oferta or producto.precio or Decimal("0.00")
+        total_item = precio_unitario * cantidad
+
+        subtotal += total_item
+
+        items_lista.append((producto, talla, cantidad, precio_unitario, total_item))
+
+        line_items.append({
+            "price_data": {
+                "currency": "eur",
+                "product_data": {"name": producto.nombre},
+                "unit_amount": int(precio_unitario * 100),  # en céntimos
+            },
+            "quantity": cantidad,
+        })
+
+    # Si no hay ningún producto válido, vaciamos carrito y salimos
+    if not items_lista:
+        request.session["cart"] = {}
+        request.session.modified = True
+        messages.error(
+            request,
+            "Tu carrito se ha vaciado porque los productos ya no están disponibles."
+        )
+        return redirect("cart")
+
+    total = subtotal + impuestos + coste_entrega - descuento
+
+    # Crear Pedido
+    pedido = Pedido.objects.create(
+        cliente=cliente,
+        numero_pedido=generar_numero_pedido(),
+        subtotal=subtotal,
+        impuestos=impuestos,
+        coste_entrega=coste_entrega,
+        descuento=descuento,
+        total=total,
+        estado=Pedido.Estados.PENDIENTE,
+        metodo_pago="stripe_test",
+        direccion_envio=cliente.direccion,
+        telefono=cliente.telefono,
+    )
+
+    # Crear Items de pedido
+    for producto, talla, cantidad, precio_unitario, total_item in items_lista:
+        ItemPedido.objects.create(
+            pedido=pedido,
+            producto=producto,
+            talla=talla,
+            cantidad=cantidad,
+            precio_unitario=precio_unitario,
+            total=total_item,
+        )
+
+    # Sesión de Stripe
+    session = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        mode="payment",
+        line_items=line_items,
+        success_url=request.build_absolute_uri(
+            reverse("pago_ok", args=[pedido.id_pedido])
+        ),
+        cancel_url=request.build_absolute_uri(
+            reverse("pago_cancelado", args=[pedido.id_pedido])
+        ),
+    )
+
+    return redirect(session.url, code=303)
+
+
+def pago_ok(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id_pedido=pedido_id)
+    pedido.estado = Pedido.Estados.PAGADO
+    pedido.save()
+
+    # vaciar carrito
+    request.session["cart"] = {}
+    request.session.modified = True
+
+    return render(request, "pago_ok.html", {"pedido": pedido})
+
+
+def pago_cancelado(request, pedido_id):
+    pedido = get_object_or_404(Pedido, id_pedido=pedido_id)
+    pedido.estado = Pedido.Estados.CANCELADO
+    pedido.save()
+
+    return render(request, "pago_cancelado.html", {"pedido": pedido})

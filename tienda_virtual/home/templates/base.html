@@ -46,7 +46,7 @@
         </div>
     </main>
     {# Global mini-cart visible on all pages when there are items in the cart. Uses cart context provided by context processor. #}
-    {% if cart_count and cart_count|default:0 > 0 %}
+    {% if cart_count and cart_count|default:0 > 0 and '/checkout' not in request.path and '/cart' not in request.path %}
     <section class="mini-cart" style="position:fixed;right:20px;bottom:20px;top:auto;width:260px;max-width:calc(100% - 40px);max-height:50vh;overflow:auto;background:#fff;border:1px solid rgba(0,0,0,0.08);box-shadow:0 6px 18px rgba(0,0,0,0.08);border-radius:8px;padding:8px;z-index:9999;box-sizing:border-box;font-size:13px;">
         <h2>Carrito ({{ cart_count }})</h2>
         <ul class="mini-cart-list">
@@ -93,6 +93,10 @@
             {% endfor %}
         </ul>
         <p class="mini-cart-total">Total: {{ cart_total }} €</p>
+        <a href="{% url 'checkout_datos' %}" class="btn small" style="display:block;text-align:center;margin-top:8px;">
+            Tramitar pedido
+        </a>
+
     </section>
     {% endif %}
     <footer class="site-footer">
