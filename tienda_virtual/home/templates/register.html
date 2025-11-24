@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Crear cuenta{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+    <h2>Crear una cuenta</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <label>Nombre *</label>
+        {{ form.nombre }}
+        {% for error in form.nombre.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <label>Apellidos</label>
+        {{ form.apellidos }}
+        {% for error in form.apellidos.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <label>Email *</label>
+        {{ form.email }}
+        {% for error in form.email.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <label>Teléfono</label>
+        {{ form.telefono }}
+        {% for error in form.telefono.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <label>Dirección *</label>
+        {{ form.direccion }}
+        {% for error in form.direccion.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <label>Ciudad *</label>
+        {{ form.ciudad }}
+        {% for error in form.ciudad.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <label>Código postal *</label>
+        {{ form.codigo_postal }}
+        {% for error in form.codigo_postal.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <label>Contraseña *</label>
+        {{ form.password1 }}
+        {% for error in form.password1.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <label>Repite la contraseña *</label>
+        {{ form.password2 }}
+        {% for error in form.password2.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Crear cuenta</button>
+    </form>
+    <p>¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
+</section>
+{% endblock %}
+

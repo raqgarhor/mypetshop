@@ -21,6 +21,13 @@
                 <button type="submit">Buscar</button>
             </form>
             <nav class="header-actions">
+                {% if request.user.is_authenticated %}
+                    <span class="user-pill">👤 {{ request.user.first_name|default:request.user.username }}</span>
+                    <a href="{% url 'logout' %}">Salir</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Entrar</a>
+                    <a href="{% url 'register' %}">Crear cuenta</a>
+                {% endif %}
                 <a class="cart" href="{% url 'cart' %}">🛒 <span class="cart-count">{{ cart_count|default:0 }}</span></a>
             </nav>
         </div>
@@ -35,7 +42,12 @@
             <a href="{% url 'productos' %}" class="tab">Productos</a>
             <a href="{% url 'ofertas' %}" class="tab">Ofertas</a>
             <a href="{% url 'cart' %}" class="tab">Cesta</a>
-            <a href="#" class="tab">Registro</a>
+            {% if request.user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="tab">Salir</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="tab">Entrar</a>
+                <a href="{% url 'register' %}" class="tab">Registro</a>
+            {% endif %}
         </div>
     </nav>
 

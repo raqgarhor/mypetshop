@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+    <h2>Iniciar sesión</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <label for="{{ form.username.id_for_label }}">Email</label>
+        {{ form.username }}
+        {% for error in form.username.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <label for="{{ form.password.id_for_label }}">Contraseña</label>
+        {{ form.password }}
+        {% for error in form.password.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Acceder</button>
+    </form>
+    <p>¿No tienes cuenta? <a href="{% url 'register' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Crear una cuenta</a></p>
+</section>
+{% endblock %}
+

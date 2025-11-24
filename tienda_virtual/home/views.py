@@ -1,15 +1,32 @@
+import datetime
 from decimal import Decimal
-from django.shortcuts import render, redirect, get_object_or_404
+
+import stripe
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-import datetime
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import Cliente, Producto, Carrito, ItemCarrito, Pedido, ItemPedido
-from django.conf import settings
-import stripe
-from .models import Articulo, Escaparate
+from django.utils.crypto import get_random_string
+from django.utils.http import url_has_allowed_host_and_scheme
+
+from .forms import ClienteEnvioForm, EmailAuthenticationForm, RegistroForm
+from .models import (
+    Articulo,
+    Carrito,
+    Cliente,
+    Escaparate,
+    ItemCarrito,
+    ItemPedido,
+    Pedido,
+    Producto,
+)
+
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 def index(request):
@@ -198,74 +215,97 @@ def product_detail(request, product_id):
     return render(request, 'product_detail.html', contexto)
 
 
-def checkout_datos_cliente_envio(request):
-    print("---- ENTRANDO A CHECKOUT_DATOS ----")
-    print("Método:", request.method)
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
 
+    form = EmailAuthenticationForm(request, data=request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        user = form.get_user()
+        login(request, user)
+        next_url = request.POST.get('next') or request.GET.get('next')
+        if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+            return redirect(next_url)
+        return redirect('home')
+
+    return render(request, 'login.html', {'form': form, 'next': request.GET.get('next', '')})
+
+
+def logout_view(request):
+    logout(request)
+    messages.info(request, "Has cerrado sesión correctamente.")
+    return redirect('home')
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'POST':
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            cliente = form.save()
+            login(request, cliente.user)
+            messages.success(request, "Tu cuenta se creó correctamente.")
+            return redirect('checkout_datos')
+    else:
+        form = RegistroForm()
+
+    return render(request, 'register.html', {'form': form})
+
+
+@login_required(login_url='login')
+def checkout_datos_cliente_envio(request):
     cart = request.session.get("cart", {})
     if not cart:
-        print("Carrito vacío")
         messages.error(request, "Tu carrito está vacío.")
         return redirect("cart")
-    
-    # SI ESTÁ AUTENTICADO
-    # TODO: AÑADIR AQUÍ SI SE IMPLEMENTA AUTHENTICACIÓN 
 
-    # SI NO ESTA LOGGEADO
-    cliente_id = request.session.get("cliente_id")
-    cliente = Cliente.objects.filter(id=cliente_id).first() if cliente_id else None
-    print("Cliente en sesión:", cliente)
+    cliente = getattr(request.user, "cliente", None)
+    email_real = (request.user.email or "").strip().lower()
+    if email_real:
+        lookup_email = email_real
+    else:
+        username_slug = (request.user.username or "usuario").strip().lower()
+        lookup_email = username_slug if "@" in username_slug else f"{username_slug}@local"
 
-    if request.method == "POST":
-        print("POST recibido:", request.POST)
+    if not cliente and lookup_email:
+        cliente = Cliente.objects.filter(email__iexact=lookup_email).first()
+        if cliente and cliente.user is None:
+            cliente.user = request.user
+            cliente.save(update_fields=["user"])
 
-        nombre = request.POST.get("nombre", "").strip()
-        apellidos = request.POST.get("apellidos", "").strip()
-        email = request.POST.get("email", "").strip()
-        telefono = request.POST.get("telefono", "").strip()
-        direccion = request.POST.get("direccion", "").strip()
-        ciudad = request.POST.get("ciudad", "").strip()
-        codigo_postal = request.POST.get("codigo_postal", "").strip()
+    if not cliente:
+        nombre_base = request.user.first_name or (lookup_email.split("@")[0] if lookup_email else "")
+        cliente = Cliente.objects.create(
+            user=request.user,
+            email=lookup_email or request.user.username,
+            nombre=nombre_base or "Cliente",
+            apellidos=request.user.last_name or "",
+        )
 
-        password1 = request.POST.get("password1")
-        password2 = request.POST.get("password2")
+    if email_real and cliente.email != email_real:
+        cliente.email = email_real
+        cliente.save(update_fields=["email"])
+    elif not cliente.email and lookup_email:
+        cliente.email = lookup_email
+        cliente.save(update_fields=["email"])
 
-        if cliente is None:
-            print("Cliente nuevo")
-            if password1 != password2:
-                print("Error: contraseñas distintas")
-                messages.error(request, "Contraseñas no coinciden")
-                return render(request, "checkout_datos.html", {"cliente": None})
-
-            if Cliente.objects.filter(email=email).exists():
-                print("Error: email repetido")
-                messages.error(request, "Email repetido")
-                return render(request, "checkout_datos.html", {"cliente": None})
-
-            cliente = Cliente.objects.create(
-                nombre=nombre, apellidos=apellidos, email=email,
-                telefono=telefono, direccion=direccion, ciudad=ciudad,
-                codigo_postal=codigo_postal, password=password1,
-            )
-            request.session["cliente_id"] = cliente.id
-            print("Cliente creado correctamente:", cliente.id)
-
-        else:
-            print("Cliente existente")
-            cliente.nombre = nombre
-            cliente.apellidos = apellidos
-            cliente.telefono = telefono
-            cliente.direccion = direccion
-            cliente.ciudad = ciudad
-            cliente.codigo_postal = codigo_postal
-            cliente.save()
-            print("Cliente actualizado")
-
-        print("HACIENDO REDIRECT A detalles_pago")
+    form = ClienteEnvioForm(request.POST or None, instance=cliente)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Datos guardados correctamente. Revisa el pago.")
         return redirect("detalles_pago")
 
-    print("GET - mostrando formulario")
-    return render(request, "checkout_datos.html", {"cliente": cliente})
+    return render(
+        request,
+        "checkout_datos.html",
+        {
+            "form": form,
+            "cliente": cliente,
+            "email_usuario": request.user.email or lookup_email,
+        },
+    )
 
 from decimal import Decimal
 from django.contrib import messages
@@ -273,13 +313,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 
 
+@login_required(login_url='login')
 def detalles_pago(request):
-    cliente_id = request.session.get("cliente_id")
-    if not cliente_id:
-        messages.error(request, "Primero debes introducir tus datos de cliente.")
+    cliente = getattr(request.user, "cliente", None)
+    if not cliente:
+        messages.error(request, "Primero debes completar tus datos de envío.")
         return redirect("checkout_datos")
-
-    cliente = get_object_or_404(Cliente, id=cliente_id)
 
     cart = request.session.get("cart", {})
     if not cart:
@@ -332,15 +371,19 @@ def detalles_pago(request):
     descuento = Decimal("0.00")
     total = subtotal + impuestos + coste_entrega - descuento
 
-    return render(request, "detalles_pago.html", {
-        "cliente": cliente,
-        "items": items,
-        "subtotal": subtotal,
-        "impuestos": impuestos,
-        "coste_entrega": coste_entrega,
-        "descuento": descuento,
-        "total": total,
-    })
+    return render(
+        request,
+        "detalles_pago.html",
+        {
+            "cliente": cliente,
+            "items": items,
+            "subtotal": subtotal,
+            "impuestos": impuestos,
+            "coste_entrega": coste_entrega,
+            "descuento": descuento,
+            "total": total,
+        },
+    )
 
 
 
@@ -352,6 +395,7 @@ def generar_numero_pedido():
     return f"MP-{timezone.now().strftime('%Y%m%d%H%M%S')}-{get_random_string(4).upper()}"
 
 
+@login_required(login_url='login')
 def checkout_stripe(request):
     if request.method != "POST":
         return redirect("detalles_pago")
@@ -361,12 +405,10 @@ def checkout_stripe(request):
         messages.error(request, "Tu carrito está vacío.")
         return redirect("cart")
 
-    cliente_id = request.session.get("cliente_id")
-    if not cliente_id:
-        messages.error(request, "Primero debes introducir tus datos de cliente.")
+    cliente = getattr(request.user, "cliente", None)
+    if not cliente:
+        messages.error(request, "Primero debes completar tus datos de envío.")
         return redirect("checkout_datos")
-
-    cliente = get_object_or_404(Cliente, id=cliente_id)
 
     # Calcular totales y preparar items
     subtotal = Decimal("0.00")

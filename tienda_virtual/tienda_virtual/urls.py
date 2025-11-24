@@ -36,6 +36,9 @@ urlpatterns = [
     path("checkout/stripe/", home_views.checkout_stripe, name="checkout_stripe"),
     path("pago/ok/<int:pedido_id>/", home_views.pago_ok, name="pago_ok"),
     path("pago/cancelado/<int:pedido_id>/", home_views.pago_cancelado, name="pago_cancelado"),    
+    path("cuenta/registro/", home_views.register, name="register"),
+    path("cuenta/login/", home_views.login_view, name="login"),
+    path("cuenta/logout/", home_views.logout_view, name="logout"),
     path('', home_views.index, name='home'),
 
 ]
