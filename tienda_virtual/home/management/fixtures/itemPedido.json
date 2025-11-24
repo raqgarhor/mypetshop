@@ -1,102 +1,102 @@
 [
   {
-    "pedido": "PED-0001",
+    "pedido": "MP-20241124100001-TEST",
     "producto": "Pienso Premium Adulto",
     "talla": null,
     "cantidad": 3
   },
   {
-    "pedido": "PED-0001",
+    "pedido": "MP-20241124100001-TEST",
     "producto": "Chuches de Jamón",
     "talla": null,
     "cantidad": 10
   },
   {
-    "pedido": "PED-0001",
+    "pedido": "MP-20241124100001-TEST",
     "producto": "Latas de Pavo para Gatos",
     "talla": null,
     "cantidad": 5
   },
   {
-    "pedido": "PED-0001",
+    "pedido": "MP-20241124100001-TEST",
     "producto": "Correa para perros",
     "talla": "S",
     "cantidad": 1
   },
     {
-    "pedido": "PED-0012",
+    "pedido": "MP-20241124100002-PAID",
     "producto": "Camita",
     "talla": "M",
     "cantidad": 1
   },
   {
-    "pedido": "PED-0012",
+    "pedido": "MP-20241124100002-PAID",
     "producto": "Chuches de Jamón",
     "talla": null,
     "cantidad": 5
   },
     {
-    "pedido": "PED-0013",
+    "pedido": "MP-20241124100003-PROC",
     "producto": "Conjunto chaleco y falda",
     "talla": "M",
     "cantidad": 1
   },
     {
-    "pedido": "PED-0013",
+    "pedido": "MP-20241124100003-PROC",
     "producto": "Sueter para gatos",
     "talla": "M",
     "cantidad": 1
   },
   {
-    "pedido": "PED-0013",
+    "pedido": "MP-20241124100003-PROC",
     "producto": "Latas de Pavo para Gatos",
     "talla": null,
     "cantidad": 10
   },
   {
-    "pedido": "PED-0014",
+    "pedido": "MP-20241124100004-SHIP",
     "producto": "Anti parásitos",
     "talla": null,
     "cantidad": 3
   },
      {
-    "pedido": "PED-0015",
+    "pedido": "MP-20241124100005-DELV",
     "producto": "Condrovet Force HA",
     "talla": null,
     "cantidad": 2
   },
     {
-    "pedido": "PED-0015",
+    "pedido": "MP-20241124100005-DELV",
     "producto": "PetCaps",
     "talla": null,
     "cantidad": 20
   },
   {
-    "pedido": "PED-0015",
+    "pedido": "MP-20241124100005-DELV",
     "producto": "Latas de Pavo para Gatos",
     "talla": null,
     "cantidad": 5
   },
   {
-    "pedido": "PED-0015",
+    "pedido": "MP-20241124100005-DELV",
     "producto": "Sueter para gatos",
     "talla": "S",
     "cantidad": 5
   },
     {
-    "pedido": "PED-0016",
+    "pedido": "MP-20241124100006-CANC",
     "producto": "Abrigo Muflón",
     "talla": ",M",
     "cantidad": 1
   },
   {
-    "pedido": "PED-0016",
+    "pedido": "MP-20241124100006-CANC",
     "producto": "Abrigo Muflón",
     "talla": "L",
     "cantidad": 1
   },
     {
-    "pedido": "PED-0002",
+    "pedido": "MP-20241124100007-DEMO",
     "producto": "Acuario grande",
     "talla": null,
     "cantidad": 2
