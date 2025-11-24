@@ -39,6 +39,7 @@ urlpatterns = [
     path("cuenta/registro/", home_views.register, name="register"),
     path("cuenta/login/", home_views.login_view, name="login"),
     path("cuenta/logout/", home_views.logout_view, name="logout"),
+    path("seguimiento/", home_views.seguimiento_pedido, name="tracking"),
     path('', home_views.index, name='home'),
 
 ]

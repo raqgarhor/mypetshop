@@ -36,9 +36,22 @@ class RegistroForm(forms.ModelForm):
             "codigo_postal",
         ]
         widgets = {
-            "telefono": forms.TextInput(attrs={"placeholder": "Opcional"}),
-            "apellidos": forms.TextInput(attrs={"placeholder": "Opcional"}),
+            "telefono": forms.TextInput(),
+            "apellidos": forms.TextInput(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name in [
+            "nombre",
+            "apellidos",
+            "email",
+            "telefono",
+            "direccion",
+            "ciudad",
+            "codigo_postal",
+        ]:
+            self.fields[field_name].required = True
 
     def clean_email(self):
         email = (self.cleaned_data.get("email") or "").strip().lower()
@@ -83,3 +96,15 @@ class ClienteEnvioForm(forms.ModelForm):
         for field in required_fields:
             self.fields[field].required = True
 
+
+class SeguimientoPedidoForm(forms.Form):
+    numero_pedido = forms.CharField(
+        label="Código de seguimiento",
+        max_length=50,
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Introduce tu código (MP-YYYYMMDD...)",
+                "autofocus": True,
+            }
+        ),
+    )

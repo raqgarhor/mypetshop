@@ -260,10 +260,17 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING("Cliente sin email en fixtures, se omite."))
                 continue
 
+            nombre = (item.get("nombre") or "Cliente").strip()[:150] or "Cliente"
+            apellidos = (item.get("apellidos") or "Demo").strip()[:150] or "Demo"
+            telefono = (item.get("telefono") or "000000000").strip()
+            direccion = (item.get("direccion") or "Dirección pendiente").strip()
+            ciudad = (item.get("ciudad") or "Ciudad").strip()
+            codigo_postal = (item.get("codigo_postal") or "00000").strip()
+
             user_defaults = {
                 "email": email,
-                "first_name": item.get("nombre", "")[:150],
-                "last_name": item.get("apellidos", "")[:150],
+                "first_name": nombre,
+                "last_name": apellidos,
             }
             user, created_user = User.objects.get_or_create(
                 username=email,
@@ -275,13 +282,13 @@ class Command(BaseCommand):
                 user.save()
 
             cliente_defaults = {
-                'nombre': item.get("nombre", '')[:150] or user.first_name or "Cliente",
-                'apellidos': item.get("apellidos", '') or user.last_name,
-                'telefono': item.get("telefono", '') or None,
+                'nombre': nombre,
+                'apellidos': apellidos,
+                'telefono': telefono,
                 'fecha_creacion': timezone.now(),
-                'direccion': item.get("direccion", '') or None,
-                'ciudad': item.get("ciudad", '') or None,
-                'codigo_postal': item.get("codigo_postal", '') or None,
+                'direccion': direccion,
+                'ciudad': ciudad,
+                'codigo_postal': codigo_postal,
                 'user': user,
             }
 

@@ -13,7 +13,12 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.http import url_has_allowed_host_and_scheme
 
-from .forms import ClienteEnvioForm, EmailAuthenticationForm, RegistroForm
+from .forms import (
+    ClienteEnvioForm,
+    EmailAuthenticationForm,
+    RegistroForm,
+    SeguimientoPedidoForm,
+)
 from .models import (
     Articulo,
     Carrito,
@@ -241,20 +246,47 @@ def register(request):
     if request.user.is_authenticated:
         return redirect('home')
 
+    next_url = request.GET.get('next') or request.POST.get('next', '')
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
             cliente = form.save()
             login(request, cliente.user)
             messages.success(request, "Tu cuenta se creó correctamente.")
+            if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+                return redirect(next_url)
             return redirect('checkout_datos')
     else:
         form = RegistroForm()
 
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'register.html', {'form': form, 'next': next_url})
 
 
-@login_required(login_url='login')
+def seguimiento_pedido(request):
+    pedido = None
+    found = False
+    form = SeguimientoPedidoForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            codigo = form.cleaned_data["numero_pedido"].strip()
+            pedido = Pedido.objects.select_related("cliente").prefetch_related("items__producto").filter(
+                numero_pedido__iexact=codigo
+            ).first()
+            if pedido:
+                found = True
+            else:
+                messages.error(request, "No encontramos un pedido con ese código. Revisa el número y vuelve a intentarlo.")
+
+    return render(
+        request,
+        "tracking.html",
+        {
+            "form": form,
+            "pedido": pedido if found else None,
+        },
+    )
+
+@login_required(login_url='register')
 def checkout_datos_cliente_envio(request):
     cart = request.session.get("cart", {})
     if not cart:
@@ -313,7 +345,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 
 
-@login_required(login_url='login')
+@login_required(login_url='register')
 def detalles_pago(request):
     cliente = getattr(request.user, "cliente", None)
     if not cliente:
@@ -395,7 +427,7 @@ def generar_numero_pedido():
     return f"MP-{timezone.now().strftime('%Y%m%d%H%M%S')}-{get_random_string(4).upper()}"
 
 
-@login_required(login_url='login')
+@login_required(login_url='register')
 def checkout_stripe(request):
     if request.method != "POST":
         return redirect("detalles_pago")
