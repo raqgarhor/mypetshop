@@ -1,0 +1,4 @@
+stripe>=13.0.0
+python-dotenv
+Django>=3.2
+

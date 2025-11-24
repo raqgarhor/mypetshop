@@ -3,11 +3,32 @@ import random
 import json
 import os
 from django.utils import timezone
+from django.utils.crypto import get_random_string
 
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from home.models import Categoria, Marca, Producto, ImagenProducto, TallaProducto, Cliente, Pedido, ItemPedido, ItemCarrito, Carrito
+from home.models import (
+    Carrito,
+    Categoria,
+    Cliente,
+    ImagenProducto,
+    ItemCarrito,
+    ItemPedido,
+    Marca,
+    Pedido,
+    Producto,
+    TallaProducto,
+)
+
+User = get_user_model()
+
+
+def generar_numero_pedido():
+    """Genera un número de pedido con el formato MP-YYYYMMDDHHMMSS-XXXX"""
+    return f"MP-{timezone.now().strftime('%Y%m%d%H%M%S')}-{get_random_string(4).upper()}"
+
 
 class Command(BaseCommand):
     help = 'Seed the database with initial data for development'
@@ -24,9 +45,15 @@ class Command(BaseCommand):
             Producto.objects.all().delete()
             Categoria.objects.all().delete()
             Marca.objects.all().delete()
-            Cliente.objects.all().delete()
             ItemCarrito.objects.all().delete()
             Carrito.objects.all().delete()
+            # eliminar clientes y usuarios enlazados
+            linked_user_ids = list(
+                Cliente.objects.exclude(user__isnull=True).values_list('user_id', flat=True)
+            )
+            Cliente.objects.all().delete()
+            if linked_user_ids:
+                User.objects.filter(id__in=linked_user_ids).delete()
 
         # =====================================
         # CATEGORÍAS
@@ -235,20 +262,52 @@ class Command(BaseCommand):
             clientes_data = json.load(f)
 
         for item in clientes_data:
-            # Use email as unique lookup to avoid IntegrityError on repeated runs
-            Cliente.objects.get_or_create(
-                email=item["email"],
-                defaults={
-                    'nombre': item.get("nombre", ''),
-                    'apellidos': item.get("apellidos", ''),
-                    'telefono': item.get("telefono", ''),
-                    'fecha_creacion': timezone.now(),
-                    'direccion': item.get("direccion", ''),
-                    'ciudad': item.get("ciudad", ''),
-                    'codigo_postal': item.get("codigo_postal", ''),
-                    'password': item.get("password", ''),
-                }
+            email = (item.get("email") or "").strip().lower()
+            if not email:
+                self.stdout.write(self.style.WARNING("Cliente sin email en fixtures, se omite."))
+                continue
+
+            nombre = (item.get("nombre") or "Cliente").strip()[:150] or "Cliente"
+            apellidos = (item.get("apellidos") or "Demo").strip()[:150] or "Demo"
+            telefono = (item.get("telefono") or "000000000").strip()
+            direccion = (item.get("direccion") or "Dirección pendiente").strip()
+            ciudad = (item.get("ciudad") or "Ciudad").strip()
+            codigo_postal = (item.get("codigo_postal") or "00000").strip()
+
+            user_defaults = {
+                "email": email,
+                "first_name": nombre,
+                "last_name": apellidos,
+            }
+            user, created_user = User.objects.get_or_create(
+                username=email,
+                defaults=user_defaults,
             )
+            password = item.get("password")
+            if password:
+                user.set_password(password)
+                user.save()
+
+            cliente_defaults = {
+                'nombre': nombre,
+                'apellidos': apellidos,
+                'telefono': telefono,
+                'fecha_creacion': timezone.now(),
+                'direccion': direccion,
+                'ciudad': ciudad,
+                'codigo_postal': codigo_postal,
+                'user': user,
+            }
+
+            cliente, created_cliente = Cliente.objects.get_or_create(
+                email=email,
+                defaults=cliente_defaults,
+            )
+            if not created_cliente:
+                # ensure latest profile data & link user
+                for field, value in cliente_defaults.items():
+                    setattr(cliente, field, value)
+                cliente.save()
 
         self.stdout.write(self.style.SUCCESS("Clientes insertados correctamente"))
         
@@ -272,9 +331,14 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING(f'Cliente no encontrado para pedido: {item.get("cliente")}'))
                 continue
 
+            # Usar numero_pedido del JSON si existe, sino generar uno nuevo
+            numero_pedido = item.get("numero_pedido")
+            if not numero_pedido:
+                numero_pedido = generar_numero_pedido()
+
             pedido = Pedido.objects.create(
                 cliente=cliente_obj,
-                numero_pedido=item["numero_pedido"],
+                numero_pedido=numero_pedido,
                 estado=item["estado"],
                 subtotal=Decimal(str(item.get('subtotal') or '0').replace(',', '.')),
                 impuestos=Decimal(str(item.get('impuestos') or '0').replace(',', '.')),

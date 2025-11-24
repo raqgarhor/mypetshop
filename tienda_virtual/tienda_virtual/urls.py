@@ -31,7 +31,17 @@ urlpatterns = [
     path('productos/', home_views.productos, name='productos'),
     path('producto/<int:product_id>/', home_views.product_detail, name='product_detail'),
     path('ofertas/', home_views.ofertas, name='ofertas'),
+    path("checkout/datos/", home_views.checkout_datos_cliente_envio, name="checkout_datos"),
+    path("checkout/pago/", home_views.detalles_pago, name="detalles_pago"),
+    path("checkout/stripe/", home_views.checkout_stripe, name="checkout_stripe"),
+    path("pago/ok/<int:pedido_id>/", home_views.pago_ok, name="pago_ok"),
+    path("pago/cancelado/<int:pedido_id>/", home_views.pago_cancelado, name="pago_cancelado"),    
+    path("cuenta/registro/", home_views.register, name="register"),
+    path("cuenta/login/", home_views.login_view, name="login"),
+    path("cuenta/logout/", home_views.logout_view, name="logout"),
+    path("seguimiento/", home_views.seguimiento_pedido, name="tracking"),
     path('', home_views.index, name='home'),
+
 ]
 
 if settings.DEBUG:
