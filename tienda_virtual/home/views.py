@@ -15,7 +15,7 @@ from django.utils import timezone
 from django.contrib import messages
 import datetime
 
-from .models import Articulo, Escaparate, Categoria, Producto
+from .models import Articulo, Escaparate, Categoria, Producto, MensajeContacto
 from django.utils.crypto import get_random_string
 from django.utils.http import url_has_allowed_host_and_scheme
 import os
@@ -237,6 +237,12 @@ def contacto(request):
         nombre = request.POST.get("nombre")
         email = request.POST.get("email")  
         mensaje = request.POST.get("mensaje")
+
+        MensajeContacto.objects.create(
+            nombre=nombre,
+            email=email,
+            mensaje=mensaje
+        )
         messages.success(request, "¡Gracias! Tu mensaje se ha enviado correctamente. Te responderemos pronto.")
         return redirect('contacto')
     return render(request, "contacto.html")

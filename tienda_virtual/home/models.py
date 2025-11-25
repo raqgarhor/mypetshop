@@ -392,3 +392,12 @@ class ItemCarrito(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} x{self.cantidad} ({self.talla})"
+
+class MensajeContacto(models.Model):
+    nombre = models.CharField(max_length=100)
+    email = models.EmailField()
+    mensaje = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.nombre} - {self.email}"

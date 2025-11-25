@@ -16,7 +16,8 @@ from .models import (
     Categoria,
     TallaProducto,
     Carrito, 
-    ItemCarrito
+    ItemCarrito,
+    MensajeContacto,
 )
 
 #Inlines
@@ -180,6 +181,11 @@ class CarritoAdmin(admin.ModelAdmin):
 class ItemCarritoAdmin(admin.ModelAdmin):
     list_display = ("carrito", "producto", "talla", "cantidad")
     search_fields = ("producto__nombre", "carrito__cliente__nombre")
+
+@admin.register(MensajeContacto)
+class MensajeContactoAdmin(admin.ModelAdmin):
+    list_display = ("nombre", "email", "fecha")
+    search_fields = ("nombre", "email", "mensaje")
 
 
 admin.site.register(Articulo)
