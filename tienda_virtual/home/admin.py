@@ -141,8 +141,9 @@ class ItemPedidoAdmin(admin.ModelAdmin):
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
-    list_display = ("nombre", "apellidos", "email", "telefono", "fecha_creacion")
-    search_fields = ("nombre", "apellidos", "email")
+    list_display = ("nombre", "apellidos", "email", "telefono", "user", "fecha_creacion")
+    search_fields = ("nombre", "apellidos", "email", "user__username")
+    readonly_fields = ("fecha_creacion",)
 
 
 class ItemCarritoInline(admin.TabularInline):

@@ -1,5 +1,6 @@
 from decimal import Decimal, ROUND_HALF_UP
 
+from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator
@@ -117,23 +118,37 @@ class Categoria(models.Model):
 
 
 class Cliente(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="cliente",
+        null=True,
+        blank=True,
+    )
     nombre = models.CharField(max_length=150)
-    apellidos = models.CharField(max_length=150, blank=True)
+    apellidos = models.CharField(max_length=150, blank=True, null=True)
     email = models.EmailField(unique=True)
-    telefono = models.CharField(max_length=20, blank=True)
+    telefono = models.CharField(max_length=20, blank=True, null=True)
     fecha_creacion = models.DateTimeField(default=timezone.now)
-    direccion = models.CharField(max_length=255, blank=True)
-    ciudad = models.CharField(max_length=100, blank=True)
-    codigo_postal = models.CharField(max_length=20, blank=True)
-    password = models.CharField(max_length=128)
+    direccion = models.CharField(max_length=255, blank=True, null=True)
+    ciudad = models.CharField(max_length=100, blank=True, null=True)
+    codigo_postal = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         verbose_name = "Cliente"
         verbose_name_plural = "Clientes"
 
     def __str__(self):
-        nombre_completo = f"{self.nombre} {self.apellidos}".strip()
+        nombre_completo = " ".join(
+            part for part in [self.nombre, self.apellidos] if part
+        ).strip()
         return nombre_completo or self.email
+
+    @property
+    def esta_logueado(self) -> bool:
+        """Helper to check if the related auth user has an active session."""
+        user = getattr(self, "user", None)
+        return bool(user and user.is_authenticated)
 
 
 class Pedido(models.Model):
@@ -354,7 +369,7 @@ class ItemCarrito(models.Model):
     )
     producto = models.ForeignKey(
         Producto,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name="items_carrito",
     )
     talla = models.CharField(max_length=50, blank=True, null=True)

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Seguimiento de pedido{% endblock %}
+
+{% block content %}
+<section class="tracking-card">
+    <h2>Seguimiento de pedido</h2>
+    <p>Introduce el código que recibiste al confirmar tu compra para ver el estado del pedido.</p>
+    <form method="post" class="auth-form" novalidate>
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+            <p class="form-errors">{{ error }}</p>
+        {% endfor %}
+        <div class="form-field">
+            {{ form.numero_pedido.label_tag }}
+            {{ form.numero_pedido }}
+            {% for error in form.numero_pedido.errors %}
+                <p class="field-error">{{ error }}</p>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary">Consultar</button>
+    </form>
+
+    {% if pedido %}
+        <article class="pedido-status">
+            <h3>Pedido {{ pedido.numero_pedido }}</h3>
+            <p><strong>Estado:</strong> {{ pedido.get_estado_display }}</p>
+            <p><strong>Fecha:</strong> {{ pedido.fecha_creacion|date:"d/m/Y H:i" }}</p>
+            {% if pedido.cliente %}
+                <p><strong>Cliente:</strong> {{ pedido.cliente }}</p>
+            {% endif %}
+            <p><strong>Total:</strong> {{ pedido.total }} €</p>
+
+            <h4>Artículos</h4>
+            <ul class="pedido-items">
+                {% for item in pedido.items.all %}
+                    <li>
+                        {{ item.producto.nombre }} — {{ item.cantidad }} ud.
+                        {% if item.talla %}<small>(Talla {{ item.talla }})</small>{% endif %}
+                        <span>{{ item.total }} €</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </article>
+    {% endif %}
+</section>
+{% endblock %}
+

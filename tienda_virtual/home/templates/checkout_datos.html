@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Datos del cliente{% endblock %}
+
+{% block content %}
+<h2>Datos del cliente y envío</h2>
+
+<form action="" method="post" class="checkout-form">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="form-errors">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <label>Email</label>
+    <input type="email" value="{{ email_usuario }}" readonly>
+
+    <label>Nombre *</label>
+    <input type="text" name="nombre" value="{{ form.nombre.value }}" required>
+    {% for error in form.nombre.errors %}
+        <p class="field-error">{{ error }}</p>
+    {% endfor %}
+
+    <label>Apellidos</label>
+    <input type="text" name="apellidos" value="{{ form.apellidos.value|default_if_none:'' }}">
+    {% for error in form.apellidos.errors %}
+        <p class="field-error">{{ error }}</p>
+    {% endfor %}
+
+    <label>Teléfono</label>
+    <input type="text" name="telefono" value="{{ form.telefono.value|default_if_none:'' }}">
+    {% for error in form.telefono.errors %}
+        <p class="field-error">{{ error }}</p>
+    {% endfor %}
+
+    <label>Dirección *</label>
+    <input type="text" name="direccion" value="{{ form.direccion.value|default_if_none:'' }}" required>
+    {% for error in form.direccion.errors %}
+        <p class="field-error">{{ error }}</p>
+    {% endfor %}
+
+    <label>Ciudad *</label>
+    <input type="text" name="ciudad" value="{{ form.ciudad.value|default_if_none:'' }}" required>
+    {% for error in form.ciudad.errors %}
+        <p class="field-error">{{ error }}</p>
+    {% endfor %}
+
+    <label>Código postal *</label>
+    <input type="text" name="codigo_postal" value="{{ form.codigo_postal.value|default_if_none:'' }}" required>
+    {% for error in form.codigo_postal.errors %}
+        <p class="field-error">{{ error }}</p>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Continuar al pago</button>
+</form>
+
+{% endblock %}
