@@ -31,6 +31,10 @@ urlpatterns = [
     path('productos/', home_views.productos, name='productos'),
     path('producto/<int:product_id>/', home_views.product_detail, name='product_detail'),
     path('ofertas/', home_views.ofertas, name='ofertas'),
+    path('categoria/<int:categoria_id>/', home_views.categoria_detail, name='categoria_detail'),
+    path('acerca-de/', home_views.acerca_de, name='acerca_de'),
+    path('contacto/', home_views.contacto, name='contacto'),
+    path('categorias/', home_views.categorias, name='categorias'),
     path('', home_views.index, name='home'),
 ]
 

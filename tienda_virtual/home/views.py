@@ -1,11 +1,12 @@
+from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib import messages
 import datetime
 
-from .models import Articulo, Escaparate
-from .models import Producto
+from .models import Articulo, Escaparate, Categoria, Producto
 
 
 def index(request):
@@ -192,3 +193,28 @@ def product_detail(request, product_id):
         'title': producto.nombre,
     }
     return render(request, 'product_detail.html', contexto)
+
+def acerca_de(request):
+    return render(request, "acerca_de.html")
+
+def contacto(request):
+    if request.method == "POST":
+        nombre = request.POST.get("nombre")
+        email = request.POST.get("email")  
+        mensaje = request.POST.get("mensaje")
+        messages.success(request, "¡Gracias! Tu mensaje se ha enviado correctamente. Te responderemos pronto.")
+        return redirect('contacto')
+    return render(request, "contacto.html")
+
+def categorias(request):
+    # Mostrar las categorías reales definidas en el modelo `Categoria`.
+    categorias = Categoria.objects.all().order_by('nombre')
+    return render(request, "categorias.html", {"categorias": categorias})
+
+
+def categoria_detail(request, categoria_id):
+    """Muestra los productos que pertenecen a la categoría indicada."""
+    categoria = get_object_or_404(Categoria, pk=categoria_id)
+    productos = Producto.objects.filter(categoria=categoria, esta_disponible=True).order_by('-fecha_creacion')
+    contexto = {'productos': productos, 'title': categoria.nombre}
+    return render(request, 'products.html', contexto)

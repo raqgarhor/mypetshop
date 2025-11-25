@@ -30,7 +30,7 @@
     <nav class="main-tabs">
         <div class="container tabs-inner">
             <a href="{% url 'home' %}" class="tab">Inicio</a>
-            <a href="#" class="tab">Categorías</a>
+            <a href="{% url 'categorias' %}" class="tab">Categorías</a>
             <a href="{% url 'novedades' %}" class="tab">Novedades</a>
             <a href="{% url 'productos' %}" class="tab">Productos</a>
             <a href="{% url 'ofertas' %}" class="tab">Ofertas</a>
@@ -96,6 +96,8 @@
     </section>
     {% endif %}
     <footer class="site-footer">
+        <a href="{% url 'acerca_de' %}" class="tab">Acerca de nosotros</a>
+        <a href="{% url 'contacto' %}" class="tab">Contacto</a>
         <div class="container">© {{ now|default:2025 }} My Pet Shop</div>
     </footer>
 </body>

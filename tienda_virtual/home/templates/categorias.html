@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">Categorías de Productos</h1>
+        <p class="text-muted">Explora las categorías disponibles en nuestra tienda.</p>
+    </div>
+
+    <div class="row">
+
+        {% for categoria in categorias %}
+        <div class="col-md-4 mb-4">
+            <a href="{% url 'categoria_detail' categoria.id %}" class="text-decoration-none text-dark">
+
+                <div class="card shadow-sm h-100">
+
+                    {% if categoria.imagen %}
+                        <img src="{{ categoria.imagen.url }}" class="card-img-top" style="height:200px; object-fit:cover;">
+                    {% else %}
+                        <img src="/static/home/default-category.jpg" class="card-img-top" style="height:200px; object-fit:cover;">
+                    {% endif %}
+
+                    <div class="card-body text-center">
+                        <h5 class="card-title">{{ categoria.nombre }}</h5>
+                        {% if categoria.descripcion %}
+                            <p class="card-text text-muted" style="font-size: 14px;">
+                                {{ categoria.descripcion }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </a>
+        </div>
+        {% empty %}
+            <p class="text-center">No hay categorías disponibles.</p>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}
