@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5 acerca">
+
+    <!-- Encabezado -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Acerca de My Pet Shop</h1>
+        <img src="/static/acerca-de/icono-recortado.png" alt="Logo My Pet Shop" style="width: 150px; margin-bottom: 0.1px;"></img>
+        <p class="text-muted">Tu tienda de confianza para el cuidado de tus mascotas</p>
+    </div>
+
+    <!-- Sección de descripción -->
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <h3>Nuestra Historia</h3>
+            <p>
+                My Pet Shop nace con la misión de ofrecer productos de calidad para mascotas de forma rápida,
+                segura y accesible. Nuestra filosofía se basa en el amor por los animales y el compromiso con su bienestar.
+            </p>
+            <p>
+                Contamos con una selección cuidadosamente elegida de juguetes, accesorios y productos pensados
+                para mejorar la vida de tus mascotas.
+            </p>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="\static\acerca-de\perritos-felices.png" class="img-fluid rounded shadow" style="width: 400px; margin-bottom: 0.1px;" alt="Mascotas felices"></img>
+        </div>
+    </div>
+
+    <!-- Valores -->
+    <div class="mb-5">
+        <h3 class="text-center mb-4">Nuestros Valores</h3>
+        <div class="row text-center">
+
+            <div class="col-md-4">
+                <div class="p-4 shadow-sm rounded">
+                    <h5 class="fw-bold">Confianza</h5>
+                    <img src="\static\acerca-de\confianza.png" class="img-fluid rounded shadow" style="width: 100px; margin-bottom: 0.1px"></img>
+                    <p>Garantizamos compras seguras para que disfrutes de una experiencia sin preocupaciones.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="p-4 shadow-sm rounded">
+                    <h5 class="fw-bold">Calidad</h5>
+                    <img src="\static\acerca-de\calidad.png" class="img-fluid rounded shadow" style="width: 150px; margin-bottom: 0.1px"></img>
+                    <p>Seleccionamos productos de alta calidad para garantizar la satisfacción de nuestros clientes.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="p-4 shadow-sm rounded">
+                    <h5 class="fw-bold">Compromiso</h5>
+                    <img src="\static\acerca-de\compromiso.png" class="img-fluid rounded shadow" style="width: 200px; margin-bottom: 0.1px"></img>
+                    <p>Estamos comprometidos con ofrecer el mejor servicio en español y con total transparencia.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Pie -->
+    <div class="text-center text-muted mt-5">
+        <p>© 2025 My Pet Shop — Todos los derechos reservados</p>
+    </div>
+
+</div>
+
+{% endblock %}
