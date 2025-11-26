@@ -39,7 +39,7 @@ class Producto(models.Model):
         AVE = 'ave', 'Ave'
         ROEDOR = 'roedor', 'Roedor'
         REPTIL = 'reptil', 'Reptil'
-        PECERA = 'pecera', 'Pecera'
+        PEZ = 'pez', 'Pez'
         OTRO = 'otro', 'Otro'
 
     genero = models.CharField(max_length=20, choices=Especie.choices, default=Especie.PERRO)
