@@ -1,5 +1,560 @@
 [
   {
+    "nombre": "Adult pienso para perros",
+    "descripcion": "Pienso natural sin cereales y alto en proteínas para mejorar la musculatura y la energía en perros adultos de todas las razas.",
+    "precio": "19.09",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 3,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/adult-pienso-para-perros.jpg"
+    ]
+  },
+   {
+    "nombre": "Collar Antiparasitario para perros",
+    "descripcion": "El collar Scalibor es el primer antiparasitario para perros del mercado que protege de los mosquitos del género flebotomo, garrapatas y pulgas hasta un periodo de 12 meses (12 meses frente a ...",
+    "precio": "24.99",
+    "precio_oferta": null,
+    "marca": "Scalibor",
+    "categoria": "Cuidado e Higiene",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 19,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/collar-antiparasitario-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Classics Prairie Poultry pienso para perros",
+    "descripcion": "Pienso natural de pollo para perros de todas las edades, alto en proteínas y altamente digestivo.",
+    "precio": "17.49",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 46,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/classics-prairie-poultry-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Wild Adult Country Water Pollo y Salmón pienso para perros",
+    "descripcion": "Pienso natural sin cereales para perros adultos.",
+    "precio": "6.99",
+    "precio_oferta": null,
+    "marca": "True Origins",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 1,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/wild-adult-country-water-pollo-y-salm-n-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Light & Fit pienso para perros",
+    "descripcion": "Pienso light para perros adultos con tendencia al sobrepeso que necesitan perder peso o mantener su peso ideal.",  
+    "precio": "19.59",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 10,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/light-fit-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Wild Adult Redlands Ternera pienso para perros",
+    "descripcion": "Pienso sin cereales y con sabor a ternera y prebioticos para perros adultos.",
+    "precio": "24.99",
+    "precio_oferta": null,
+    "marca": "True Origins",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 32,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/wild-adult-redlands-ternera-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Senior pienso para perros",
+    "descripcion": "Pienso para perros adultos de más de 7 años, especialmente formulado para cuidar la salud y minimizar los síntomas del envejecimiento en perros seniors.",
+    "precio": "19.59",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 14,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/senior-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Medium Sensitive Skin Salmón pienso para perros",
+    "descripcion": "Pienso para perros adultos de razas medianas con piel sensible. Fórmula avanzada rica en Salmón de alta calidad.", 
+    "precio": "23.59",
+    "precio_oferta": null,
+    "marca": "Pro Plan",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 32,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/adult-medium-sensitive-skin-salm-n-pienso-para-perros.jpg"
+    ]
+  },
+
+  {
+    "nombre": "HP Pacífica pienso para perros",
+    "descripcion": "Pienso alto en proteínas para perros adultos o cachorros a partir de 2 kg de peso.",
+    "precio": "22.09",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 2,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/hp-pac-fica-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "High Prairie Bisonte pienso para perros",
+    "descripcion": "Pienso natural sin cereales para perros adultos de todas las razas. Contiene bisonte, venado, frutas y verduras, que le aportan un delicioso sabor.",
+    "precio": "20.29",
+    "precio_oferta": null,
+    "marca": "Taste of the Wild",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 41,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/high-prairie-bisonte-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Puppy Large Breed pienso para perros",
+    "descripcion": "Pienso natural sin cereales con pollo para cachorros de razas grandes.",
+    "precio": "72.89",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 27,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/puppy-large-breed-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Base Adultos Cordero pienso para perros",
+    "descripcion": "El pienso para perros adultos Salvaje Base con cordero es un alimento premium elaborado con ingredientes naturales de primera calidad.",
+    "precio": "8.99",
+    "precio_oferta": null,
+    "marca": "Salvaje",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 16,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/base-adultos-cordero-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Puppy Small Breed pienso para perros",
+    "descripcion": "Pienso para cachorros de raza pequeña (hasta 9 kg de adultos) con pollo, huevos y pescado.",
+    "precio": "19.49",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 3,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/puppy-small-breed-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Daily Care Overweight Sterilized pienso para perros",
+    "descripcion": "Pienso formulado para perros mayores de 1 año con problemas de sobrepeso o que están esterilizados.",
+    "precio": "35.99",
+    "precio_oferta": null,
+    "marca": "Eukanuba",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 11,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/adult-daily-care-overweight-sterilized-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Large Breed pienso para perros",
+    "descripcion": "El pienso Acana Large Breed Adult brinda una alimentación muy completa para perros de más de 25 kg con todos los nutrientes que necesitan.",
+    "precio": "72.89",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 5,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/adult-large-breed-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Veterinary Diets Dermatosis FP pienso para perros",
+    "descripcion": "Pienso dermatológico indicado para perros con dermatitis, alergias u otros problemas en la piel.",
+    "precio": "30.69",
+    "precio_oferta": null,
+    "marca": "Eukanuba",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 21,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/veterinary-diets-dermatosis-fp-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Dietetic Adulto Renal pienso para perros",
+    "descripcion": "Pienso para perros adultos indicado para la insuficiencia renal con una receta baja en fósforo y proteínas que ayuda a cuidar la salud de las vías urinarias.",
+    "precio": "18.99",
+    "precio_oferta": null,
+    "marca": "Criadores",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 50,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/dietetic-adulto-renal-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Caseta de Plástico 60% reciclado ECO para perros",
+    "descripcion": "Ofrece a tu perro mediano o grande un refugio cómodo y resistente con esta caseta de plástico TK Pet. Su base elevada y techo a dos aguas protegen del agua y la humedad, mientras que la puerta amplia garantiza una ventilación constante. Ideal para exteriores, es fácil de montar, limpiar y mantener en perfecto estado.",
+    "precio": "53.99",
+    "precio_oferta": null,
+    "marca": "TK-Pet",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 45,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/caseta-de-pl-stico-60-reciclado-eco-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Tindaya Caseta con Puerta para Perros",
+    "descripcion": "Caseta para perros con puerta de la marca Tkpet.",
+    "precio": "69.99",
+    "precio_oferta": null,
+    "marca": "TK-Pet",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "Madera",
+    "material": "Láminas de madera tratada, techo con tela asfáltica, patas de goma, puerta con cierre de plástico.",        
+    "stock": 29,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/tindaya-caseta-con-puerta-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Grain Free Hypoallergenic Salmón pienso para perros",
+    "descripcion": "Pienso hipoalergenico con salmón para perros adultos. Evita las incompatibilidades de tu perro con cereales y otras fuentes de proteínas distintas al salmón.",
+    "precio": "26.39",
+    "precio_oferta": null,
+    "marca": "Ownat",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 33,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/grain-free-hypoallergenic-salm-n-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Just Grain Free Adulto Light pienso para perros",
+    "descripcion": "Pienso light y sin cereales para perros adultos, rico en proteínas y bajo en grasas, ayuda a adelgazar o mantener el peso corporal, reduce las intolerancias y alergias alimenticias, facilita la digestión y mejora la salud de la piel y pelaje.",      
+    "precio": "15.59",
+    "precio_oferta": null,
+    "marca": "Ownat",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 45,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/just-grain-free-adulto-light-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Small Breed pienso para perros",
+    "descripcion": "Pienso natural con pollo y merluza para perros de razas pequeñas, que en su edad adulta alcanzan un máximo de 9 kg",
+    "precio": "19.39",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 21,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/adult-small-breed-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Prescription Diet Mobility Pollo pienso para perros",
+    "descripcion": "El pienso para perros Hill’s Prescription Diet Canine j/d está indicado para mejorar la movilidad y dolor articular en mascotas con osteoartritis.",
+    "precio": "42.99",
+    "precio_oferta": null,
+    "marca": "Hill's",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 38,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/prescription-diet-mobility-pollo-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Salmón y Arroz pienso",
+    "descripcion": "Pienso de salmón para perros de edad adulta y tamaño mediano o grande.",
+    "precio": "14.99",
+    "precio_oferta": null,
+    "marca": "Dogxtreme",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 37,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/salm-n-y-arroz-pienso.jpg"
+    ]
+  },
+  {
+    "nombre": "Adulto Pollo y Arroz pienso para perros de raza mediana",
+    "descripcion": "Pienso para perros de edad adulta y tamaño mediano. Con pollo y arroz integral, es un alimento alto en proteínas y bajo en grasas que protege la salud intestinal de tu mascota.",
+    "precio": "16.99",
+    "precio_oferta": null,
+    "marca": "Criadores",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 38,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/adulto-pollo-y-arroz-pienso-para-perros-de-raza-mediana.jpg"
+    ]
+  },
+  {
+    "nombre": "Prescription Diet z/d Food Sensitivities Mini para perros",
+    "descripcion": "El pienso para perros Hill's Prescriptio Diet Food Sensitives es un alimento formulado específicamente para aquellos perros de raza mini que tienen problmeas alérgicos con síntomas cutáneos y/o gastrointestinales.",
+    "precio": "14.89",
+    "precio_oferta": null,
+    "marca": "Hill's",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 48,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/prescription-diet-z-d-food-sensitivities-mini-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "No Grain Adult Medium Maxi Pollo pienso para perros",
+    "descripcion": "Nature's Variety No Grain, antes conocido como Nature's Variety Original, es un pienso de pollo deshuesado para perros adultos de razas medianas y grandes, es rico en proteínas y no contiene granos, favorece la salud de la piel y pelaje, fortalece el sistema inmunitario y permite mantener una óptima condición física.",
+    "precio": "5.49",
+    "precio_oferta": null,
+    "marca": "Nature's Variety",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 5,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/no-grain-adult-medium-maxi-pollo-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adulto Grain Free Salmón pienso para perros de razas medianas y grandes",
+    "descripcion": "",
+    "precio": "19.99",
+    "precio_oferta": null,
+    "marca": "Criadores",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 14,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/adulto-grain-free-salm-n-pienso-para-perros-de-razas-medianas-y-grandes.jpg"
+    ]
+  },
+  {
+    "nombre": "Dietetic Adulto Mobility pienso para perros",
+    "descripcion": "Pienso especialmente formulado para mejorar los síntomas de afecciones como la artritis y la artrosis que afectan a la movilidad y a la salud de las articulaciones en perros seniors o de razas grandes.",
+    "precio": "18.99",
+    "precio_oferta": null,
+    "marca": "Criadores",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 10,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/dietetic-adulto-mobility-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Prescription Diet Digestive i/d Care Low Fat Estofado de Pollo y Verduras lata para perros",
+    "descripcion": "Comida húmeda para perros de la gama Hill's i/d low fat formulada para mejorar la digestión. Es un estofado de pollo y verduras con un sabor delicioso.",
+    "precio": "2.49",
+    "precio_oferta": null,
+    "marca": "Hill's",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 13,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/prescription-diet-digestive-i-d-care-low-fat-estofado-de-pollo-y-verduras-lata-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Pure Adult Pollo No Grain pienso para perros",
+    "descripcion": "",
+    "precio": "23.99",
+    "precio_oferta": null,
+    "marca": "True Origins",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 47,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pure-adult-pollo-no-grain-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Prescription Diet Urinary Care u/d pienso para perros",
+    "descripcion": "Un pienso para perros que fue desarrollado para ayudar en el cuidado de tu mascota con problemas asociados a la urolitiasis.",
+    "precio": "40.39",
+    "precio_oferta": null,
+    "marca": "Hill's",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 14,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/prescription-diet-urinary-care-u-d-pienso-para-perros.jpg"
+    ]
+  },
+
+
+
+
+
+
+
+
+
+  
+  {
     "nombre": "Pienso Premium Adulto",
     "descripcion": "Alimento completo para perros adultos, alta digestibilidad.",
     "precio": "24.99",
