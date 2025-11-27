@@ -34,7 +34,8 @@
                             Precio unidad:
                             <strong>
                                 {% if it.producto.precio_oferta %}
-                                    {{ it.producto.precio_oferta }} €
+                                    <span class="old-price" style="text-decoration: line-through; color: #999; margin-right: 5px;">{{ it.producto.precio }} €</span>
+                                    <span class="offer-price" style="color: #e74c3c; font-weight: bold;">{{ it.producto.precio_oferta }} €</span>
                                 {% else %}
                                     {{ it.producto.precio }} €
                                 {% endif %}

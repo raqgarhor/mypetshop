@@ -106,7 +106,7 @@
                             {% endif %}
                         {% endwith %}
                         <h3>{{ p.nombre }}</h3>
-                        <p class="price">{{ p.precio }} €</p>
+                        <p class="price">{% if p.precio_oferta %}<span class="old-price">{{ p.precio }} €</span> <span class="offer-price">{{ p.precio_oferta }} €</span>{% else %}{{ p.precio }} €{% endif %}</p>
                         {% with in_cart=cart_qty_by_product|get_item:p.id|default:0 %}
                             {% if p.tallas.exists %}
                                 {% with remaining=p.available_stock|default:p.stock|sub:in_cart %}

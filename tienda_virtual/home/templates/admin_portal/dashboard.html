@@ -100,7 +100,14 @@
                     </span>
                 </td>
                 <td>{{ producto.categoria.nombre|default:"Sin categoría" }}</td>
-                <td>{{ producto.precio }} €</td>
+                <td>
+                    {% if producto.precio_oferta %}
+                        <span style="text-decoration: line-through; color: #999;">{{ producto.precio }} €</span>
+                        <span style="color: #e74c3c; font-weight: bold; margin-left: 5px;">{{ producto.precio_oferta }} €</span>
+                    {% else %}
+                        {{ producto.precio }} €
+                    {% endif %}
+                </td>
             </tr>
             {% empty %}
             <tr>

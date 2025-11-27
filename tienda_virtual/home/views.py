@@ -334,7 +334,8 @@ def cart_view(request):
                 continue
 
             cantidad = int(qty)
-            subtotal = producto.precio * cantidad
+            precio_unitario = producto.precio_oferta or producto.precio
+            subtotal = precio_unitario * cantidad
             items.append({'producto': producto, 'cantidad': cantidad, 'subtotal': subtotal, 'size': size})
             total += subtotal
 
