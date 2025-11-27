@@ -56,14 +56,14 @@
                         </form>
 
                         <div class="cart-qty-buttons">
+                            <form action="{% url 'cart_decrement' it.producto.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="size" value="{{ it.size }}">
+                                <button type="submit" class="btn btn-circle">-</button>
+                            </form>
+
                             {% with key=it.producto.id|stringformat:"s"|add:":"|add:it.size %}
                                 {% with remaining=cart_remaining_by_item|get_item:key %}
-                                    <form action="{% url 'add_to_cart' it.producto.id %}" method="post">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="size" value="{{ it.size }}">
-                                        <button type="submit" class="btn btn-circle"
-                                                {% if remaining <= 0 %}disabled{% endif %}>+</button>
-                                    </form>
                                     <small class="cart-remaining">
                                         {% if remaining is not None and remaining > 0 %}
                                             Quedan {{ remaining }}
@@ -71,14 +71,14 @@
                                             Agotado
                                         {% endif %}
                                     </small>
+                                    <form action="{% url 'add_to_cart' it.producto.id %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="size" value="{{ it.size }}">
+                                        <button type="submit" class="btn btn-circle"
+                                                {% if remaining <= 0 %}disabled{% endif %}>+</button>
+                                    </form>
                                 {% endwith %}
                             {% endwith %}
-
-                            <form action="{% url 'cart_decrement' it.producto.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="size" value="{{ it.size }}">
-                                <button type="submit" class="btn btn-circle">-</button>
-                            </form>
 
                             <form action="{% url 'cart_remove' it.producto.id %}" method="post">
                                 {% csrf_token %}
