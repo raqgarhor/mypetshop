@@ -1,0 +1,147 @@
+[
+  {
+    "producto": "Pienso Premium Adulto",
+    "imagen": "productos/imagenes/perros/producto1.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Pienso cachorro",
+    "imagen": "productos/imagenes/perros/producto2.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Chuches de Jamón",
+    "imagen": "productos/imagenes/perros/producto3.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Latas de Pavo para Gatos",
+    "imagen": "productos/imagenes/gatos/producto4.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Alpiste de Calidad",
+    "imagen": "productos/imagenes/pajaros/producto5.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "snack de pato para perros",
+    "imagen": "productos/imagenes/perros/producto6.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Comida de peces en lata",
+    "imagen": "productos/imagenes/peces/producto7.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Anti parásitos",
+    "imagen": "productos/imagenes/perros/producto8.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Condrovet Force HA",
+    "imagen": "productos/imagenes/perros/producto9.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "PetCaps",
+    "imagen": "productos/imagenes/gatos/producto10.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Diptron aves",
+    "imagen": "productos/imagenes/pajaros/producto12.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Abrigo Muflón",
+    "imagen": "productos/imagenes/perros/producto13.jpg",
+    "es_principal": true
+  },
+    {
+    "producto": "Abrigo Muflón",
+    "imagen": "productos/imagenes/perros/producto13.jpg",
+    "es_principal": false
+  },
+  {
+    "producto": "Sueter para gatos",
+    "imagen": "productos/imagenes/gatos/producto14.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Conjunto chaleco y falda",
+    "imagen": "productos/imagenes/roedores/producto15.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Pelota",
+    "imagen": "productos/imagenes/perros/producto16.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Ratón",
+    "imagen": "productos/imagenes/gatos/producto17.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Hamaca",
+    "imagen": "productos/imagenes/reptiles/producto19.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Champoo natural",
+    "imagen": "productos/imagenes/perros/producto20.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Correa para perros",
+    "imagen": "productos/imagenes/perros/producto21.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Bebedero portatil",
+    "imagen": "productos/imagenes/perros/producto22.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Trasportín",
+    "imagen": "productos/imagenes/gatos/producto23.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Terrario",
+    "imagen": "productos/imagenes/reptiles/producto24.jpg",
+    "es_principal": true
+  },
+    {
+    "producto": "Terrario",
+    "imagen": "productos/imagenes/reptiles/producto24.jpg",
+    "es_principal": false
+  },
+  {
+    "producto": "Jaula",
+    "imagen": "productos/imagenes/pajaros/producto25.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Acuario grande",
+    "imagen": "productos/imagenes/peces/producto26.jpg",
+    "es_principal": true
+  },
+  {
+    "producto": "Camita",
+    "imagen": "productos/imagenes/perros/producto27.jpg",
+    "es_principal": true
+  },
+    {
+    "producto": "Camita",
+    "imagen": "productos/imagenes/perros/producto27.jpg",
+    "es_principal": false
+  },
+  {
+    "producto": "Escalera",
+    "imagen": "productos/imagenes/gatos/producto28.jpg",
+    "es_principal": true
+  }
+]

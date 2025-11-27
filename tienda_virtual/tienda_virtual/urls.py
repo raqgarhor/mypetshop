@@ -17,8 +17,36 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from home import views as home_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('cart/add/<int:product_id>/', home_views.add_to_cart, name='add_to_cart'),
+    path('cart/decrement/<int:product_id>/', home_views.cart_decrement, name='cart_decrement'),
+    path('cart/remove/<int:product_id>/', home_views.cart_remove, name='cart_remove'),
+    path('cart/update/', home_views.cart_update, name='cart_update'),
+    path('cart/', home_views.cart_view, name='cart'),
+    path('novedades/', home_views.novedades, name='novedades'),
+    path('productos/', home_views.productos, name='productos'),
+    path('producto/<int:product_id>/', home_views.product_detail, name='product_detail'),
+    path('ofertas/', home_views.ofertas, name='ofertas'),
+    path('categoria/<int:categoria_id>/', home_views.categoria_detail, name='categoria_detail'),
+    path('acerca-de/', home_views.acerca_de, name='acerca_de'),
+    path('contacto/', home_views.contacto, name='contacto'),
+    path('categorias/', home_views.categorias, name='categorias'),
+    path("checkout/datos/", home_views.checkout_datos_cliente_envio, name="checkout_datos"),
+    path("checkout/pago/", home_views.detalles_pago, name="detalles_pago"),
+    path("checkout/stripe/", home_views.checkout_stripe, name="checkout_stripe"),
+    path("pago/ok/<int:pedido_id>/", home_views.pago_ok, name="pago_ok"),
+    path("pago/cancelado/<int:pedido_id>/", home_views.pago_cancelado, name="pago_cancelado"),    
+    path("cuenta/registro/", home_views.register, name="register"),
+    path("cuenta/login/", home_views.login_view, name="login"),
+    path("cuenta/logout/", home_views.logout_view, name="logout"),
+    path("seguimiento/", home_views.seguimiento_pedido, name="tracking"),
     path('', home_views.index, name='home'),
+
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ producto.nombre }} - My Pet Shop{% endblock %}
+
+{% load cart_extras %}
+{% block content %}
+<section class="product-detail container">
+    <a href="{% url 'home' %}" class="btn">← Volver</a>
+    <div class="detail-grid">
+        <div class="detail-media">
+            {% with ip=producto.imagenes.first %}
+                {% if ip %}
+                    <img src="{{ ip.imagen.url }}" alt="{{ producto.nombre }}" class="detail-image">
+                {% else %}
+                    <div class="placeholder" style="height:320px">Sin imagen</div>
+                {% endif %}
+            {% endwith %}
+        </div>
+        <div class="detail-info">
+            <h1>{{ producto.nombre }}</h1>
+
+            {# brand and category are shown in the Details list below #}
+
+            <p class="price">{% if producto.precio_oferta %}<span class="old-price">{{ producto.precio }} €</span> <span class="offer-price">{{ producto.precio_oferta }} €</span>{% else %}{{ producto.precio }} €{% endif %}</p>
+
+            {% comment %}Compute remaining stock (respecting tallas).{% endcomment %}
+            <div class="descripcion">{{ producto.descripcion|linebreaks }}</div>
+
+            <h3 style="margin-top:14px">Detalles</h3>
+            <ul class="product-details" style="list-style:none;padding:0;color:#444">
+                {% if producto.marca %}<li><strong>Marca:</strong> {{ producto.marca.nombre }}</li>{% endif %}
+                {% if producto.categoria %}<li><strong>Categoría:</strong> {{ producto.categoria.nombre }}</li>{% endif %}
+                <li><strong>Especie:</strong> {{ producto.get_genero_display }}</li>
+                {% if producto.color %}<li><strong>Color:</strong> {{ producto.color }}</li>{% endif %}
+                {% if producto.material %}<li><strong>Material:</strong> {{ producto.material }}</li>{% endif %}
+                <li><strong>Stock:</strong> {{ producto.stock }}</li>
+                <li><strong>Disponible:</strong> {% if producto.esta_disponible %}Sí{% else %}No{% endif %}</li>
+                {% if producto.es_destacado %}<li><strong>Destacado:</strong> Sí</li>{% endif %}
+                {% if producto.categoria and producto.categoria.descripcion %}<li><strong>Sobre la categoría:</strong> {{ producto.categoria.descripcion }}</li>{% endif %}
+            </ul>
+
+            {# Eliminado el formulario de añadir al carrito en la ficha de producto por petición del usuario. #}
+            {% if producto.tallas.exists %}
+                <div style="margin-top:12px">
+                    <strong>Tallas disponibles:</strong>
+                    <ul style="list-style:none;padding:0;margin:6px 0">
+                        {% for t in producto.tallas.all %}
+                            <li>{{ t.talla }} — {% if t.stock > 0 %}{{ t.stock }} disponibles{% else %}<span style="color:#c62828">Sin stock</span>{% endif %}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% else %}
+                <div style="margin-top:12px">Stock: {% if producto.stock > 0 %}{{ producto.stock }} disponibles{% else %}<span style="color:#c62828">Sin stock</span>{% endif %}</div>
+            {% endif %}
+
+            <div class="meta" style="margin-top:12px;color:#666">Publicado: {{ producto.fecha_creacion|date:"d M Y" }} — Última actualización: {{ producto.fecha_actualizacion|date:"d M Y" }}</div>
+        </div>
+    </div>
+</section>
+
+<style>
+.detail-grid{display:flex;gap:24px;align-items:flex-start;margin-top:16px}
+.detail-media{flex:0 0 48%}
+.detail-info{flex:1}
+.detail-image{width:100%;height:auto;object-fit:contain;border-radius:6px}
+.old-price{text-decoration:line-through;color:#777;margin-right:6px}
+.offer-price{color:#c62828;font-weight:700}
+</style>
+
+{% endblock %}

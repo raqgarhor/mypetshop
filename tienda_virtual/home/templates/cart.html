@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load cart_extras %}
+
+{% block title %}Carrito - My Pet Shop{% endblock %}
+
+{% block content %}
+<div class="cart-page">
+    <h2 class="cart-title">Tu carrito</h2>
+
+    {% if items %}
+        <div class="cart-items">
+            {% for it in items %}
+                <article class="cart-item-card">
+                    <div class="cart-item-media">
+                        {% with ip=it.producto.imagenes.first %}
+                            {% if ip %}
+                                <img src="{{ ip.imagen.url }}" alt="{{ it.producto.nombre }}">
+                            {% else %}
+                                <div class="cart-item-placeholder">
+                                    Sin imagen
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+
+                    <div class="cart-item-info">
+                        <h3 class="cart-item-name">
+                            {{ it.producto.nombre }}
+                            {% if it.size %}
+                                <span class="cart-item-size">Talla: {{ it.size }}</span>
+                            {% endif %}
+                        </h3>
+                        <p class="cart-item-price">
+                            Precio unidad:
+                            <strong>
+                                {% if it.producto.precio_oferta %}
+                                    {{ it.producto.precio_oferta }} €
+                                {% else %}
+                                    {{ it.producto.precio }} €
+                                {% endif %}
+                            </strong>
+                        </p>
+                        <p class="cart-item-subtotal">
+                            Subtotal: <strong>{{ it.subtotal }} €</strong>
+                        </p>
+                    </div>
+
+                    <div class="cart-item-actions">
+                        <form action="{% url 'cart_update' %}" method="post" class="cart-qty-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ it.producto.id }}">
+                            <input type="hidden" name="size" value="{{ it.size }}">
+                            <label>Cantidad</label>
+                            <input type="number" name="quantity" value="{{ it.cantidad }}" min="0">
+                            <button type="submit" class="btn btn-outline">Actualizar</button>
+                        </form>
+
+                        <div class="cart-qty-buttons">
+                            {% with key=it.producto.id|stringformat:"s"|add:":"|add:it.size %}
+                                {% with remaining=cart_remaining_by_item|get_item:key %}
+                                    <form action="{% url 'add_to_cart' it.producto.id %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="size" value="{{ it.size }}">
+                                        <button type="submit" class="btn btn-circle"
+                                                {% if remaining <= 0 %}disabled{% endif %}>+</button>
+                                    </form>
+                                    <small class="cart-remaining">
+                                        {% if remaining is not None and remaining > 0 %}
+                                            Quedan {{ remaining }}
+                                        {% else %}
+                                            Agotado
+                                        {% endif %}
+                                    </small>
+                                {% endwith %}
+                            {% endwith %}
+
+                            <form action="{% url 'cart_decrement' it.producto.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="size" value="{{ it.size }}">
+                                <button type="submit" class="btn btn-circle">-</button>
+                            </form>
+
+                            <form action="{% url 'cart_remove' it.producto.id %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="size" value="{{ it.size }}">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+            <p class="cart-total-label">Total del carrito</p>
+            <p class="cart-total-amount">{{ total }} €</p>
+
+            <a href="{% url 'checkout_datos' %}" class="btn btn-primary cart-checkout-btn">
+                Tramitar pedido
+            </a>
+        </div>
+    {% else %}
+        <p>Tu carrito está vacío.</p>
+    {% endif %}
+</div>
+{% endblock %}

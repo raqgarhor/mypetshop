@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Crear cuenta{% endblock %}
+
+{% block content %}
+<section class="auth-card">
+    <h2>Crear una cuenta</h2>
+    <form method="post" novalidate class="auth-form">
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+            <p class="form-errors">{{ error }}</p>
+        {% endfor %}
+
+        {% for field in form %}
+            <div class="form-field">
+                {{ field.label_tag }}
+                {{ field }}
+                {% for error in field.errors %}
+                    <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+
+        <button type="submit" class="btn btn-primary">Crear cuenta</button>
+    </form>
+    <p>¿Ya tienes cuenta? <a href="{% url 'login' %}{% if next %}?next={{ next|urlencode }}{% endif %}">Inicia sesión</a></p>
+</section>
+{% endblock %}
+

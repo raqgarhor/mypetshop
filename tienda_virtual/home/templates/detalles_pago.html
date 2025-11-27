@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Resumen del pedido{% endblock %}
+
+{% block content %}
+<h2>Resumen del pedido</h2>
+
+<h3>Datos del cliente</h3>
+<p><strong>{{ cliente.nombre }} {{ cliente.apellidos }}</strong></p>
+<p>{{ cliente.email }}</p>
+<p>{{ cliente.telefono }}</p>
+
+<h3>Dirección de envío</h3>
+<p>{{ cliente.direccion }} — {{ cliente.ciudad }} ({{ cliente.codigo_postal }})</p>
+
+<h3>Productos</h3>
+<table class="cart-table">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Talla</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for it in items %}
+        <tr>
+            <td>{{ it.producto.nombre }}</td>
+            <td>{{ it.talla }}</td>
+            <td>{{ it.cantidad }}</td>
+            <td>{{ it.subtotal }} €</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<p><strong>Subtotal:</strong> {{ subtotal }} €</p>
+<p><strong>Impuestos:</strong> {{ impuestos }} €</p>
+<p><strong>Coste de entrega:</strong> {{ coste_entrega }} €</p>
+<p><strong>Descuento:</strong> {{ descuento }} €</p>
+
+<h3>Total final: {{ total }} €</h3>
+
+<form action="{% url 'checkout_stripe' %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Pagar con tarjeta (Stripe)</button>
+</form>
+
+{% endblock %}

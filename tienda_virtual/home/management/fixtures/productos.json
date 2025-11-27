@@ -1,0 +1,2667 @@
+[
+  {
+    "nombre": "Adult pienso para perros",
+    "descripcion": "Pienso natural sin cereales y alto en proteínas para mejorar la musculatura y la energía en perros adultos de todas las razas.",
+    "precio": "19.09",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 3,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/adult-pienso-para-perros.jpg"
+    ]
+  },
+   {
+    "nombre": "Collar Antiparasitario para perros",
+    "descripcion": "El collar Scalibor es el primer antiparasitario para perros del mercado que protege de los mosquitos del género flebotomo, garrapatas y pulgas hasta un periodo de 12 meses (12 meses frente a ...",
+    "precio": "24.99",
+    "precio_oferta": null,
+    "marca": "Scalibor",
+    "categoria": "Cuidado e Higiene",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 19,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/collar-antiparasitario-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Classics Prairie Poultry pienso para perros",
+    "descripcion": "Pienso natural de pollo para perros de todas las edades, alto en proteínas y altamente digestivo.",
+    "precio": "17.49",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 46,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/classics-prairie-poultry-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Wild Adult Country Water Pollo y Salmón pienso para perros",
+    "descripcion": "Pienso natural sin cereales para perros adultos.",
+    "precio": "6.99",
+    "precio_oferta": null,
+    "marca": "True Origins",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 1,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/wild-adult-country-water-pollo-y-salm-n-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Light & Fit pienso para perros",
+    "descripcion": "Pienso light para perros adultos con tendencia al sobrepeso que necesitan perder peso o mantener su peso ideal.",  
+    "precio": "19.59",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 10,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/light-fit-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Wild Adult Redlands Ternera pienso para perros",
+    "descripcion": "Pienso sin cereales y con sabor a ternera y prebioticos para perros adultos.",
+    "precio": "24.99",
+    "precio_oferta": null,
+    "marca": "True Origins",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 32,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/wild-adult-redlands-ternera-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Senior pienso para perros",
+    "descripcion": "Pienso para perros adultos de más de 7 años, especialmente formulado para cuidar la salud y minimizar los síntomas del envejecimiento en perros seniors.",
+    "precio": "19.59",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 14,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/senior-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Medium Sensitive Skin Salmón pienso para perros",
+    "descripcion": "Pienso para perros adultos de razas medianas con piel sensible. Fórmula avanzada rica en Salmón de alta calidad.", 
+    "precio": "23.59",
+    "precio_oferta": null,
+    "marca": "Pro Plan",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 32,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/adult-medium-sensitive-skin-salm-n-pienso-para-perros.jpg"
+    ]
+  },
+
+  {
+    "nombre": "HP Pacífica pienso para perros",
+    "descripcion": "Pienso alto en proteínas para perros adultos o cachorros a partir de 2 kg de peso.",
+    "precio": "22.09",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 2,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/hp-pac-fica-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "High Prairie Bisonte pienso para perros",
+    "descripcion": "Pienso natural sin cereales para perros adultos de todas las razas. Contiene bisonte, venado, frutas y verduras, que le aportan un delicioso sabor.",
+    "precio": "20.29",
+    "precio_oferta": null,
+    "marca": "Taste of the Wild",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 41,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/high-prairie-bisonte-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Puppy Large Breed pienso para perros",
+    "descripcion": "Pienso natural sin cereales con pollo para cachorros de razas grandes.",
+    "precio": "72.89",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 27,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/puppy-large-breed-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Base Adultos Cordero pienso para perros",
+    "descripcion": "El pienso para perros adultos Salvaje Base con cordero es un alimento premium elaborado con ingredientes naturales de primera calidad.",
+    "precio": "8.99",
+    "precio_oferta": null,
+    "marca": "Salvaje",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 16,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/base-adultos-cordero-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Puppy Small Breed pienso para perros",
+    "descripcion": "Pienso para cachorros de raza pequeña (hasta 9 kg de adultos) con pollo, huevos y pescado.",
+    "precio": "19.49",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 3,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/puppy-small-breed-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Daily Care Overweight Sterilized pienso para perros",
+    "descripcion": "Pienso formulado para perros mayores de 1 año con problemas de sobrepeso o que están esterilizados.",
+    "precio": "35.99",
+    "precio_oferta": null,
+    "marca": "Eukanuba",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 11,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/adult-daily-care-overweight-sterilized-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Large Breed pienso para perros",
+    "descripcion": "El pienso Acana Large Breed Adult brinda una alimentación muy completa para perros de más de 25 kg con todos los nutrientes que necesitan.",
+    "precio": "72.89",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 5,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/adult-large-breed-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Veterinary Diets Dermatosis FP pienso para perros",
+    "descripcion": "Pienso dermatológico indicado para perros con dermatitis, alergias u otros problemas en la piel.",
+    "precio": "30.69",
+    "precio_oferta": null,
+    "marca": "Eukanuba",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 21,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/veterinary-diets-dermatosis-fp-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Dietetic Adulto Renal pienso para perros",
+    "descripcion": "Pienso para perros adultos indicado para la insuficiencia renal con una receta baja en fósforo y proteínas que ayuda a cuidar la salud de las vías urinarias.",
+    "precio": "18.99",
+    "precio_oferta": null,
+    "marca": "Criadores",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 50,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/dietetic-adulto-renal-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Caseta de Plástico 60% reciclado ECO para perros",
+    "descripcion": "Ofrece a tu perro mediano o grande un refugio cómodo y resistente con esta caseta de plástico TK Pet. Su base elevada y techo a dos aguas protegen del agua y la humedad, mientras que la puerta amplia garantiza una ventilación constante. Ideal para exteriores, es fácil de montar, limpiar y mantener en perfecto estado.",
+    "precio": "53.99",
+    "precio_oferta": null,
+    "marca": "TK-Pet",
+    "categoria": "Viviendas",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 45,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/caseta-de-pl-stico-60-reciclado-eco-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Tindaya Caseta con Puerta para Perros",
+    "descripcion": "Caseta para perros con puerta de la marca Tkpet.",
+    "precio": "69.99",
+    "precio_oferta": null,
+    "marca": "TK-Pet",
+    "categoria": "Viviendas",
+    "genero": "perro",
+    "color": "Madera",
+    "material": "Láminas de madera tratada, techo con tela asfáltica, patas de goma, puerta con cierre de plástico.",        
+    "stock": 29,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/tindaya-caseta-con-puerta-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Grain Free Hypoallergenic Salmón pienso para perros",
+    "descripcion": "Pienso hipoalergenico con salmón para perros adultos. Evita las incompatibilidades de tu perro con cereales y otras fuentes de proteínas distintas al salmón.",
+    "precio": "26.39",
+    "precio_oferta": null,
+    "marca": "Ownat",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 33,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/grain-free-hypoallergenic-salm-n-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Just Grain Free Adulto Light pienso para perros",
+    "descripcion": "Pienso light y sin cereales para perros adultos, rico en proteínas y bajo en grasas, ayuda a adelgazar o mantener el peso corporal, reduce las intolerancias y alergias alimenticias, facilita la digestión y mejora la salud de la piel y pelaje.",      
+    "precio": "15.59",
+    "precio_oferta": null,
+    "marca": "Ownat",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 45,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/just-grain-free-adulto-light-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Small Breed pienso para perros",
+    "descripcion": "Pienso natural con pollo y merluza para perros de razas pequeñas, que en su edad adulta alcanzan un máximo de 9 kg",
+    "precio": "19.39",
+    "precio_oferta": null,
+    "marca": "Acana",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 21,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/adult-small-breed-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Prescription Diet Mobility Pollo pienso para perros",
+    "descripcion": "El pienso para perros Hill’s Prescription Diet Canine j/d está indicado para mejorar la movilidad y dolor articular en mascotas con osteoartritis.",
+    "precio": "42.99",
+    "precio_oferta": null,
+    "marca": "Hill's",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 38,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/prescription-diet-mobility-pollo-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Salmón y Arroz pienso",
+    "descripcion": "Pienso de salmón para perros de edad adulta y tamaño mediano o grande.",
+    "precio": "14.99",
+    "precio_oferta": null,
+    "marca": "Dogxtreme",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 37,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/salm-n-y-arroz-pienso.jpg"
+    ]
+  },
+  {
+    "nombre": "Adulto Pollo y Arroz pienso para perros de raza mediana",
+    "descripcion": "Pienso para perros de edad adulta y tamaño mediano. Con pollo y arroz integral, es un alimento alto en proteínas y bajo en grasas que protege la salud intestinal de tu mascota.",
+    "precio": "16.99",
+    "precio_oferta": null,
+    "marca": "Criadores",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 38,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/adulto-pollo-y-arroz-pienso-para-perros-de-raza-mediana.jpg"
+    ]
+  },
+  {
+    "nombre": "Prescription Diet z/d Food Sensitivities Mini para perros",
+    "descripcion": "El pienso para perros Hill's Prescriptio Diet Food Sensitives es un alimento formulado específicamente para aquellos perros de raza mini que tienen problmeas alérgicos con síntomas cutáneos y/o gastrointestinales.",
+    "precio": "14.89",
+    "precio_oferta": null,
+    "marca": "Hill's",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 48,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/prescription-diet-z-d-food-sensitivities-mini-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "No Grain Adult Medium Maxi Pollo pienso para perros",
+    "descripcion": "Nature's Variety No Grain, antes conocido como Nature's Variety Original, es un pienso de pollo deshuesado para perros adultos de razas medianas y grandes, es rico en proteínas y no contiene granos, favorece la salud de la piel y pelaje, fortalece el sistema inmunitario y permite mantener una óptima condición física.",
+    "precio": "5.49",
+    "precio_oferta": null,
+    "marca": "Nature's Variety",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 5,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/no-grain-adult-medium-maxi-pollo-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adulto Grain Free Salmón pienso para perros de razas medianas y grandes",
+    "descripcion": "",
+    "precio": "19.99",
+    "precio_oferta": null,
+    "marca": "Criadores",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 14,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/adulto-grain-free-salm-n-pienso-para-perros-de-razas-medianas-y-grandes.jpg"
+    ]
+  },
+  {
+    "nombre": "Dietetic Adulto Mobility pienso para perros",
+    "descripcion": "Pienso especialmente formulado para mejorar los síntomas de afecciones como la artritis y la artrosis que afectan a la movilidad y a la salud de las articulaciones en perros seniors o de razas grandes.",
+    "precio": "18.99",
+    "precio_oferta": null,
+    "marca": "Criadores",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 10,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/dietetic-adulto-mobility-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Prescription Diet Digestive i/d Care Low Fat Estofado de Pollo y Verduras lata para perros",
+    "descripcion": "Comida húmeda para perros de la gama Hill's i/d low fat formulada para mejorar la digestión. Es un estofado de pollo y verduras con un sabor delicioso.",
+    "precio": "2.49",
+    "precio_oferta": null,
+    "marca": "Hill's",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 13,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/prescription-diet-digestive-i-d-care-low-fat-estofado-de-pollo-y-verduras-lata-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Pure Adult Pollo No Grain pienso para perros",
+    "descripcion": "",
+    "precio": "23.99",
+    "precio_oferta": null,
+    "marca": "True Origins",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 47,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/perros/pure-adult-pollo-no-grain-pienso-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Prescription Diet Urinary Care u/d pienso para perros",
+    "descripcion": "Un pienso para perros que fue desarrollado para ayudar en el cuidado de tu mascota con problemas asociados a la urolitiasis.",
+    "precio": "40.39",
+    "precio_oferta": null,
+    "marca": "Hill's",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 14,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/perros/prescription-diet-urinary-care-u-d-pienso-para-perros.jpg"
+    ]
+  },
+
+  {
+    "nombre": "Original pienso para gatos y gatitos",
+    "descripcion": "Pienso natural para gatos de todas las edades, sin cereales, con un gran aporte de proteínas y elaborado con ingredientes frescos de primera calidad.",
+    "precio": "30.89",
+    "precio_oferta": null,
+    "marca": "Orijen",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 50,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/original-pienso-para-gatos-y-gatitos.jpg"
+    ]
+  },
+  {
+    "nombre": "Veterinary Hypoallergenic pienso para gatos",
+    "descripcion": "Pienso hipoalergénico para gatos adultos, ideal para reducir la intolerancia a ingredientes y nutrientes.",        
+    "precio": "7.39",
+    "precio_oferta": null,
+    "marca": "Royal Canin",
+    "categoria": "Alimentación",
+    "genero": "otro",
+    "color": "",
+    "material": "",
+    "stock": 47,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/veterinary-hypoallergenic-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Veterinary Diets Gastroenteric Sensitive pienso para gatos",
+    "descripcion": "Pienso gastrointestinal para gatos adultos con problemas digestivos, apto también para gatos con pancreatitis.",   
+    "precio": "19.39",
+    "precio_oferta": null,
+    "marca": "Advance",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 46,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/veterinary-diets-gastroenteric-sensitive-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Inflavet Antiinflamatorio para perros y gatos",
+    "descripcion": "Suplemento nutricional para perros y gatos que alivia la inflamación y el dolor.",
+    "precio": "30.49",
+    "precio_oferta": null,
+    "marca": "Pharmadiet",
+    "categoria": "Medicina",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 33,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/inflavet-antiinflamatorio-para-perros-y-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Selección Clásicos Sobre en Salsa para gatos",
+    "descripcion": "Comida húmeda para gatos adultos, con recetas de pollo y guisantes, buey, pavo y cordero con zanahorias, aporta hidratación adicional a la dieta habitual, fortalece el sistema inmunitario, mejora la salud de la piel y es muy fácil de digerir.",      
+    "precio": "7.19",
+    "precio_oferta": null,
+    "marca": "Whiskas",
+    "categoria": "Alimentación",
+    "genero": "otro",
+    "color": "",
+    "material": "",
+    "stock": 49,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/selecci-n-cl-sicos-sobre-en-salsa-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Wild Adult Country Water Pollo y Salmón pienso para gatos",
+    "descripcion": "Pienso para gatos de edad adulta, sin gluten, con pollo, salmón, vegetales y frutas.",
+    "precio": "4.99",
+    "precio_oferta": null,
+    "marca": "True Origins",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 8,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/wild-adult-country-water-pollo-y-salm-n-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Six Fish pienso para gatos y gatitos",
+    "descripcion": "Pienso felino elaborado para satisfacer las necesidades nutricionales de los gatos, con ingredientes naturales seleccionados para aportar la mejor alimentación.",
+    "precio": "33.29",
+    "precio_oferta": null,
+    "marca": "Orijen",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 47,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/six-fish-pienso-para-gatos-y-gatitos.jpg"
+    ]
+  },
+  {
+    "nombre": "Active Lotus Arena Aglomerante para gatos",
+    "descripcion": "Sanicat Active arena aglomerante efecto relax para gatos tiene un gran poder de absorción del 200% y es de larga duración, por lo que cunde mucho y resulta más económica. ...",
+    "precio": "9.89",
+    "precio_oferta": null,
+    "marca": "Sanicat",
+    "categoria": "Viviendas",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 13,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/active-lotus-arena-aglomerante-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Veterinary Diets Urinary Stress pienso para gatos",
+    "descripcion": "Este pienso para gatos esterilizados adultos ayuda a controlar el peso de la mascota y evita problemas urinarios como la reaparición de los cálculos de estruvita. Ingredientes como la melisa ayudan a reducir el estrés.",
+    "precio": "19.19",
+    "precio_oferta": null,
+    "marca": "Advance",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 5,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/veterinary-diets-urinary-stress-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Kitten pienso para gatos",
+    "descripcion": "El pienso Royal Canin Kitten es un alimento completo y equilibrado, específicamente formulado para gatitos de hasta un año de edad. Diseñado para asegurar un crecimiento fuerte y saludable, este producto protege el cuerpo de los más pequeños.",      
+    "precio": "30.69",
+    "precio_oferta": null,
+    "marca": "Royal Canin",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 41,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/kitten-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Variedades de Pollo Snack Líquido para gatos",
+    "descripcion": "Premio líquido para gatos adultos con una variedad de recetas de pollo.",
+    "precio": "16.49",
+    "precio_oferta": null,
+    "marca": "Churu",
+    "categoria": "Alimentación",
+    "genero": "otro",
+    "color": "",
+    "material": "",
+    "stock": 19,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/variedades-de-pollo-snack-l-quido-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Wild Adult Sterilised Pollo Pienso para gatos",
+    "descripcion": "True Origins te trae un pienso completo para que ofrezcas a tu gato adulto esterilizado. Por lo general tienden a aumentar de peso, por ello, es importante que se alimenten de forma correcta para ...",
+    "precio": "24.99",
+    "precio_oferta": null,
+    "marca": "True Origins",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 9,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/wild-adult-sterilised-pollo-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Sterilised Pollo y Pavo pienso para gatos",
+    "descripcion": "Pienso natural para gatos adultos esterilizados. Es un alimento sin gluten, que evita que el gato engorde, la formación de bolas de pelo y contiene prebióticos.",
+    "precio": "19.29",
+    "precio_oferta": null,
+    "marca": "Wellness Core",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 32,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/adult-sterilised-pollo-y-pavo-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Prescription Diet Digestive Care i/d Pollo pienso para gatos",
+    "descripcion": "Comida para gatos con problemas digestivos.",
+    "precio": "23.79",
+    "precio_oferta": null,
+    "marca": "Hill's",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 19,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/prescription-diet-digestive-care-i-d-pollo-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Regional Red pienso para gatos y gatitos",
+    "descripcion": "",
+    "precio": "37.69",
+    "precio_oferta": null,
+    "marca": "Orijen",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 32,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/regional-red-pienso-para-gatos-y-gatitos.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Pollo y Arroz pienso para gatos",
+    "descripcion": "Pienso con una receta rica en pollo, especialmente formulado para cubrir las necesidades nutricionales de los gatos adultos a partir de 12 meses de edad.",
+    "precio": "4.99",
+    "precio_oferta": null,
+    "marca": "Advance",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 34,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/adult-pollo-y-arroz-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Kitten Pollo y Arroz  pienso para gatos",
+    "descripcion": "Pienso para gatitos a partir de los 2 meses de edad con una receta Criadores Kitten a base de pollo, arroz y verduras para crecer fuerte.",
+    "precio": "18.99",
+    "precio_oferta": null,
+    "marca": "Criadores",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 50,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/kitten-pollo-y-arroz-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Sensitive Sterilized Salmón y Arroz pienso para gatos",
+    "descripcion": "Pienso para gatos esterilizados con tendencia al sobrepeso. Apto para gatos con sensibilidades alimentarias. Ayuda a prevenir los problemas urinarios o aquellos relacionados con el aumento de peso.",
+    "precio": "16.19",
+    "precio_oferta": null,
+    "marca": "Advance",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 45,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/sensitive-sterilized-salm-n-y-arroz-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Fantastic Selecciones Favoritas de Carnes en Gelatina sobre para gatos – Multipack",
+    "descripcion": "Multipack de alimento húmedo de pequeños trozos de carne envueltos en gelatina para gatos adultos. Ideal para ofrecer como dieta principal que cuenta con diferentes recetas y promueve una vida saludable.",
+    "precio": "52.99",
+    "precio_oferta": null,
+    "marca": "Felix",
+    "categoria": "Alimentación",
+    "genero": "otro",
+    "color": "",
+    "material": "",
+    "stock": 9,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/fantastic-selecciones-favoritas-de-carnes-en-gelatina-sobre-para-gatos-multipack.jpg"
+    ]
+  },
+  {
+    "nombre": "Veterinary Satiety Weight Management pienso para gatos",
+    "descripcion": "Royal Canin Satiety Feline es un pienso formulado con bajas calorías y abundante fibra que incorpora el efecto saciante para ayudar a bajar el peso de los gatos obesos , siendo también...",
+    "precio": "29.39",
+    "precio_oferta": null,
+    "marca": "Royal Canin",
+    "categoria": "Alimentación",
+    "genero": "otro",
+    "color": "",
+    "material": "",
+    "stock": 19,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/veterinary-satiety-weight-management-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Veterinary Diets Urinary Sterilized Low Calorie pienso para gatos",
+    "descripcion": "Pienso urinario bajo en calorías para gatos esterilizados adultos que ayuda a controlar el peso y evita la reaparición de los cristales de estruvita.",
+    "precio": "17.99",
+    "precio_oferta": null,
+    "marca": "Advance",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 5,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/veterinary-diets-urinary-sterilized-low-calorie-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Gold Fondant Pollo en Paté lata para gatos",
+    "descripcion": "La comida húmeda para gatos en forma de paté con un sorprendente corazón líquido de salsa Purina Gourmet Gold Fondant es deliciosa y saludable.",
+    "precio": "0.89",
+    "precio_oferta": null,
+    "marca": "Gourmet",
+    "categoria": "Alimentación",
+    "genero": "otro",
+    "color": "",
+    "material": "",
+    "stock": 7,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/gold-fondant-pollo-en-pat-lata-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Sterilized Salmón Pienso para gatos",
+    "descripcion": "Pienso de salmón para gatos adultos esterilizados que favorece una función renal saludable y control de peso.",    
+    "precio": "16.99",
+    "precio_oferta": null,
+    "marca": "Pro Plan",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 42,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/adult-sterilized-salm-n-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Arena Aglomerante Bentonita y Marsella para gatos",
+    "descripcion": "Si estás pensando en cuál es la mejor arena para tu gato, TK-Pet te da la opción de siempre, pero mejorada. Su nueva gama de arenas para felinos tiene una excelente calidad libre ...",
+    "precio": "9.99",
+    "precio_oferta": null,
+    "marca": "TK-Pet",
+    "categoria": "Viviendas",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 2,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/arena-aglomerante-bentonita-y-marsella-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Veterinary Diets Hypoallergenic pienso para gatos",
+    "descripcion": "Pienso dietético completo para gatitos y gatos adultos para reducir la intolerancia a ingredientes y nutrientes, formulado con fuentes de proteína hidrolizada.",
+    "precio": "21.79",
+    "precio_oferta": null,
+    "marca": "Pro Plan",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 5,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/veterinary-diets-hypoallergenic-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Lypex Suplemento en Comprimidos para perros",
+    "descripcion": "Complemento alimenticio para perros y gatos que padecen problemas pancreáticos.",
+    "precio": "75.59",
+    "precio_oferta": null,
+    "marca": "VetPlus",
+    "categoria": "Medicina",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 35,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/lypex-suplemento-en-comprimidos-para-perros.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Sterilised Pollo y Arroz pienso para gatos",
+    "descripcion": "Pienso para gatos de edad adulta esterilizados. Este alimento con pollo como ingrediente principal, ayuda a cuidar el tracto urinario y a controlar el peso del animal.",
+    "precio": "4.99",
+    "precio_oferta": null,
+    "marca": "Nath",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 22,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/adult-sterilised-pollo-y-arroz-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Veterinary Gastrointestinal pienso para gatos",
+    "descripcion": "Es un alimento dietético para gatos, perfecto para reducir el riesgo de trastornos agudos de la absorción intestinal, y promover la recuperación nutricional.",
+    "precio": "10.89",
+    "precio_oferta": null,
+    "marca": "Royal Canin",
+    "categoria": "Alimentación",
+    "genero": "otro",
+    "color": "",
+    "material": "",
+    "stock": 4,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/veterinary-gastrointestinal-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Adult Pollo y Buey pienso para gatos",
+    "descripcion": "",
+    "precio": "4.99",
+    "precio_oferta": null,
+    "marca": "Start",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 13,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/adult-pollo-y-buey-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Prescription Diet Urinary Care c/d multicare stress pollo pienso para gatos",
+    "descripcion": "Pienso para gatos que ayuda a controlar el estrés y a reducir la Cistitis Ideopática Felina (CIF)",
+    "precio": "27.49",
+    "precio_oferta": null,
+    "marca": "Hill's",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 28,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/gatos/prescription-diet-urinary-care-c-d-multicare-stress-pollo-pienso-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Perlas Absorbentes para gatos",
+    "descripcion": "Arena de sílice para gatos, no permufada, ligera y con un gran poder de absorción.",
+    "precio": "6.49",
+    "precio_oferta": null,
+    "marca": "Nova Clean",
+    "categoria": "Viviendas",
+    "genero": "gato",
+    "color": "",
+    "material": "",
+    "stock": 43,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/gatos/perlas-absorbentes-para-gatos.jpg"
+    ]
+  },
+  {
+    "nombre": "Comedero Automático  para acuario",
+    "descripcion": "Este dispensador programable de pequeño tamaño ofrece a tus peces su ración de comida diaria de forma constante y regular . Es un accesorio indispensable si piensas ausentarte de...",
+    "precio": "60.49",
+    "precio_oferta": null,
+    "marca": "Eheim",
+    "categoria": "Alimentación",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 15,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/comedero-autom-tico-para-acuario.jpg"
+    ]
+  },
+  {
+    "nombre": "eSHa 2000 Tratamiento Desinfectante para peces",
+    "descripcion": "El tratamiento desinfectante para peces eSHa 2000 previene y combate más de 18 enfermedades como: infecciones bacterianas de la mucosa, levantamiento de escamas, micosas primarias y ...",
+    "precio": "10.99",
+    "precio_oferta": null,
+    "marca": "eSHa labs",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 6,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/esha-2000-tratamiento-desinfectante-para-peces.jpg"
+    ]
+  },
+  {
+    "nombre": "AlguMin tratamiento antialgas para acuarios",
+    "descripcion": "Cuando comienzan a aparecer las primeras algas en los acuarios es el momento de utilizar Tetra AlguMin , se trata de un tratamiento de amplio espectro contra todas las algas más frecuentes",
+    "precio": "5.99",
+    "precio_oferta": null,
+    "marca": "Tetra",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 19,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/algumin-tratamiento-antialgas-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Acuario blanco de cristal con cubierta y luces LED para peces",
+    "descripcion": "Nobleza Acuario de crsital con cubierta luces LED blanco con filtro, ideal para crear un ambiente relajante y mantener el agua limpia.",
+    "precio": "55.99",
+    "precio_oferta": null,
+    "marca": "Nobleza",
+    "categoria": "Viviendas",
+    "genero": "pez",
+    "color": "Blanco.",
+    "material": "",
+    "stock": 10,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/acuario-blanco-de-cristal-con-cubierta-y-luces-led-para-peces.jpg"
+    ]
+  },
+  {
+    "nombre": "ThermoControl +e Termocalentador digital para acuarios",
+    "descripcion": "",
+    "precio": "56.99",
+    "precio_oferta": null,
+    "marca": "Eheim",
+    "categoria": "Viviendas",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 50,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/thermocontrol-e-termocalentador-digital-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Fingerwood Dark Árbol de Raíces para acuarios",
+    "descripcion": "La raíz natural Fingerwood Dark para acuarios es una fantástica pieza decorativa que dará vida a tu pecera. Sus formas irregulares con múltiples ramas entrelazadas crean ...",
+    "precio": "15.39",
+    "precio_oferta": null,
+    "marca": "Hobby",
+    "categoria": "Viviendas",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 7,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/fingerwood-dark-rbol-de-ra-ces-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Exit Tratamiento Punto Blanco para peces",
+    "descripcion": "El tratamiento fungicida para peces Exit combate las enfermedades de tipo ICH, como el conocido punto blanco. Actúa contra las dos especies, Ich de importación e Ich de terciopelo . La...",
+    "precio": "6.29",
+    "precio_oferta": null,
+    "marca": "Nayeco",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 36,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/exit-tratamiento-punto-blanco-para-peces.jpg"
+    ]
+  },
+  {
+    "nombre": "Combiset Maletín de Análisis para acuarios",
+    "descripcion": "Este maletín incluye 6 tests diferentes para medir los parámetros más importantes del agua de su acuario . Mide la acidez del agua (pH), dureza temporal (kH), nitritos (NO2),...",
+    "precio": "57.79",
+    "precio_oferta": null,
+    "marca": "JBL",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 5,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/combiset-malet-n-de-an-lisis-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Granugreen Nature Alimento para peces",
+    "descripcion": "Este alimento de Sera Granugreen Nature en forma de pellets está elaborado para conservar todas sus propiedades , no contiene colorantes ni conservantes y es adecuados para cíclidos...",
+    "precio": "12.09",
+    "precio_oferta": null,
+    "marca": "Sera",
+    "categoria": "Alimentación",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 32,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/granugreen-nature-alimento-para-peces.jpg"
+    ]
+  },
+  {
+    "nombre": "Air 550 R Plus Bomba de Aire para acuarios",
+    "descripcion": "SERA air 550 R plus es una bomba de aire para grandes acuarios y estanques . Ahora es más pequeña y compacta que su predecesora, más eficiente (consume un 33% menos) y más...",
+    "precio": "56.09",
+    "precio_oferta": null,
+    "marca": "Sera",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 43,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/air-550-r-plus-bomba-de-aire-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "300 Unidad de Ósmosis Inversa para acuarios",
+    "descripcion": "Unidad de ósmosis inversa para el tratamiento del agua de acuarios, uso doméstico e industrial, permite depurar el agua del grifo sin usar productos químicos, funciona con agua dulce o salada, es compacta y altamente eficiente.",
+    "precio": "59.99",
+    "precio_oferta": null,
+    "marca": "Blue Clown Fish",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 16,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/300-unidad-de-smosis-inversa-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Pack acuario amazónico 15 plantas",
+    "descripcion": "Son plantas de fácil cuidado y mantenimiento....",
+    "precio": "48.80",
+    "precio_oferta": null,
+    "marca": "Tropica Iberia",
+    "categoria": "Viviendas",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 26,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/pack-acuario-amaz-nico-15-plantas.jpg"
+    ]
+  },
+  {
+    "nombre": "Biopower Filtro Interior para acuarios",
+    "descripcion": "EHEIM Biopower es el primer filtro interior de alto rendimiento con una característica muy especial, ya que funciona con filtración por diferentes capas, como si se tratara de un filtro ...",
+    "precio": "55.89",
+    "precio_oferta": null,
+    "marca": "Eheim",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 9,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/biopower-filtro-interior-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "M.Bermudes Mesa negra para acuarios",
+    "descripcion": "La funcional mesa modelo Bermudes para acuarios de Aquatlantis está hecha en madera resistente , destaca elegantemente por su color negro, posee capacidad para soportar el peso del acuario y su...",
+    "precio": "39.99",
+    "precio_oferta": null,
+    "marca": "Aquatlantis",
+    "categoria": "Viviendas",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 41,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/m-bermudes-mesa-negra-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Classic Filtro de esponja para acuarios",
+    "descripcion": "",
+    "precio": "6.99",
+    "precio_oferta": null,
+    "marca": "Eheim",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 34,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/classic-filtro-de-esponja-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "AquaClear AC Cargas de Mantenimiento para Filtro de acuarios",
+    "descripcion": "Kit de cargas de mantenimiento para filtro de acuarios, contiene los tres medios filtrantes esenciales del filtro Fluval AC, con una bolsita de BioFoam, una de BioMax y dos de Carbón, son adecuados para agua dulce y salada y muy fáciles de utilizar.",
+    "precio": "8.79",
+    "precio_oferta": null,
+    "marca": "Fluval",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 10,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/aquaclear-ac-cargas-de-mantenimiento-para-filtro-de-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Pond CrystalWater Acondicionador de Agua para estanques",
+    "descripcion": "Tetra Pond CrystalWater aclara el agua de tu estanque",
+    "precio": "12.59",
+    "precio_oferta": null,
+    "marca": "Tetra",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 45,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/pond-crystalwater-acondicionador-de-agua-para-estanques.jpg"
+    ]
+  },
+  {
+    "nombre": "Florena Fertilizante para acuarios",
+    "descripcion": "Abono para plantas de acuario con hierro, minerales y oligoelementos fácilmente asimilables por todas las plantas acuáticas. No contiene nitratos ni fosfatos. Garantiza un óptimo ...",
+    "precio": "8.29",
+    "precio_oferta": null,
+    "marca": "Sera",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 14,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/florena-fertilizante-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Flourish Excel fertilizante para plantas",
+    "descripcion": "",
+    "precio": "11.99",
+    "precio_oferta": null,
+    "marca": "Seachem",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 49,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/flourish-excel-fertilizante-para-plantas.jpg"
+    ]
+  },
+  {
+    "nombre": "Filtro Esponja Blanco de Alta Densidad para acuarios",
+    "descripcion": "Nobleza Filtro Esponja Blanco de Alta Densidad para acuarios, ideal para mantener el agua limpia y libre de impurezas.",
+    "precio": "10.99",
+    "precio_oferta": null,
+    "marca": "Nobleza",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 11,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/filtro-esponja-blanco-de-alta-densidad-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Cladophora Marimo Bola de Musgo Japones Aegagropila para peces",
+    "descripcion": "La Chladoflora Aegagropila o Marimo es una bola de musgo natural. no tiene mucha dificultad, simplemente unos cuidados básicos. Se vende por unidades",
+    "precio": "2.69",
+    "precio_oferta": null,
+    "marca": "My Shrimp House",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 19,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/peces/cladophora-marimo-bola-de-musgo-japones-aegagropila-para-peces.jpg"
+    ]
+  },
+  {
+    "nombre": "B-Box Pure Water Filtro para acuarios",
+    "descripcion": "Cartucho de filtración química para acuarios, mantiene el agua cristalina, elimina la coloración y los malos olores, así como el cloro y los metales tóxicos, es fácil de utilizar y está envuelto en fibra biodegradable.",
+    "precio": "4.99",
+    "precio_oferta": null,
+    "marca": "Aquatlantis",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 34,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/b-box-pure-water-filtro-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Aqua Filtro Interno de esquina para acuarios",
+    "descripcion": "El filtro interior de esquina EHEIM aqua está recomendado para acuarios pequeños y medianos de 30 a 200 L tanto de agua dulce como de agua marina. Con él te aseguras una ...",
+    "precio": "38.19",
+    "precio_oferta": null,
+    "marca": "Eheim",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 36,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/aqua-filtro-interno-de-esquina-para-acuarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Calentador Miniatura para acuarios",
+    "descripcion": "Los peces de tu acuario demandan unos parámetros y unos entornos de temperatura adecuados , gracias a este calentador sumergible de marina es posible, ya que permite controlar de forma...",
+    "precio": "20.89",
+    "precio_oferta": null,
+    "marca": "Marina",
+    "categoria": "Cuidado e Higiene",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 8,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/peces/calentador-miniatura-para-acuarios.jpg"
+    ]
+  },
+
+  {
+    "nombre": "Voltregá 440 Pajarera con Techo y Ruedas colores surtidos para pájaros",
+    "descripcion": "La pajarera Voltregá 440 es una jaula voladera ideal para todo tipo de aves gracias a su amplio y cómodo espacio y con todos sus elementos básicos. Colores surtidos.",
+    "precio": "149.99",
+    "precio_oferta": null,
+    "marca": "Voltregà",
+    "categoria": "Viviendas",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 4,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/voltreg-440-pajarera-con-techo-y-ruedas-colores-surtidos-para-p-jaros.jpg"
+    ]
+  },
+  {
+    "nombre": "Arena Absorbente para pájaros",
+    "descripcion": "Todos queremos que nuestras mascotas huelan bien y se mantengan aseadas, ¿verdad? La arena Sanibird es la respuesta para que la jaula de tus aves ya no huela mal y tus mascotas se mantengan ...",
+    "precio": "4.99",
+    "precio_oferta": null,
+    "marca": "Sanibird",
+    "categoria": "Viviendas",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 44,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/arena-absorbente-para-p-jaros.jpg"
+    ]
+  },
+  {
+    "nombre": "Jaula Metálica con 3 Puertas para pájaro",
+    "descripcion": "PawHut Jaula para Pájaros 39x33x47 cm Pajarera Metálica con 3 Puertas 2 Comederos 2 Perchas Columpio Bandeja Extraíble y Asa de Transporte para Canarios Periquitos Negro",
+    "precio": "41.99",
+    "precio_oferta": null,
+    "marca": "PawHut",
+    "categoria": "Viviendas",
+    "genero": "otro",
+    "color": "Negro",
+    "material": "",
+    "stock": 30,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/jaula-met-lica-con-3-puertas-para-p-jaro.jpg"
+    ]
+  },
+  {
+    "nombre": "pienso para ninfas",
+    "descripcion": "Comida completa y equilibrada adecuada para la alimentación de ninfas y otras cotorras. Es un alimentos rico en vitaminas y minerales como potasio e hierro para el mantenimiento de una ...",
+    "precio": "7.49",
+    "precio_oferta": null,
+    "marca": "Cunipic",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 20,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/pienso-para-ninfas.jpg"
+    ]
+  },
+  {
+    "nombre": "Omega comida para pájaros psitácidos",
+    "descripcion": "Este fantástico pienso de Psittacus está indicado como alimento de transición desde que el animal deja de tomar papilla hasta la edad adulta. Se trata de un pienso perfecto para ...",
+    "precio": "18.79",
+    "precio_oferta": null,
+    "marca": "Psittacus",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 25,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/omega-comida-para-p-jaros-psit-cidos.jpg"
+    ]
+  },
+  {
+    "nombre": "jaula con soporte y ruedas negra para pájaros",
+    "descripcion": "¿Buscando jaula para tus pájaros? Échale un vistazo a esta jaula para pajaros grande de PawHut con soporte, seguro que te encantará. Con estructura de metal, incluye 4 ...",
+    "precio": "114.99",
+    "precio_oferta": null,
+    "marca": "PawHut",
+    "categoria": "Viviendas",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 32,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/jaula-con-soporte-y-ruedas-negra-para-p-jaros.jpg"
+    ]
+  },
+  {
+    "nombre": "Pajarera Metálica con ruedas para pájaros",
+    "descripcion": "¿Buscas una jaula para tus pájaros? Una buena jaula aportará grandes beneficios a los pájaros, entre ellos promueve la longevidad, la seguridad y el bienestar.",
+    "precio": "116.99",
+    "precio_oferta": null,
+    "marca": "PawHut",
+    "categoria": "Viviendas",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 50,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/pajarera-met-lica-con-ruedas-para-p-jaros.jpg"
+    ]
+  },
+  {
+    "nombre": "Ornithostore Lecho de Mazorca de Maíz para pájaros",
+    "descripcion": "Lecho natural suave y libre de polvo, elaborado con mazorca de maíz para pájaros. Es compostable y posee un agradable aroma a romero, ideal para colocar en la jaula para contribuir con la limpieza, y absorber líquidos y malos olores.",
+    "precio": "9.19",
+    "precio_oferta": null,
+    "marca": "Psittacus",
+    "categoria": "Viviendas",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 48,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/ornithostore-lecho-de-mazorca-de-ma-z-para-p-jaros.jpg"
+    ]
+  },
+  {
+    "nombre": "614 Jaula gris con puerta frontal y lateral para pájaros",
+    "descripcion": "Jaula espaciosa para pájaros pequeños y medianos.",
+    "precio": "60.49",
+    "precio_oferta": null,
+    "marca": "Voltregà",
+    "categoria": "Viviendas",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 38,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/614-jaula-gris-con-puerta-frontal-y-lateral-para-p-jaros.jpg"
+    ]
+  },
+  {
+    "nombre": "Total Vitaminas Gotas para pájaros",
+    "descripcion": "La salud de tu ave de adorno estará protegida con estos complementos vitamínicos, imprescindibles para protegerla de las inclemencias del tiempo, parásitos, enfermedades etc....",
+    "precio": "9.99",
+    "precio_oferta": null,
+    "marca": "Tabernil",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 1,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/total-vitaminas-gotas-para-p-jaros.jpg"
+    ]
+  },
+  {
+    "nombre": "Portalámparas Doble de cúpula para terrarios",
+    "descripcion": "Este producto es una solución para aportar una iluminación completa a tu reptil, gracias a que combina dos lámparas en una sola por lo que es muy práctico y cómodo ,...",
+    "precio": "59.99",
+    "precio_oferta": null,
+    "marca": "Zoo Med",
+    "categoria": "Viviendas",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 9,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/portal-mparas-doble-de-c-pula-para-terrarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Prestige Premium pienso para canarios",
+    "descripcion": "Mezcla de semillas enriquecidas con vitaminas, minerales y oligoelementos adecuada para la alimentación diaria de canarios. Su fórmula exclusiva está compuesta por una selecta ...",
+    "precio": "6.49",
+    "precio_oferta": null,
+    "marca": "Versele-Laga",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 8,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/prestige-premium-pienso-para-canarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Jaula con ruedas para Pájaros",
+    "descripcion": "",
+    "precio": "104.99",
+    "precio_oferta": null,
+    "marca": "PawHut",
+    "categoria": "Viviendas",
+    "genero": "otro",
+    "color": "",
+    "material": "",
+    "stock": 7,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/jaula-con-ruedas-para-p-jaros.jpg"
+    ]
+  },
+  {
+    "nombre": "Prestige pienso para canarios",
+    "descripcion": "El alimento para canarios Versele Laga Prestige Stand up es un pienso formado por una mezcla de semillas tradicional adecuada para la alimentación diaria de todos los canarios, especialmente ...",
+    "precio": "5.79",
+    "precio_oferta": null,
+    "marca": "Versele-Laga",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 1,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/prestige-pienso-para-canarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Jaula para Pájaros Negro",
+    "descripcion": "Pajarera doble de PawHut con puertas en cada lado, tendrás acceso fácil y rápido, ideal para alimentarlas en tus días más ajetreados. La estructura metálica de esta jaula ofrece un gran espacio.",
+    "precio": "117.99",
+    "precio_oferta": null,
+    "marca": "PawHut",
+    "categoria": "Viviendas",
+    "genero": "otro",
+    "color": "",
+    "material": "",
+    "stock": 45,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/jaula-para-p-jaros-negro.jpg"
+    ]
+  },
+  {
+    "nombre": "pienso para periquitos",
+    "descripcion": "Comida completa y equilibrada adecuada para la alimentación de periquitos. Está enriquecido con vitaminas y minerales para el mantenimiento de una óptima salud. Es un producto ...",
+    "precio": "7.49",
+    "precio_oferta": null,
+    "marca": "Cunipic",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 43,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/pienso-para-periquitos.jpg"
+    ]
+  },
+  {
+    "nombre": "Muda anticaída de plumas",
+    "descripcion": "Tabernil muda es un complemento vitamínico para canarios y aves de adornos en general (periquitos , cotorras , jilgueros , etc.) que se administra en forma de gotas en el agua de bebida.Su u...",
+    "precio": "6.99",
+    "precio_oferta": null,
+    "marca": "Tabernil",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 47,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/muda-antica-da-de-plumas.jpg"
+    ]
+  },
+  {
+    "nombre": "Rekord 3 jaula con puerta frontal para canarios",
+    "descripcion": "Jaula de Ferplast para canarios y pájaros exiticos pequeños.",
+    "precio": "61.59",
+    "precio_oferta": null,
+    "marca": "Ferplast",
+    "categoria": "Viviendas",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 33,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/rekord-3-jaula-con-puerta-frontal-para-canarios.jpg"
+    ]
+  },
+  {
+    "nombre": "Versele Laga Nutribird B14 Mantenimiento alimento para periquitos",
+    "descripcion": "Este alimento para periquitos está compuesto por una mezcla equilibrada de cereales seleccionados, frutas y semillas de mijo. Es una fuente rica de nutrientes esenciales para la salud y bienestar del pájaro. Es fácil de digerir y tiene sabor atractivo.",
+    "precio": "7.69",
+    "precio_oferta": null,
+    "marca": "Versele-Laga",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 10,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/versele-laga-nutribird-b14-mantenimiento-alimento-para-periquitos.jpg"
+    ]
+  },
+  {
+    "nombre": "Verserle-Laga Exotic Nuts Snacks para loros",
+    "descripcion": "Mezcla de deliciosas semillas y cereales con un contenido mínimo 20% de nueces para la alimentación complementaria de loros y cotorras. Es un producto con una seleccionada mezcla de ...",
+    "precio": "6.59",
+    "precio_oferta": null,
+    "marca": "Versele-Laga",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 17,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/verserle-laga-exotic-nuts-snacks-para-loros.jpg"
+    ]
+  },
+  {
+    "nombre": "Prestige pienso para aves exóticas",
+    "descripcion": "Mezcla de alta calidad adecuada para la alimentación de todo tipo de pájaros exóticos....",
+    "precio": "4.29",
+    "precio_oferta": null,
+    "marca": "Versele-Laga",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 1,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/prestige-pienso-para-aves-ex-ticas.jpg"
+    ]
+  },
+  {
+    "nombre": "Menú Comida para aves exóticas granívoras",
+    "descripcion": "Alimento especial para pájaros exóticos granívoros, con las vitaminas, minerales, sustancias nutritivas y reconstituyentes que estas especies necesitan....",
+    "precio": "2.79",
+    "precio_oferta": null,
+    "marca": "Vitakraft",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 47,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/men-comida-para-aves-ex-ticas-gran-voras.jpg"
+    ]
+  },
+  {
+    "nombre": "Bolas de grasa para pájaros salvajes sabor Natural",
+    "descripcion": "Te presentamos estas bolsas de grasas perfecta para la alimentación de los pájaros salvajes. Sabemos lo importante que es mantener una buena salud gracias a los alimentos que los ...",
+    "precio": "46.99",
+    "precio_oferta": null,
+    "marca": "VidaXL",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 35,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/pajaros/bolas-de-grasa-para-p-jaros-salvajes-sabor-natural.jpg"
+    ]
+  },
+  {
+    "nombre": "Espiga de Mijo para pájaros",
+    "descripcion": "¿Sabes que la espiga de mijo es rica en vitaminas y minerales muy beneficiosos para las aves? Por eso, si estás pensando en ofrecerle un snack a tu mascota y estás buscando ...",
+    "precio": "2.99",
+    "precio_oferta": null,
+    "marca": "Small Life",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 14,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/pajaros/espiga-de-mijo-para-p-jaros.jpg"
+    ]
+  },
+
+  {
+    "nombre": "Bolsa Transportín Extensible con Ventilación para mascotas",
+    "descripcion": "Con las bolsas de transporte para animales podrás llevar a tu mascota contigo a cualquier parte de una forma segura y cómoda para ellos.",
+    "precio": "39.95",
+    "precio_oferta": null,
+    "marca": "Mobiclinic",
+    "categoria": "Viviendas",
+    "genero": "roedor",
+    "color": "",
+    "material": "Ligera, resistente y fácil de lavar.",
+    "stock": 24,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/bolsa-transport-n-extensible-con-ventilaci-n-para-mascotas.jpg"
+    ]
+  },
+  {
+    "nombre": "Jaula para Roedores",      
+    "descripcion": "Con 2 Puertas 3 Plataformas Bandeja Extraíble Comedero y Bebedero para Conejos Cobayas Negro",
+    "precio": "86.99",
+    "precio_oferta": null,
+    "marca": "PawHut",
+    "categoria": "Viviendas",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 26,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/jaula-para-roedores-con-2-puertas-3-plataformas-bandeja-extra-ble-comedero-y-bebedero-para-conejos-cobayas-negro.jpg"
+    ]
+  },
+  {
+    "nombre": "Jaula para hámster de múltiples niveles  color Azul",
+    "descripcion": "Si necesitas un lugar amplio, pero a la vez seguro para que jueguen tus pequeñas mascotas… esta jaula de la marca PawHut para hámster con diferentes niveles te encantará ...",
+    "precio": "46.99",
+    "precio_oferta": null,
+    "marca": "PawHut",
+    "categoria": "Viviendas",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 7,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/roedores/jaula-para-h-mster-de-m-ltiples-niveles-color-azul.jpg"
+    ]
+  },
+  {
+    "nombre": "Jaula plegable negra para conejos",
+    "descripcion": "Jaula para conejos y cobayas, con un diseño que aporta comodidad.",
+    "precio": "60.49",
+    "precio_oferta": null,
+    "marca": "Voltregà",
+    "categoria": "Viviendas",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 25,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/roedores/jaula-plegable-negra-para-conejos.jpg"
+    ]
+  },
+  {
+    "nombre": "Complete Cuni Adulto alimento para conejos",
+    "descripcion": "",
+    "precio": "25.59",
+    "precio_oferta": null,
+    "marca": "Versele-Laga",
+    "categoria": "Alimentación",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 24,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/complete-cuni-adulto-alimento-para-conejos.jpg"
+    ]
+  },
+  {
+    "nombre": "Eliminador de Olores para gatos y roedores",
+    "descripcion": "TK-Pet Home Antiamoniaco de bandejas y lechos es un producto específico para eliminar los olores de la orina y mantener un entorno más higiénico en el hogar.",
+    "precio": "4.89",
+    "precio_oferta": null,
+    "marca": "TK-Pet",
+    "categoria": "Cuidado e Higiene",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 48,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/eliminador-de-olores-para-gatos-y-roedores.jpg"
+    ]
+  },
+  {
+    "nombre": "Trampa Verde para Roedores",
+    "descripcion": "",
+    "precio": "46.99",
+    "precio_oferta": null,
+    "marca": "PawHut",
+    "categoria": "Cuidado e Higiene",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 13,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/roedores/trampa-verde-para-roedores.jpg"
+    ]
+  },
+  {
+    "nombre": "Extensión Modular de la Caseta Rocky para conejos y gallinas",
+    "descripcion": "La Jaula gallinero - conejera TK-Pet Rocky Modular es una estación de extensión adaptable al Gallinero Technical Pet Rocky Modular , uno de los más prácticas y funcionales...",
+    "precio": "101.69",
+    "precio_oferta": null,
+    "marca": "TK-Pet",
+    "categoria": "Viviendas",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 27,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/roedores/extensi-n-modular-de-la-caseta-rocky-para-conejos-y-gallinas.jpg"
+    ]
+  },
+  {
+    "nombre": "Nature Cuni pienso para conejos",
+    "descripcion": "El alimento para conejos Versele-Laga Nature Cuni es una comida rica y nutritiva que cubre perfectamente las necesidades de estos animales en su estado adulto. Se trata de una mezcla enriquecida ...",
+    "precio": "4.69",
+    "precio_oferta": null,
+    "marca": "Versele-Laga",
+    "categoria": "Alimentación",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 8,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/nature-cuni-pienso-para-conejos.jpg"
+    ]
+  },
+  {
+    "nombre": "Jaula Negra para Roedores",
+    "descripcion": "Esta jaula para hámsteres de PawHut ofrece un hábitat seguro y estimulante. Con rampas, plataformas y rueda para ejercicio, fomenta la actividad de tu hámster.",
+    "precio": "89.99",
+    "precio_oferta": null,
+    "marca": "PawHut",
+    "categoria": "Viviendas",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 20,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/jaula-negra-para-roedores.jpg"
+    ]
+  },
+  {
+    "nombre": "pienso para conejos",
+    "descripcion": "Los conejos son animales herbívoros por lo que su alimentación se basa en vegetales. Además del heno, básico en su dieta, el alimento que elabora Small Life es ...",
+    "precio": "4.99",
+    "precio_oferta": null,
+    "marca": "Small Life",
+    "categoria": "Alimentación",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 28,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/pienso-para-conejos.jpg"
+    ]
+  },
+  {
+    "nombre": "Complemento natural y nutricional  Anima Strath",
+    "descripcion": "Te presentamos este complemeto natural y nutricional para las mascotas, les ayudará a mantener la energía necesaria en el día a día. Se caracteríza por sus ...",
+    "precio": "78.93",
+    "precio_oferta": null,
+    "marca": "Stangest",
+    "categoria": "Alimentación",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 30,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/complemento-natural-y-nutricional-anima-strath.jpg"
+    ]
+  },
+  {
+    "nombre": "Care+ Pienso para conejos",
+    "descripcion": "",
+    "precio": "5.49",
+    "precio_oferta": null,
+    "marca": "Beaphar",
+    "categoria": "Alimentación",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 15,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/roedores/care-pienso-para-conejos.jpg"
+    ]
+  },
+  {
+    "nombre": "Pasta Multivitamínica",
+    "descripcion": "Delicioso complejo multivitamínico indicado para que no le falte vitalidad a tus gatos y hurones. Especialmente indicado para fortalecer la defensas, fomentar una piel y pelaje sano y br...",
+    "precio": "2.69",
+    "precio_oferta": null,
+    "marca": "Gimborn",
+    "categoria": "Cuidado e Higiene",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 23,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/roedores/pasta-multivitam-nica.jpg"
+    ]
+  },
+  {
+    "nombre": "Trampa para Roedores",
+    "descripcion": "",
+    "precio": "46.99",
+    "precio_oferta": null,
+    "marca": "Outsunny",
+    "categoria": "Cuidado e Higiene",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 50,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/trampa-para-roedores.jpg"
+    ]
+  },
+  {
+    "nombre": "Heno de Montaña con Manzanilla para roedores",
+    "descripcion": "Heno de montaña con manzanilla totalmente natural y libre de polvo para roedores. Es rico en fibras, ideal para favorecer la digestión y el correcto desgaste de los dientes para evitar el crecimiento excesivo.",
+    "precio": "4.99",
+    "precio_oferta": null,
+    "marca": "Versele-Laga",
+    "categoria": "Alimentación",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 21,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/roedores/heno-de-monta-a-con-manzanilla-para-roedores.jpg"
+    ]
+  },
+  {
+    "nombre": "Heno de Manzanilla para roedores",
+    "descripcion": "¿Sabes que las flores de manzanilla son un alimento especialmente recomendado para roedores por sus propiedades antiinflamatorias que ayudan a mejorar el tránsito intestinal? ...",
+    "precio": "4.99",
+    "precio_oferta": null,
+    "marca": "Small Life",
+    "categoria": "Alimentación",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 19,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/roedores/heno-de-manzanilla-para-roedores.jpg"
+    ]
+  },
+  {
+    "nombre": "Jaula de 5 plantas con accesorios para hámsters color Verde",
+    "descripcion": "Sabemos que tus hámsters necesitan un lugar donde vivir plácida y cómodamente, por ello te presentamos esta magnífica jaula de 5 plantas en las que tu hámster ...",
+    "precio": "40.99",
+    "precio_oferta": null,
+    "marca": "PawHut",
+    "categoria": "Viviendas",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 37,
+    "esta_disponible": true,
+    "es_destacado": true,
+    "imagenes": [
+      "productos/imagenes/roedores/jaula-de-5-plantas-con-accesorios-para-h-msters-color-verde.jpg"
+    ]
+  },
+  {
+    "nombre": "Absorsol Lecho de Madera para mascotas",
+    "descripcion": "Lecho para mascotas compuesto de pellets de madera, producto natural y 100% biodegradable.",
+    "precio": "8.09",
+    "precio_oferta": null,
+    "marca": "SanDimas",
+    "categoria": "Cuidado e Higiene",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 8,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/absorsol-lecho-de-madera-para-mascotas.jpg"
+    ]
+  },
+  {
+    "nombre": "Bebedero universal Gyc con botella 2 L  color Blanco/Gris /Negro",
+    "descripcion": "Bebedero universal y Cazoleta M-50 Botella 2 L para Conejos",
+    "precio": "7.10",
+    "precio_oferta": null,
+    "marca": "Gomez Y Crespo",
+    "categoria": "Cuidado e Higiene",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 44,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/bebedero-universal-gyc-con-botella-2-l-color-blanco-gris-negro.jpg"
+    ]
+  },
+  {
+    "nombre": "Casita 100 Jaula para roedores",
+    "descripcion": "Jaula para roedores como cobayas y también conejos, tiene un comedero, un bebedero, una casa, un cuenco para heno y una escalera, fabricada con materiales reciclados y de alta calidad.",
+    "precio": "83.59",
+    "precio_oferta": null,
+    "marca": "Ferplast",
+    "categoria": "Viviendas",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 22,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/casita-100-jaula-para-roedores.jpg"
+    ]
+  },
+  {
+    "nombre": "Neutralizador de olores para roedores",
+    "descripcion": "Neutralizador de olor para roedores, diseñado para eliminar los malos olores del hogar de tu mascota.",
+    "precio": "10.36",
+    "precio_oferta": null,
+    "marca": "Beaphar",
+    "categoria": "Cuidado e Higiene",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 28,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/neutralizador-de-olores-para-roedores.jpg"
+    ]
+  },
+  {
+    "nombre": "Heno de Montaña con Frutos Silvestres para roedores",
+    "descripcion": "Heno natural enriquecido con frutos silvestres y hierbas, ideal para roedores y lagomorfos. Rico en fibra, vitaminas y minerales. Favorece la digestión, el metabolismo y la salud dental. 100% natural y delicioso.",
+    "precio": "6.89",
+    "precio_oferta": null,
+    "marca": "Cunipic",
+    "categoria": "Alimentación",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 40,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/heno-de-monta-a-con-frutos-silvestres-para-roedores.jpg"
+    ]
+  },
+  {
+    "nombre": "Nature para pienso para chinchillas",
+    "descripcion": "Versele-Laga Nature es un alimento completo adaptado a las necesidades nutricionales de las chinchillas. Esta mezcla premium de componentes naturales contiene todas las sustancias nutritivas, ...",
+    "precio": "5.29",
+    "precio_oferta": null,
+    "marca": "Versele-Laga",
+    "categoria": "Alimentación",
+    "genero": "roedor",
+    "color": "",
+    "material": "",
+    "stock": 38,
+    "esta_disponible": true,
+    "es_destacado": false,
+    "imagenes": [
+      "productos/imagenes/roedores/nature-para-pienso-para-chinchillas.jpg"
+    ]
+  },
+
+  
+  {
+    "nombre": "Pienso Premium Adulto",
+    "descripcion": "Alimento completo para perros adultos, alta digestibilidad.",
+    "precio": "24.99",
+    "precio_oferta": "19.99",
+    "marca": "Marca 1",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "jamón",
+    "stock": 50,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+   {
+    "nombre": "Pienso cachorro",
+    "descripcion": "Alimento completo para perros jóvenes.",
+    "precio": "24.99",
+    "precio_oferta": "",
+    "marca": "Marca 1",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "pollo",
+    "stock": 58,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+   {
+    "nombre": "Chuches de Jamón",
+    "descripcion": "Deliciosas golosinas de jamón para premiar a tu perro.",
+    "precio": "14.99",
+    "precio_oferta": "10.99",
+    "marca": "Marca 2",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "jamón",
+    "stock": 12,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+   {
+    "nombre": "Latas de Pavo para Gatos",
+    "descripcion": "Alimento completo para gatos adultos, alta digestibilidad.",
+    "precio": "24.99",
+    "precio_oferta": "19.99",
+    "marca": "Marca 1",
+    "categoria": "Alimentación",
+    "genero": "gato",
+    "color": "",
+    "material": "pavo",
+    "stock": 39,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+   {
+    "nombre": "Alpiste de Calidad",
+    "descripcion": "Alimento completo para aves, alta digestibilidad.",
+    "precio": "8.99",
+    "precio_oferta": "",
+    "marca": "Marca 5",
+    "categoria": "Alimentación",
+    "genero": "ave",
+    "color": "",
+    "material": "pipas",
+    "stock": 100,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+   {
+    "nombre": "snack de pato para perros",
+    "descripcion": "Deliciosas cabezas de pato deshidratadas para perros.",
+    "precio": "54.99",
+    "precio_oferta": "49.99",
+    "marca": "Marca 4",
+    "categoria": "Alimentación",
+    "genero": "perro",
+    "color": "",
+    "material": "pato",
+    "stock": 50,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+     {
+    "nombre": "Comida de peces en lata",
+    "descripcion": "Comida para peces en lata, rica en nutrientes.",
+    "precio": "4.99",
+    "precio_oferta": "3.99",
+    "marca": "Marca 4",
+    "categoria": "Alimentación",
+    "genero": "pez",
+    "color": "",
+    "material": "",
+    "stock": 50,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+    {
+    "nombre": "Anti parásitos",
+    "descripcion": "Tratamiento antiparasitario para perros.",
+    "precio": "52.50",
+    "precio_oferta": null,
+    "marca": "Marca 3",
+    "categoria": "Medicina",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 120,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+      {
+    "nombre": "Condrovet Force HA",
+    "descripcion": "Suplemento para perros que necesitan mejorar la salud articular.",
+    "precio": "118.99",
+    "precio_oferta": null,
+    "marca": "Marca 3",
+    "categoria": "Medicina",
+    "genero": "perro",
+    "color": "",
+    "material": "",
+    "stock": 26,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+      {
+    "nombre": "PetCaps",
+    "descripcion": "Cápsulas vacías de Gelatina para Macotas, sabor a pollo",
+    "precio": "16.99",
+    "precio_oferta": null,
+    "marca": "Marca 3",
+    "categoria": "Medicina",
+    "genero": "gato",
+    "color": "",
+    "material": "gelatina, pollo",
+    "stock": 100,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+      {
+    "nombre": "Diptron aves",
+    "descripcion": "Solución pulverizada para aves para la prevención de infecciones por ácaros.",
+    "precio": "13,37",
+    "precio_oferta": "6.99",
+    "marca": "Marca 3",
+    "categoria": "Medicina",
+    "genero": "ave",
+    "color": "",
+    "material": "",
+    "stock": 74,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+    {
+    "nombre": "Abrigo Muflón",
+    "descripcion": "Abrigo calentito para perros de raza pequeña.",
+    "precio": "8.99",
+    "precio_oferta": "6.99",
+    "marca": "Marca 1",
+    "categoria": "Moda",
+    "genero": "perro",
+    "color": "gris",
+    "material": "muflón",
+    "stock": 80,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+      {
+    "nombre": "Sueter para gatos",
+    "descripcion": "Sueter calentito para gatos.",
+    "precio": "3.99",
+    "precio_oferta": "",
+    "marca": "Marca 1",
+    "categoria": "Moda",
+    "genero": "gato",
+    "color": "rosa",
+    "material": "Forro polar",
+    "stock": 17,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+      {
+    "nombre": "Conjunto chaleco y falda",
+    "descripcion": "Conjunto con lunares para conejos",
+    "precio": "6.67",
+    "precio_oferta": "5.25",
+    "marca": "Marca 1",
+    "categoria": "Moda",
+    "genero": "roedor",
+    "color": "rosa",
+    "material": "algodón",
+    "stock": 7,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+  {
+    "nombre": "Pelota",
+    "descripcion": "Pelota de goma resistente para perros.",
+    "precio": "9.50",
+    "precio_oferta": null,
+    "marca": "Marca 2",
+    "categoria": "Juguetes",
+    "genero": "perro",
+    "color": "rojo",
+    "material": "goma",
+    "stock": 40,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+    {
+    "nombre": "Ratón",
+    "descripcion": "Raton de peluche para gatos",
+    "precio": "1.50",
+    "precio_oferta": null,
+    "marca": "Marca 2",
+    "categoria": "Juguetes",
+    "genero": "gato",
+    "color": "gris",
+    "material": "algodón",
+    "stock": 60,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+    {
+    "nombre": "Hamaca",
+    "descripcion": "Hamaca colgante para reptiles",
+    "precio": "7.50",
+    "precio_oferta": null,
+    "marca": "Marca 2",
+    "categoria": "Juguetes",
+    "genero": "reptil",
+    "color": "gris",
+    "material": "cuerda",
+    "stock": 6,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+  {
+    "nombre": "Champoo natural",
+    "descripcion": "Champoo para perros con ingredientes naturales",
+    "precio": "35.75",
+    "precio_oferta": null,
+    "marca": "Marca 3",
+    "categoria": "Cuidado e Higiene",
+    "genero": "perro",
+    "color": "rojo",
+    "material": "",
+    "stock": 75,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+    {
+    "nombre": "Correa para perros",
+    "descripcion": "Arnes cómodo para perros",
+    "precio": "35.75",
+    "precio_oferta": null,
+    "marca": "Marca 3",
+    "categoria": "Accesorios",
+    "genero": "perro",
+    "color": "rojo",
+    "material": "",
+    "stock": 25,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+    {
+    "nombre": "Bebedero portatil",
+    "descripcion": "Botella para que tu peluda pueda hidratarse siempre",
+    "precio": "5.75",
+    "precio_oferta": "4,56",
+    "marca": "Marca 1",
+    "categoria": "Accesorios",
+    "genero": "perro",
+    "color": "verde",
+    "material": "plastico",
+    "stock": 56,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+    {
+    "nombre": "Trasportín",
+    "descripcion": "Trasportín acogedor para tu gato",
+    "precio": "35.75",
+    "precio_oferta": null,
+    "marca": "Marca 3",
+    "categoria": "Accesorios",
+    "genero": "gato",
+    "color": "negro",
+    "material": "",
+    "stock": 75,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+    {
+    "nombre": "Terrario",
+    "descripcion": "Terrario amplio para que tus mascotas vivan en su habitad natural",
+    "precio": "65.75",
+    "precio_oferta": "60.99",
+    "marca": "Marca 4",
+    "categoria": "vivienda",
+    "genero": "reptil",
+    "color": "",
+    "material": "cristal",
+    "stock": 6,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+    {
+    "nombre": "Jaula",
+    "descripcion": "Amplia y cómoda para tu pajarito.",
+    "precio": "35.75",
+    "precio_oferta": null,
+    "marca": "Marca 1",
+    "categoria": "Vivienda",
+    "genero": "ave",
+    "color": "azul",
+    "material": "metal",
+    "stock": 45,
+    "esta_disponible": true,
+    "es_destacado": false
+  },
+    {
+    "nombre": "Acuario grande",
+    "descripcion": "Acuario espacioso para tus peces",
+    "precio": "73.75",
+    "precio_oferta": "70.10",
+    "marca": "Marca 5",
+    "categoria": "Vivienda",
+    "genero": "pez",
+    "color": "",
+    "material": "cristal",
+    "stock": 5,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+    {
+    "nombre": "Camita",
+    "descripcion": "Comoda cama para que tu peludo descanse",
+    "precio": "25.75",
+    "precio_oferta": null,
+    "marca": "Marca 2",
+    "categoria": "Hogar",
+    "genero": "perro",
+    "color": "gris",
+    "material": "algodón",
+    "stock": 45,
+    "esta_disponible": true,
+    "es_destacado": true
+  },
+    {
+    "nombre": "Escalera",
+    "descripcion": "Pequeño escalon para que tu peludo pueda subir a todos lados.",
+    "precio": "25.75",
+    "precio_oferta": null,
+    "marca": "Marca 2",
+    "categoria": "Hogar",
+    "genero": "otro",
+    "color": "marrón",
+    "material": "madera",
+    "stock": 15,
+    "esta_disponible": true,
+    "es_destacado": false
+  }
+]
