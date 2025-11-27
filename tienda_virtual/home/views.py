@@ -1,5 +1,3 @@
-from urllib import request
-from django.shortcuts import render, redirect, get_object_or_404
 import datetime
 from decimal import Decimal
 
@@ -9,19 +7,14 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.contrib import messages
-import datetime
-
-from .models import Articulo, Escaparate, Categoria, Producto, MensajeContacto
 from django.utils.crypto import get_random_string
 from django.utils.http import url_has_allowed_host_and_scheme
-import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-
 
 from .forms import (
     ClienteEnvioForm,
@@ -30,18 +23,146 @@ from .forms import (
     SeguimientoPedidoForm,
 )
 from .models import (
-    Articulo,
-    Carrito,
+    Categoria,
     Cliente,
-    Escaparate,
-    ItemCarrito,
     ItemPedido,
+    MensajeContacto,
     Pedido,
     Producto,
 )
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+def calculate_remaining_stock(cart, producto, size=''):
+    """
+    Calcula el stock restante para un producto/talla considerando lo que hay en el carrito.
+    Similar a la lógica en context_processors.py
+    """
+    if not isinstance(cart, dict):
+        cart = {}
+    
+    # Calcular cantidad total en el carrito para este producto
+    qty_by_product = {}
+    qty_by_item = {}
+    
+    for composite_key, qty in cart.items():
+        try:
+            if isinstance(composite_key, str) and ':' in composite_key:
+                pid_str, item_size = composite_key.split(':', 1)
+            else:
+                pid_str = str(composite_key)
+                item_size = ''
+            
+            if int(pid_str) == producto.id:
+                cantidad = int(qty)
+                pid_key = str(producto.id)
+                qty_by_product[pid_key] = qty_by_product.get(pid_key, 0) + cantidad
+                key = f"{pid_key}:{item_size}"
+                qty_by_item[key] = qty_by_item.get(key, 0) + cantidad
+        except Exception:
+            continue
+    
+    # Calcular stock restante
+    pid_key = str(producto.id)
+    key = f"{pid_key}:{size}"
+    
+    if size:
+        # Si tiene talla específica, usar el stock de esa talla
+        talla = producto.tallas.filter(talla=size).first()
+        stock = talla.stock if talla else 0
+        taken = qty_by_item.get(key, 0)
+        return max(0, stock - taken)
+    else:
+        # Sin talla específica
+        if producto.tallas.exists():
+            # Si el producto tiene tallas, sumar todos los stocks
+            total_stock = sum(t.stock for t in producto.tallas.all())
+            taken = qty_by_product.get(pid_key, 0)
+            return max(0, total_stock - taken)
+        else:
+            # Sin tallas, usar el stock del producto
+            taken = qty_by_product.get(pid_key, 0)
+            return max(0, producto.stock - taken)
+
+
+def _build_cart_json_response(cart, extra_data=None):
+    """
+    Helper function para construir la respuesta JSON del carrito.
+    Evita duplicación de código en las funciones de carrito.
+    
+    Args:
+        cart: Diccionario del carrito de sesión
+        extra_data: Diccionario opcional con datos adicionales para incluir en la respuesta
+    
+    Returns:
+        Dict con la estructura estándar de respuesta del carrito
+    """
+    if not isinstance(cart, dict):
+        cart = {}
+    
+    total_count = sum(int(qty) for qty in cart.values())
+    items = []
+    total_amount = Decimal('0.00')
+    remaining_by_product = {}
+    
+    for composite_key, qty in cart.items():
+        try:
+            if isinstance(composite_key, str) and ':' in composite_key:
+                pid_str, size = composite_key.split(':', 1)
+            else:
+                pid_str = str(composite_key)
+                size = ''
+            
+            prod = Producto.objects.filter(pk=int(pid_str)).first()
+            if not prod:
+                continue
+            
+            cantidad = int(qty)
+            precio = prod.precio_oferta or prod.precio or Decimal('0.00')
+            subtotal = precio * cantidad
+            total_amount += subtotal
+            
+            # Obtener imagen
+            imagen_url = None
+            imagen = prod.imagenes.first()
+            if imagen:
+                imagen_url = imagen.imagen.url
+            
+            # Calcular stock restante
+            remaining = calculate_remaining_stock(cart, prod, size)
+            
+            items.append({
+                'producto_id': prod.id,
+                'nombre': prod.nombre,
+                'cantidad': cantidad,
+                'subtotal': float(subtotal),
+                'size': size,
+                'imagen_url': imagen_url,
+                'precio': float(precio),
+                'remaining': remaining
+            })
+            
+            # Guardar remaining para productos sin tallas
+            if not size and not prod.tallas.exists():
+                remaining_by_product[prod.id] = remaining
+        except Exception:
+            continue
+    
+    response = {
+        'success': True,
+        'cart_count': total_count,
+        'cart_items': items,
+        'cart_total': float(total_amount),
+        'remaining_by_product': remaining_by_product
+    }
+    
+    # Agregar datos extra si se proporcionan
+    if extra_data:
+        response.update(extra_data)
+    
+    return response
 
 
 def index(request):
@@ -62,6 +183,8 @@ def index(request):
 def add_to_cart(request, product_id):
     """Añade un producto al carrito guardado en la sesión."""
     if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     # Allow selecting a talla (size). Expect POST param 'size'
@@ -78,7 +201,22 @@ def add_to_cart(request, product_id):
     request.session['cart'] = cart
     request.session.modified = True
 
+    # Si es petición AJAX, devolver JSON con datos del carrito
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        response = _build_cart_json_response(cart, {
+            'message': f'{producto.nombre} añadido al carrito',
+            'product_name': producto.nombre
+        })
+        return JsonResponse(response)
+
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+
+
+def cart_status(request):
+    """Devuelve el estado actual del carrito en formato JSON para AJAX."""
+    cart = request.session.get('cart', {})
+    response = _build_cart_json_response(cart)
+    return JsonResponse(response)
 
 
 def cart_view(request):
@@ -112,6 +250,8 @@ def cart_view(request):
 def cart_decrement(request, product_id):
     """Decrementa la cantidad de `product_id` en el carrito de sesión."""
     if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     # Expect optional 'size' param from the form so we decrement the correct item
@@ -135,12 +275,19 @@ def cart_decrement(request, product_id):
             request.session['cart'] = cart
             request.session.modified = True
 
+    # Si es petición AJAX, devolver JSON con datos del carrito
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        response = _build_cart_json_response(cart)
+        return JsonResponse(response)
+
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
 
 def cart_remove(request, product_id):
     """Elimina completamente `product_id` del carrito de sesión."""
     if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     size = (request.POST.get('size') or '').strip()
@@ -156,18 +303,27 @@ def cart_remove(request, product_id):
         request.session['cart'] = cart
         request.session.modified = True
 
+    # Si es petición AJAX, devolver JSON con datos del carrito
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        response = _build_cart_json_response(cart)
+        return JsonResponse(response)
+
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
 
 def cart_update(request):
     """Actualiza la cantidad de un item a un valor específico (POST)."""
     if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     product_id = request.POST.get('product_id')
     quantity = request.POST.get('quantity')
     size = (request.POST.get('size') or '').strip()
     if not product_id:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Producto no especificado'}, status=400)
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     try:
@@ -191,7 +347,37 @@ def cart_update(request):
 
     request.session['cart'] = cart
     request.session.modified = True
+
+    # Si es petición AJAX, devolver JSON con datos del carrito
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        response = _build_cart_json_response(cart)
+        return JsonResponse(response)
+
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+
+
+def cart_clear(request):
+    """Elimina todos los productos del carrito."""
+    if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+        return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+
+    request.session['cart'] = {}
+    request.session.modified = True
+
+    # Si es petición AJAX, devolver JSON
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': True,
+            'message': 'Carrito vaciado',
+            'cart_count': 0,
+            'cart_items': [],
+            'cart_total': 0.00
+        })
+
+    messages.success(request, "Carrito vaciado.")
+    return redirect('cart')
 
 
 def novedades(request):
@@ -379,12 +565,6 @@ def checkout_datos_cliente_envio(request):
         },
     )
 
-from decimal import Decimal
-from django.contrib import messages
-from django.shortcuts import render, redirect, get_object_or_404
-
-
-
 @login_required(login_url='register')
 def detalles_pago(request):
     cliente = getattr(request.user, "cliente", None)
@@ -458,10 +638,6 @@ def detalles_pago(request):
     )
 
 
-
-from django.utils.crypto import get_random_string
-import stripe
-stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def generar_numero_pedido():
     return f"MP-{timezone.now().strftime('%Y%m%d%H%M%S')}-{get_random_string(4).upper()}"
