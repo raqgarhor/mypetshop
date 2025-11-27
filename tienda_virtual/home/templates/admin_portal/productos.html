@@ -1,0 +1,96 @@
+{% extends "admin_portal/base.html" %}
+
+{% block title %}Productos - Panel de Administración{% endblock %}
+
+{% block content %}
+<div class="admin-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Gestión de Productos</h1>
+    <a href="{% url 'admin_panel:producto_crear' %}" class="btn-admin btn-success">
+        <i class="fas fa-plus"></i> Crear Producto
+    </a>
+</div>
+
+<div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <form method="get" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <input type="text" name="q" placeholder="Buscar productos..." value="{{ busqueda }}" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd; flex: 1; min-width: 200px;">
+        
+        <select name="categoria" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+            <option value="">Todas las categorías</option>
+            {% for categoria in categorias %}
+            <option value="{{ categoria.id }}" {% if categoria_filtro == categoria.id|stringformat:"s" %}selected{% endif %}>
+                {{ categoria.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+        
+        <select name="disponible" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+            <option value="">Todos</option>
+            <option value="si" {% if disponible_filtro == 'si' %}selected{% endif %}>Disponibles</option>
+            <option value="no" {% if disponible_filtro == 'no' %}selected{% endif %}>No disponibles</option>
+        </select>
+        
+        <button type="submit" class="btn-admin btn-primary">Filtrar</button>
+        {% if busqueda or categoria_filtro or disponible_filtro %}
+        <a href="{% url 'admin_panel:productos' %}" class="btn-admin" style="background: #95a5a6; color: white;">Limpiar</a>
+        {% endif %}
+    </form>
+</div>
+
+<div class="admin-table">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Marca</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Disponible</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos %}
+            <tr>
+                <td>{{ producto.id }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.categoria.nombre|default:"Sin categoría" }}</td>
+                <td>{{ producto.marca.nombre }}</td>
+                <td>{{ producto.precio }} €</td>
+                <td>
+                    <span style="color: {% if producto.stock < 10 %}#e74c3c{% elif producto.stock < 50 %}#f39c12{% else %}#27ae60{% endif %}; font-weight: bold;">
+                        {{ producto.stock }}
+                    </span>
+                </td>
+                <td>
+                    {% if producto.esta_disponible %}
+                        <span style="color: #27ae60;">✓ Sí</span>
+                    {% else %}
+                        <span style="color: #e74c3c;">✗ No</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="display: flex; gap: 8px;">
+                        <a href="{% url 'admin_panel:producto_editar' producto.id %}" class="btn-admin btn-primary">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a href="{% url 'admin_panel:producto_eliminar' producto.id %}" 
+                           class="btn-admin" 
+                           style="background: #e74c3c; color: white;"
+                           onclick="return confirm('¿Estás seguro de que deseas eliminar el producto \'{{ producto.nombre }}\'? Esta acción no se puede deshacer.');">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 20px;">No se encontraron productos</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

@@ -24,6 +24,8 @@
             <nav class="header-actions">
                 {% if request.user.is_authenticated %}
                     <span class="user-pill"><i class="fas fa-user"></i> {{ request.user.first_name|default:request.user.username }}</span>
+                    {% with cliente=request.user.cliente %}
+                    {% endwith %}
                     <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Salir</a>
                 {% else %}
                     <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Entrar</a>
@@ -58,6 +60,15 @@
             <a href="{% url 'tracking' %}" class="tab {% if request.resolver_match.url_name == 'tracking' %}active{% endif %}">
                 <i class="fas fa-truck"></i> Seguimiento
             </a>
+            {% if request.user.is_authenticated %}
+                {% with cliente=request.user.cliente %}
+                    {% if cliente and cliente.es_admin %}
+                        <a href="{% url 'admin_panel:dashboard' %}" class="tab {% if 'admin_panel' in request.resolver_match.namespace %}active{% endif %}" style="background: #e74c3c; color: white; border-left: 2px solid #c0392b;">
+                            <i class="fas fa-shield-alt"></i> Panel Admin
+                        </a>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
         </div>
     </nav>
 

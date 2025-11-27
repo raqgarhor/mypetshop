@@ -1,0 +1,359 @@
+{% extends "admin_portal/base.html" %}
+
+{% block title %}Detalle Pedido - Panel de Administración{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Detalle del Pedido #{{ pedido.numero_pedido }}</h1>
+</div>
+
+<!-- Timeline del Estado del Pedido -->
+<div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 30px;">
+    <h3 style="margin-bottom: 25px;">Estado del Pedido</h3>
+    <div class="timeline-container" style="display: flex; align-items: center; justify-content: space-between; position: relative; padding: 20px 0;">
+        <!-- Línea de conexión con progreso -->
+        <div class="timeline-line" style="position: absolute; top: 50px; left: 8%; right: 8%; height: 4px; background: #ecf0f1; z-index: 0; border-radius: 2px;">
+            <div class="timeline-progress" style="height: 100%; background: linear-gradient(to right, 
+                {% if pedido.estado == 'pagado' %}#f39c12 0%, #f39c12 25%{% elif pedido.estado == 'en_proceso' %}#f39c12 0%, #3498db 25%, #3498db 50%{% elif pedido.estado == 'enviado' %}#f39c12 0%, #3498db 25%, #9b59b6 50%, #2980b9 75%{% elif pedido.estado == 'entregado' %}#f39c12 0%, #3498db 25%, #9b59b6 50%, #2980b9 75%, #27ae60 100%{% else %}#ecf0f1{% endif %}; 
+                border-radius: 2px; transition: all 0.3s ease;"></div>
+        </div>
+        
+        {% for step in estados_timeline %}
+            {% if step.estado == 'pendiente' %}
+                <div class="timeline-step" style="flex: 1; position: relative; z-index: 1;">
+                    {% if step.tipo == 'actual' %}
+                        <div class="timeline-icon" style="width: 70px; height: 70px; border-radius: 50%; background: #f39c12; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 28px; border: 4px solid #f39c12; box-shadow: 0 0 0 6px rgba(243, 156, 18, 0.3);">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; font-weight: bold; color: #f39c12;">Pendiente</div>
+                    {% elif step.tipo == 'completado' %}
+                        <div class="timeline-icon" style="width: 60px; height: 60px; border-radius: 50%; background: #f39c12; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; border: 3px solid #f39c12;">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; color: #f39c12;">Pendiente</div>
+                    {% else %}
+                        <div class="timeline-icon" style="width: 60px; height: 60px; border-radius: 50%; background: #ecf0f1; color: #95a5a6; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; border: 3px solid #bdc3c7;">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; color: #95a5a6;">Pendiente</div>
+                    {% endif %}
+                </div>
+            {% elif step.estado == 'pagado' %}
+                <div class="timeline-step" style="flex: 1; position: relative; z-index: 1;">
+                    {% if step.tipo == 'actual' %}
+                        <div class="timeline-icon" style="width: 70px; height: 70px; border-radius: 50%; background: #3498db; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 28px; border: 4px solid #3498db; box-shadow: 0 0 0 6px rgba(52, 152, 219, 0.3);">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; font-weight: bold; color: #3498db;">Pagado</div>
+                    {% elif step.tipo == 'completado' %}
+                        <div class="timeline-icon" style="width: 60px; height: 60px; border-radius: 50%; background: #3498db; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; border: 3px solid #3498db;">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; color: #3498db;">Pagado</div>
+                    {% else %}
+                        <div class="timeline-icon" style="width: 60px; height: 60px; border-radius: 50%; background: #ecf0f1; color: #95a5a6; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; border: 3px solid #bdc3c7;">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; color: #95a5a6;">Pagado</div>
+                    {% endif %}
+                </div>
+            {% elif step.estado == 'en_proceso' %}
+                <div class="timeline-step" style="flex: 1; position: relative; z-index: 1;">
+                    {% if step.tipo == 'actual' %}
+                        <div class="timeline-icon" style="width: 70px; height: 70px; border-radius: 50%; background: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 28px; border: 4px solid #9b59b6; box-shadow: 0 0 0 6px rgba(155, 89, 182, 0.3);">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; font-weight: bold; color: #9b59b6;">En Proceso</div>
+                    {% elif step.tipo == 'completado' %}
+                        <div class="timeline-icon" style="width: 60px; height: 60px; border-radius: 50%; background: #9b59b6; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; border: 3px solid #9b59b6;">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; color: #9b59b6;">En Proceso</div>
+                    {% else %}
+                        <div class="timeline-icon" style="width: 60px; height: 60px; border-radius: 50%; background: #ecf0f1; color: #95a5a6; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; border: 3px solid #bdc3c7;">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; color: #95a5a6;">En Proceso</div>
+                    {% endif %}
+                </div>
+            {% elif step.estado == 'enviado' %}
+                <div class="timeline-step" style="flex: 1; position: relative; z-index: 1;">
+                    {% if step.tipo == 'actual' %}
+                        <div class="timeline-icon" style="width: 70px; height: 70px; border-radius: 50%; background: #2980b9; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 28px; border: 4px solid #2980b9; box-shadow: 0 0 0 6px rgba(41, 128, 185, 0.3);">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; font-weight: bold; color: #2980b9;">Enviado</div>
+                    {% elif step.tipo == 'completado' %}
+                        <div class="timeline-icon" style="width: 60px; height: 60px; border-radius: 50%; background: #2980b9; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; border: 3px solid #2980b9;">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; color: #2980b9;">Enviado</div>
+                    {% else %}
+                        <div class="timeline-icon" style="width: 60px; height: 60px; border-radius: 50%; background: #ecf0f1; color: #95a5a6; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; border: 3px solid #bdc3c7;">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; color: #95a5a6;">Enviado</div>
+                    {% endif %}
+                </div>
+            {% elif step.estado == 'entregado' %}
+                <div class="timeline-step" style="flex: 1; position: relative; z-index: 1;">
+                    {% if step.tipo == 'actual' %}
+                        <div class="timeline-icon" style="width: 70px; height: 70px; border-radius: 50%; background: #27ae60; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 28px; border: 4px solid #27ae60; box-shadow: 0 0 0 6px rgba(39, 174, 96, 0.3);">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; font-weight: bold; color: #27ae60;">Entregado</div>
+                    {% elif step.tipo == 'completado' %}
+                        <div class="timeline-icon" style="width: 60px; height: 60px; border-radius: 50%; background: #27ae60; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; border: 3px solid #27ae60;">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; color: #27ae60;">Entregado</div>
+                    {% else %}
+                        <div class="timeline-icon" style="width: 60px; height: 60px; border-radius: 50%; background: #ecf0f1; color: #95a5a6; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; border: 3px solid #bdc3c7;">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="timeline-label" style="text-align: center; color: #95a5a6;">Entregado</div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <style>
+        @media (max-width: 768px) {
+            .timeline-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .timeline-line {
+                display: none;
+            }
+            .timeline-step {
+                width: 100%;
+            }
+        }
+    </style>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3>Información del Pedido</h3>
+        <p><strong>Fecha:</strong> {{ pedido.fecha_creacion|date:"d/m/Y H:i" }}</p>
+        <p><strong>Método de pago:</strong> {{ pedido.metodo_pago|default:"No especificado" }}</p>
+        <p><strong>Dirección de envío:</strong> {{ pedido.direccion_envio|default:"No especificada" }}</p>
+        <p><strong>Teléfono:</strong> {{ pedido.telefono|default:"No especificado" }}</p>
+    </div>
+
+    <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3>Cliente</h3>
+        <p><strong>Nombre:</strong> {{ pedido.cliente.nombre|default:"Sin cliente" }} {{ pedido.cliente.apellidos|default:"" }}</p>
+        <p><strong>Email:</strong> {{ pedido.cliente.email|default:"-" }}</p>
+        <p><strong>Teléfono:</strong> {{ pedido.cliente.telefono|default:"-" }}</p>
+    </div>
+</div>
+
+<div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 30px;">
+    <h3 style="margin-bottom: 25px;">Cambiar Estado del Pedido</h3>
+    <form method="post" id="estado-form">
+        {% csrf_token %}
+        <input type="hidden" name="estado" id="estado-value" value="{{ pedido.estado }}">
+
+        <!-- Slider Container -->
+        <div class="slider-container" style="position: relative; padding: 40px 20px;">
+            <!-- Barra del slider -->
+            <div class="slider-track" style="position: relative; height: 8px; background: linear-gradient(to right, #f39c12 0%, #3498db 25%, #9b59b6 50%, #2980b9 75%, #27ae60 100%); border-radius: 4px; margin: 20px 0;">
+                <div class="slider-progress" id="slider-progress" style="position: absolute; top: 0; left: 0; height: 100%; background: #ecf0f1; border-radius: 4px; transition: width 0.3s ease;"></div>
+            </div>
+
+            <!-- Marcadores de estados -->
+            <div class="slider-marks" style="display: flex; justify-content: space-between; position: relative; margin-top: 10px;">
+                {% for estado_val, estado_label in estados_slider %}
+                    <div class="slider-mark" data-estado="{{ estado_val }}" style="position: relative; flex: 1; text-align: center; cursor: pointer; transition: transform 0.2s ease;">
+                        <div class="mark-dot" style="width: 20px; height: 20px; border-radius: 50%; background: {% if pedido.estado == estado_val %}{% if estado_val == 'pendiente' %}#f39c12{% elif estado_val == 'pagado' %}#3498db{% elif estado_val == 'en_proceso' %}#9b59b6{% elif estado_val == 'enviado' %}#2980b9{% elif estado_val == 'entregado' %}#27ae60{% endif %}{% else %}#ecf0f1{% endif %}; border: 3px solid {% if pedido.estado == estado_val %}{% if estado_val == 'pendiente' %}#f39c12{% elif estado_val == 'pagado' %}#3498db{% elif estado_val == 'en_proceso' %}#9b59b6{% elif estado_val == 'enviado' %}#2980b9{% elif estado_val == 'entregado' %}#27ae60{% endif %}{% else %}#bdc3c7{% endif %}; margin: 0 auto 8px; transition: all 0.3s ease; box-shadow: {% if pedido.estado == estado_val %}0 0 0 4px rgba(52, 152, 219, 0.2){% else %}none{% endif %};"></div>
+                        <div class="mark-label" style="font-size: 0.85rem; color: {% if pedido.estado == estado_val %}{% if estado_val == 'pendiente' %}#f39c12{% elif estado_val == 'pagado' %}#3498db{% elif estado_val == 'en_proceso' %}#9b59b6{% elif estado_val == 'enviado' %}#2980b9{% elif estado_val == 'entregado' %}#27ae60{% endif %}{% else %}#95a5a6{% endif %}; font-weight: {% if pedido.estado == estado_val %}bold{% else %}normal{% endif %};">
+                            {% if estado_val == 'pendiente' %}<i class="fas fa-clock"></i>{% elif estado_val == 'pagado' %}<i class="fas fa-credit-card"></i>{% elif estado_val == 'en_proceso' %}<i class="fas fa-cog"></i>{% elif estado_val == 'enviado' %}<i class="fas fa-truck"></i>{% elif estado_val == 'entregado' %}<i class="fas fa-check-circle"></i>{% endif %}
+                            <br>{{ estado_label }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Estado seleccionado -->
+            <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                <p style="margin: 0; font-size: 1.1rem;">
+                    <strong>Estado seleccionado:</strong> 
+                    <span id="estado-seleccionado" style="color: #2c3e50; font-weight: bold;">{{ pedido.get_estado_display }}</span>
+                </p>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 25px;">
+            <button type="submit" class="btn-admin btn-success" style="font-size: 1rem; padding: 12px 30px;">
+                <i class="fas fa-save"></i> Actualizar Estado
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const marks = document.querySelectorAll('.slider-mark');
+    const estadoValue = document.getElementById('estado-value');
+    const estadoSeleccionado = document.getElementById('estado-seleccionado');
+    const sliderProgress = document.getElementById('slider-progress');
+    
+    // Mapeo de estados a posiciones y colores
+    const estadosMap = {
+        'pendiente': { pos: 0, color: '#f39c12', label: 'Pendiente', icon: 'fa-clock' },
+        'pagado': { pos: 25, color: '#3498db', label: 'Pagado', icon: 'fa-credit-card' },
+        'en_proceso': { pos: 50, color: '#9b59b6', label: 'En proceso', icon: 'fa-cog' },
+        'enviado': { pos: 75, color: '#2980b9', label: 'Enviado', icon: 'fa-truck' },
+        'entregado': { pos: 100, color: '#27ae60', label: 'Entregado', icon: 'fa-check-circle' }
+    };
+    
+    // Estado actual
+    let estadoSeleccionadoActual = '{{ pedido.estado }}';
+    const estadoActualData = estadosMap[estadoSeleccionadoActual];
+    
+    // Función para actualizar el visual
+    function actualizarVisual(estadoNuevo) {
+        const estadoData = estadosMap[estadoNuevo];
+        if (!estadoData) return;
+        
+        // Actualizar valor oculto
+        estadoValue.value = estadoNuevo;
+        estadoSeleccionadoActual = estadoNuevo;
+        estadoSeleccionado.textContent = estadoData.label;
+        estadoSeleccionado.style.color = estadoData.color;
+        
+        // Actualizar progreso
+        sliderProgress.style.width = estadoData.pos + '%';
+        
+        // Actualizar visual de todas las marcas
+        marks.forEach(m => {
+            const mEstado = m.getAttribute('data-estado');
+            const mData = estadosMap[mEstado];
+            const dot = m.querySelector('.mark-dot');
+            const label = m.querySelector('.mark-label');
+            
+            if (!mData) return;
+            
+            if (mEstado === estadoNuevo) {
+                // Marca seleccionada
+                dot.style.background = mData.color;
+                dot.style.borderColor = mData.color;
+                dot.style.boxShadow = '0 0 0 4px rgba(52, 152, 219, 0.2)';
+                dot.style.transform = 'scale(1.3)';
+                label.style.color = mData.color;
+                label.style.fontWeight = 'bold';
+            } else if (mData.pos < estadoData.pos) {
+                // Estados anteriores (completados)
+                dot.style.background = mData.color;
+                dot.style.borderColor = mData.color;
+                dot.style.boxShadow = 'none';
+                dot.style.transform = 'scale(1)';
+                label.style.color = mData.color;
+                label.style.fontWeight = 'normal';
+            } else {
+                // Estados futuros (pendientes)
+                dot.style.background = '#ecf0f1';
+                dot.style.borderColor = '#bdc3c7';
+                dot.style.boxShadow = 'none';
+                dot.style.transform = 'scale(1)';
+                label.style.color = '#95a5a6';
+                label.style.fontWeight = 'normal';
+            }
+        });
+    }
+    
+    // Inicializar visual
+    actualizarVisual(estadoSeleccionadoActual);
+    
+    // Agregar eventos a cada marca
+    marks.forEach(mark => {
+        const estado = mark.getAttribute('data-estado');
+        const estadoData = estadosMap[estado];
+        
+        if (!estadoData) return;
+        
+        mark.addEventListener('click', function() {
+            actualizarVisual(estado);
+        });
+        
+        // Hover effect
+        mark.addEventListener('mouseenter', function() {
+            if (estado !== estadoSeleccionadoActual) {
+                mark.style.transform = 'translateY(-5px)';
+                mark.style.transition = 'transform 0.2s ease';
+            }
+        });
+        
+        mark.addEventListener('mouseleave', function() {
+            mark.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+
+<div class="admin-table">
+    <h2 style="padding: 20px; margin: 0; border-bottom: 1px solid #eee;">Items del Pedido</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Talla</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.producto.nombre }}</td>
+                <td>{{ item.talla|default:"-" }}</td>
+                <td>{{ item.cantidad }}</td>
+                <td>{{ item.precio_unitario }} €</td>
+                <td>{{ item.total }} €</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 20px;">No hay items en este pedido</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr style="background: #f8f9fa; font-weight: bold;">
+                <td colspan="4" style="text-align: right; padding: 15px;">Subtotal:</td>
+                <td>{{ pedido.subtotal }} €</td>
+            </tr>
+            {% if pedido.impuestos %}
+            <tr style="background: #f8f9fa;">
+                <td colspan="4" style="text-align: right; padding: 15px;">Impuestos:</td>
+                <td>{{ pedido.impuestos }} €</td>
+            </tr>
+            {% endif %}
+            {% if pedido.coste_entrega %}
+            <tr style="background: #f8f9fa;">
+                <td colspan="4" style="text-align: right; padding: 15px;">Coste de entrega:</td>
+                <td>{{ pedido.coste_entrega }} €</td>
+            </tr>
+            {% endif %}
+            {% if pedido.descuento %}
+            <tr style="background: #f8f9fa;">
+                <td colspan="4" style="text-align: right; padding: 15px;">Descuento:</td>
+                <td>-{{ pedido.descuento }} €</td>
+            </tr>
+            {% endif %}
+            <tr style="background: #2c3e50; color: white; font-size: 1.2em;">
+                <td colspan="4" style="text-align: right; padding: 15px;">Total:</td>
+                <td>{{ pedido.total }} €</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'admin_panel:pedidos' %}" class="btn-admin btn-primary">Volver a Pedidos</a>
+</div>
+{% endblock %}
+
