@@ -10,7 +10,7 @@
         <h2 class="section-title"><i class="fas fa-star"></i> Productos Destacados <i class="fas fa-star"></i></h2>
         <div class="cards">
             {% for p in destacados %}
-                <article class="card">
+                <article class="card"{% if not p.tallas.exists %} data-stock="{{ p.stock }}" data-product-id="{{ p.id }}"{% endif %}>
                     {% with ip=p.imagenes.first %}
                         {% if ip %}
                             <a href="{% url 'product_detail' p.id %}"><img src="{{ ip.imagen.url }}" alt="{{ p.nombre }}"></a>
@@ -32,10 +32,9 @@
                                             <option value="" disabled selected>Selecciona</option>
                                             {% for t in p.tallas.all %}
                                                 {% with key=p.id|stringformat:"s"|add:":"|add:t.talla %}
-                                                    {% with taken=cart_qty_by_item|get_item:key %}
-                                                        {% if not taken %}{% with taken=0 %}{% endwith %}{% endif %}
+                                                    {% with taken=cart_qty_by_item|get_item:key|default:0 %}
                                                         {% with rem_size=t.stock|sub:taken %}
-                                                            <option value="{{ t.talla }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (sin stock){% endif %}</option>
+                                                            <option value="{{ t.talla }}" data-stock="{{ t.stock }}" data-product-id="{{ p.id }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (agotado){% endif %}</option>
                                                         {% endwith %}
                                                     {% endwith %}
                                                 {% endwith %}
@@ -44,7 +43,7 @@
                                         <button type="submit" class="btn small">Añadir al carrito</button>
                                     </form>
                                 {% else %}
-                                    <div style="color:#c62828;font-weight:700">No disponible</div>
+                                    <div class="product-no-disponible" style="color:#c62828;font-weight:700">No disponible</div>
                                 {% endif %}
                             {% endwith %}
                         {% else %}
@@ -55,7 +54,7 @@
                                         <button type="submit" class="btn small">Añadir al carrito</button>
                                     </form>
                                 {% else %}
-                                    <div style="color:#c62828;font-weight:700">No disponible</div>
+                                    <div class="product-no-disponible" style="color:#c62828;font-weight:700">No disponible</div>
                                 {% endif %}
                             {% endwith %}
                         {% endif %}
@@ -69,7 +68,7 @@
         <div class="cards">
             {% if productos %}
                 {% for p in productos %}
-                    <article class="card">
+                    <article class="card"{% if not p.tallas.exists %} data-stock="{{ p.stock }}" data-product-id="{{ p.id }}"{% endif %}>
                         {% with ip=p.imagenes.first %}
                             {% if ip %}
                                 <a href="{% url 'product_detail' p.id %}"><img src="{{ ip.imagen.url }}" alt="{{ p.nombre }}"></a>
@@ -90,10 +89,9 @@
                                                 <option value="" disabled selected>Selecciona</option>
                                                 {% for t in p.tallas.all %}
                                                     {% with key=p.id|stringformat:"s"|add:":"|add:t.talla %}
-                                                        {% with taken=cart_qty_by_item|get_item:key %}
-                                                            {% if not taken %}{% with taken=0 %}{% endwith %}{% endif %}
+                                                        {% with taken=cart_qty_by_item|get_item:key|default:0 %}
                                                             {% with rem_size=t.stock|sub:taken %}
-                                                                <option value="{{ t.talla }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (sin stock){% endif %}</option>
+                                                                <option value="{{ t.talla }}" data-stock="{{ t.stock }}" data-product-id="{{ p.id }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (agotado){% endif %}</option>
                                                             {% endwith %}
                                                         {% endwith %}
                                                     {% endwith %}
@@ -102,7 +100,7 @@
                                             <button type="submit" class="btn small">Añadir al carrito</button>
                                         </form>
                                     {% else %}
-                                        <div style="color:#c62828;font-weight:700">No disponible</div>
+                                        <div class="product-no-disponible" style="color:#c62828;font-weight:700">No disponible</div>
                                     {% endif %}
                                 {% endwith %}
                             {% else %}
@@ -113,7 +111,7 @@
                                             <button type="submit" class="btn small">Añadir al carrito</button>
                                         </form>
                                     {% else %}
-                                        <div style="color:#c62828;font-weight:700">No disponible</div>
+                                        <div class="product-no-disponible" style="color:#c62828;font-weight:700">No disponible</div>
                                     {% endif %}
                                 {% endwith %}
                             {% endif %}

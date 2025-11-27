@@ -46,6 +46,58 @@ from .models import (
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
+def calculate_remaining_stock(cart, producto, size=''):
+    """
+    Calcula el stock restante para un producto/talla considerando lo que hay en el carrito.
+    Similar a la lógica en context_processors.py
+    """
+    if not isinstance(cart, dict):
+        cart = {}
+    
+    # Calcular cantidad total en el carrito para este producto
+    qty_by_product = {}
+    qty_by_item = {}
+    
+    for composite_key, qty in cart.items():
+        try:
+            if isinstance(composite_key, str) and ':' in composite_key:
+                pid_str, item_size = composite_key.split(':', 1)
+            else:
+                pid_str = str(composite_key)
+                item_size = ''
+            
+            if int(pid_str) == producto.id:
+                cantidad = int(qty)
+                pid_key = str(producto.id)
+                qty_by_product[pid_key] = qty_by_product.get(pid_key, 0) + cantidad
+                key = f"{pid_key}:{item_size}"
+                qty_by_item[key] = qty_by_item.get(key, 0) + cantidad
+        except Exception:
+            continue
+    
+    # Calcular stock restante
+    pid_key = str(producto.id)
+    key = f"{pid_key}:{size}"
+    
+    if size:
+        # Si tiene talla específica, usar el stock de esa talla
+        talla = producto.tallas.filter(talla=size).first()
+        stock = talla.stock if talla else 0
+        taken = qty_by_item.get(key, 0)
+        return max(0, stock - taken)
+    else:
+        # Sin talla específica
+        if producto.tallas.exists():
+            # Si el producto tiene tallas, sumar todos los stocks
+            total_stock = sum(t.stock for t in producto.tallas.all())
+            taken = qty_by_product.get(pid_key, 0)
+            return max(0, total_stock - taken)
+        else:
+            # Sin tallas, usar el stock del producto
+            taken = qty_by_product.get(pid_key, 0)
+            return max(0, producto.stock - taken)
+
+
 def index(request):
     """Si se recibe ?q=texto, filtra por nombre, descripcion, genero, color o material."""
     q = request.GET.get('q', '')
@@ -89,6 +141,9 @@ def add_to_cart(request, product_id):
         items = []
         total_amount = Decimal('0.00')
         
+        # Crear un mapa de remaining stock por producto (para productos sin tallas que no están en el carrito)
+        remaining_by_product = {}
+        
         for composite_key, qty in cart.items():
             try:
                 if isinstance(composite_key, str) and ':' in composite_key:
@@ -112,6 +167,9 @@ def add_to_cart(request, product_id):
                 if imagen:
                     imagen_url = imagen.imagen.url
                 
+                # Calcular stock restante
+                remaining = calculate_remaining_stock(cart, prod, size)
+                
                 items.append({
                     'producto_id': prod.id,
                     'nombre': prod.nombre,
@@ -119,8 +177,13 @@ def add_to_cart(request, product_id):
                     'subtotal': float(subtotal),
                     'size': size,
                     'imagen_url': imagen_url,
-                    'precio': float(precio)
+                    'precio': float(precio),
+                    'remaining': remaining
                 })
+                
+                # Guardar remaining para productos sin tallas (para usar en productos que no están en el carrito)
+                if not size and not prod.tallas.exists():
+                    remaining_by_product[prod.id] = remaining
             except Exception:
                 continue
         
@@ -130,10 +193,76 @@ def add_to_cart(request, product_id):
             'cart_count': total_count,
             'cart_items': items,
             'cart_total': float(total_amount),
-            'product_name': producto.nombre
+            'product_name': producto.nombre,
+            'remaining_by_product': remaining_by_product  # Para productos sin tallas
         })
 
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+
+
+def cart_status(request):
+    """Devuelve el estado actual del carrito en formato JSON para AJAX."""
+    cart = request.session.get('cart', {})
+    if not isinstance(cart, dict):
+        cart = {}
+    
+    total_count = sum(int(qty) for qty in cart.values())
+    items = []
+    total_amount = Decimal('0.00')
+    
+    # Crear un mapa de remaining stock por producto (para productos sin tallas que no están en el carrito)
+    remaining_by_product = {}
+    
+    for composite_key, qty in cart.items():
+        try:
+            if isinstance(composite_key, str) and ':' in composite_key:
+                pid_str, size = composite_key.split(':', 1)
+            else:
+                pid_str = str(composite_key)
+                size = ''
+            
+            prod = Producto.objects.filter(pk=int(pid_str)).first()
+            if not prod:
+                continue
+            
+            cantidad = int(qty)
+            precio = prod.precio_oferta or prod.precio or Decimal('0.00')
+            subtotal = precio * cantidad
+            total_amount += subtotal
+            
+            # Obtener imagen
+            imagen_url = None
+            imagen = prod.imagenes.first()
+            if imagen:
+                imagen_url = imagen.imagen.url
+            
+            # Calcular stock restante
+            remaining = calculate_remaining_stock(cart, prod, size)
+            
+            items.append({
+                'producto_id': prod.id,
+                'nombre': prod.nombre,
+                'cantidad': cantidad,
+                'subtotal': float(subtotal),
+                'size': size,
+                'imagen_url': imagen_url,
+                'precio': float(precio),
+                'remaining': remaining
+            })
+            
+            # Guardar remaining para productos sin tallas (para usar en productos que no están en el carrito)
+            if not size and not prod.tallas.exists():
+                remaining_by_product[prod.id] = remaining
+        except Exception:
+            continue
+    
+    return JsonResponse({
+        'success': True,
+        'cart_count': total_count,
+        'cart_items': items,
+        'cart_total': float(total_amount),
+        'remaining_by_product': remaining_by_product  # Para productos sin tallas
+    })
 
 
 def cart_view(request):
@@ -198,6 +327,9 @@ def cart_decrement(request, product_id):
         items = []
         total_amount = Decimal('0.00')
         
+        # Crear un mapa de remaining stock por producto (para productos sin tallas que no están en el carrito)
+        remaining_by_product = {}
+        
         for composite_key, qty in cart.items():
             try:
                 if isinstance(composite_key, str) and ':' in composite_key:
@@ -220,6 +352,9 @@ def cart_decrement(request, product_id):
                 if imagen:
                     imagen_url = imagen.imagen.url
                 
+                # Calcular stock restante
+                remaining = calculate_remaining_stock(cart, prod, size)
+                
                 items.append({
                     'producto_id': prod.id,
                     'nombre': prod.nombre,
@@ -227,8 +362,13 @@ def cart_decrement(request, product_id):
                     'subtotal': float(subtotal),
                     'size': size,
                     'imagen_url': imagen_url,
-                    'precio': float(precio)
+                    'precio': float(precio),
+                    'remaining': remaining
                 })
+                
+                # Guardar remaining para productos sin tallas (para usar en productos que no están en el carrito)
+                if not size and not prod.tallas.exists():
+                    remaining_by_product[prod.id] = remaining
             except Exception:
                 continue
         
@@ -236,7 +376,8 @@ def cart_decrement(request, product_id):
             'success': True,
             'cart_count': total_count,
             'cart_items': items,
-            'cart_total': float(total_amount)
+            'cart_total': float(total_amount),
+            'remaining_by_product': remaining_by_product  # Para productos sin tallas
         })
 
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
@@ -268,6 +409,9 @@ def cart_remove(request, product_id):
         items = []
         total_amount = Decimal('0.00')
         
+        # Crear un mapa de remaining stock por producto (para productos sin tallas que no están en el carrito)
+        remaining_by_product = {}
+        
         for composite_key, qty in cart.items():
             try:
                 if isinstance(composite_key, str) and ':' in composite_key:
@@ -290,6 +434,9 @@ def cart_remove(request, product_id):
                 if imagen:
                     imagen_url = imagen.imagen.url
                 
+                # Calcular stock restante
+                remaining = calculate_remaining_stock(cart, prod, size)
+                
                 items.append({
                     'producto_id': prod.id,
                     'nombre': prod.nombre,
@@ -297,8 +444,13 @@ def cart_remove(request, product_id):
                     'subtotal': float(subtotal),
                     'size': size,
                     'imagen_url': imagen_url,
-                    'precio': float(precio)
+                    'precio': float(precio),
+                    'remaining': remaining
                 })
+                
+                # Guardar remaining para productos sin tallas (para usar en productos que no están en el carrito)
+                if not size and not prod.tallas.exists():
+                    remaining_by_product[prod.id] = remaining
             except Exception:
                 continue
         
@@ -306,7 +458,8 @@ def cart_remove(request, product_id):
             'success': True,
             'cart_count': total_count,
             'cart_items': items,
-            'cart_total': float(total_amount)
+            'cart_total': float(total_amount),
+            'remaining_by_product': remaining_by_product  # Para productos sin tallas
         })
 
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
@@ -355,6 +508,9 @@ def cart_update(request):
         items = []
         total_amount = Decimal('0.00')
         
+        # Crear un mapa de remaining stock por producto (para productos sin tallas que no están en el carrito)
+        remaining_by_product = {}
+        
         for composite_key, qty in cart.items():
             try:
                 if isinstance(composite_key, str) and ':' in composite_key:
@@ -377,6 +533,9 @@ def cart_update(request):
                 if imagen:
                     imagen_url = imagen.imagen.url
                 
+                # Calcular stock restante
+                remaining = calculate_remaining_stock(cart, prod, size)
+                
                 items.append({
                     'producto_id': prod.id,
                     'nombre': prod.nombre,
@@ -384,8 +543,13 @@ def cart_update(request):
                     'subtotal': float(subtotal),
                     'size': size,
                     'imagen_url': imagen_url,
-                    'precio': float(precio)
+                    'precio': float(precio),
+                    'remaining': remaining
                 })
+                
+                # Guardar remaining para productos sin tallas (para usar en productos que no están en el carrito)
+                if not size and not prod.tallas.exists():
+                    remaining_by_product[prod.id] = remaining
             except Exception:
                 continue
         
@@ -393,10 +557,35 @@ def cart_update(request):
             'success': True,
             'cart_count': total_count,
             'cart_items': items,
-            'cart_total': float(total_amount)
+            'cart_total': float(total_amount),
+            'remaining_by_product': remaining_by_product  # Para productos sin tallas
         })
 
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+
+
+def cart_clear(request):
+    """Elimina todos los productos del carrito."""
+    if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+        return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+
+    request.session['cart'] = {}
+    request.session.modified = True
+
+    # Si es petición AJAX, devolver JSON
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'success': True,
+            'message': 'Carrito vaciado',
+            'cart_count': 0,
+            'cart_items': [],
+            'cart_total': 0.00
+        })
+
+    messages.success(request, "Carrito vaciado.")
+    return redirect('cart')
 
 
 def novedades(request):
