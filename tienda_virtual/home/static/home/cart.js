@@ -555,24 +555,35 @@ function canAddToCart(form) {
     const selectedIndex = select.selectedIndex;
     if (selectedIndex <= 0) {
         // No hay talla seleccionada (índice 0 es el placeholder "Selecciona")
+        console.log('canAddToCart: No hay talla seleccionada (selectedIndex:', selectedIndex, ')');
         return false;
     }
     
     const selectedOption = select.options[selectedIndex];
-    if (!selectedOption || !selectedOption.value) {
+    if (!selectedOption) {
+        console.log('canAddToCart: No se encontró la opción seleccionada');
+        return false;
+    }
+    
+    const selectedValue = selectedOption.value;
+    if (!selectedValue || selectedValue.trim() === '') {
+        console.log('canAddToCart: La talla seleccionada está vacía');
         return false; // No hay talla seleccionada
     }
     
     // Verificar que la opción no está deshabilitada (agotada)
     if (selectedOption.disabled) {
+        console.log('canAddToCart: La talla seleccionada está deshabilitada (agotada)');
         return false; // La talla está agotada
     }
     
     // Verificar que el texto no contiene "(agotado)"
     if (selectedOption.textContent.includes('(agotado)')) {
+        console.log('canAddToCart: La talla seleccionada está agotada (texto contiene agotado)');
         return false; // La talla está agotada
     }
     
+    console.log('canAddToCart: Validación exitosa, talla seleccionada:', selectedValue);
     return true;
 }
 
@@ -582,7 +593,21 @@ function updateAddToCartButton(form) {
     const submitBtn = form.querySelector('button[type="submit"]');
     
     if (!select || !submitBtn) {
+        // Si no hay select, es un producto sin tallas, habilitar el botón
+        if (!select && submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+        }
         return;
+    }
+    
+    // Asegurar que el listener del select esté configurado
+    if (!select.dataset.changeListenerAdded) {
+        select.dataset.changeListenerAdded = 'true';
+        select.addEventListener('change', function() {
+            updateAddToCartButton(form);
+        });
     }
     
     const canAdd = canAddToCart(form);
@@ -629,15 +654,33 @@ function setupCartForms() {
             const action = form.getAttribute('action');
             
             // Validar si se puede añadir al carrito (para productos con tallas)
-            if (action && action.includes('add_to_cart') && !canAddToCart(form)) {
-                showNotification('Por favor selecciona una talla disponible', 'error');
-                return;
+            if (action && action.includes('add_to_cart')) {
+                const select = form.querySelector('select[id^="size-"]');
+                if (select) {
+                    // Es un producto con tallas, validar
+                    if (!canAddToCart(form)) {
+                        const selectedIndex = select.selectedIndex;
+                        if (selectedIndex <= 0) {
+                            showNotification('Por favor selecciona una talla', 'error');
+                        } else {
+                            const selectedOption = select.options[selectedIndex];
+                            if (selectedOption && selectedOption.disabled) {
+                                showNotification('La talla seleccionada no está disponible', 'error');
+                            } else {
+                                showNotification('Por favor selecciona una talla disponible', 'error');
+                            }
+                        }
+                        return;
+                    }
+                }
             }
             
             const formData = new FormData(form);
             const method = form.getAttribute('method') || 'POST';
             
-            console.log('Enviando petición AJAX a:', action);
+            // Log para depuración
+            const sizeValue = formData.get('size');
+            console.log('Enviando petición AJAX a:', action, 'con talla:', sizeValue);
             
             // Guardar texto original del botón
             const submitBtn = form.querySelector('button[type="submit"]');
@@ -814,6 +857,14 @@ function initializeCart() {
                 const allAddToCartForms = document.querySelectorAll('form[action*="/cart/add/"]');
                 allAddToCartForms.forEach(form => {
                     updateAddToCartButton(form);
+                    // Asegurar que los selects tengan listeners
+                    const select = form.querySelector('select[id^="size-"]');
+                    if (select && !select.dataset.changeListenerAdded) {
+                        select.dataset.changeListenerAdded = 'true';
+                        select.addEventListener('change', function() {
+                            updateAddToCartButton(form);
+                        });
+                    }
                 });
             }, 200);
         }
@@ -826,6 +877,14 @@ function initializeCart() {
             const allAddToCartForms = document.querySelectorAll('form[action*="/cart/add/"]');
             allAddToCartForms.forEach(form => {
                 updateAddToCartButton(form);
+                // Asegurar que los selects tengan listeners
+                const select = form.querySelector('select[id^="size-"]');
+                if (select && !select.dataset.changeListenerAdded) {
+                    select.dataset.changeListenerAdded = 'true';
+                    select.addEventListener('change', function() {
+                        updateAddToCartButton(form);
+                    });
+                }
             });
         }, 200);
     });

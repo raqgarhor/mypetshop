@@ -191,12 +191,46 @@ def add_to_cart(request, product_id):
     size = (request.POST.get('size') or '').strip()
     producto = get_object_or_404(Producto, pk=product_id, esta_disponible=True)
 
-    cart = request.session.get('cart', {})
+    # Validar que si el producto tiene tallas, se haya seleccionado una talla válida
+    if producto.tallas.exists():
+        if not size:
+            error_msg = 'Por favor selecciona una talla para este producto'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': error_msg}, status=400)
+            messages.error(request, error_msg)
+            return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+        
+        # Verificar que la talla existe y tiene stock disponible
+        talla_obj = producto.tallas.filter(talla=size).first()
+        if not talla_obj:
+            error_msg = f'La talla "{size}" no es válida para este producto'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'error': error_msg}, status=400)
+            messages.error(request, error_msg)
+            return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+
+    # Asegurar que el carrito siempre sea un diccionario
+    cart = request.session.get('cart')
     if not isinstance(cart, dict):
         cart = {}
+        request.session['cart'] = cart
 
     # use composite key productid:size (size may be empty string)
     key = f"{product_id}:{size}"
+    
+    # Verificar stock disponible antes de añadir
+    if producto.tallas.exists() and size:
+        talla_obj = producto.tallas.filter(talla=size).first()
+        if talla_obj:
+            # Calcular cantidad actual en el carrito para esta talla
+            cantidad_en_carrito = int(cart.get(key, 0))
+            if cantidad_en_carrito >= talla_obj.stock:
+                error_msg = f'No hay suficiente stock disponible para la talla "{size}"'
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({'success': False, 'error': error_msg}, status=400)
+                messages.error(request, error_msg)
+                return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+    
     cart[key] = int(cart.get(key, 0)) + 1
     request.session['cart'] = cart
     request.session.modified = True
@@ -214,14 +248,20 @@ def add_to_cart(request, product_id):
 
 def cart_status(request):
     """Devuelve el estado actual del carrito en formato JSON para AJAX."""
-    cart = request.session.get('cart', {})
+    cart = request.session.get('cart')
+    if not isinstance(cart, dict):
+        cart = {}
+        request.session['cart'] = cart
     response = _build_cart_json_response(cart)
     return JsonResponse(response)
 
 
 def cart_view(request):
     """Muestra el contenido del carrito ."""
-    cart = request.session.get('cart', {})
+    cart = request.session.get('cart')
+    if not isinstance(cart, dict):
+        cart = {}
+        request.session['cart'] = cart
     items = []
     total = 0
     if isinstance(cart, dict):
@@ -257,23 +297,35 @@ def cart_decrement(request, product_id):
     # Expect optional 'size' param from the form so we decrement the correct item
     size = (request.POST.get('size') or '').strip()
     cart = request.session.get('cart', {})
-    if isinstance(cart, dict):
-        key = f"{product_id}:{size}"
-        # support legacy key without size
-        if key not in cart and str(product_id) in cart:
-            key = str(product_id)
+    if not isinstance(cart, dict):
+        cart = {}
+    
+    key = f"{product_id}:{size}"
+    # support legacy key without size
+    if key not in cart and str(product_id) in cart:
+        key = str(product_id)
 
-        if key in cart:
-            try:
-                qty = int(cart.get(key, 0)) - 1
-            except Exception:
-                qty = 0
-            if qty > 0:
-                cart[key] = qty
-            else:
-                cart.pop(key, None)
-            request.session['cart'] = cart
-            request.session.modified = True
+    if key in cart:
+        try:
+            current_qty = int(cart.get(key, 0))
+        except Exception:
+            current_qty = 0
+        
+        # Validar que la cantidad actual sea mayor que 0 antes de decrementar
+        if current_qty <= 0:
+            # Si la cantidad ya es 0 o menos, no hacer nada
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                response = _build_cart_json_response(cart)
+                return JsonResponse(response)
+            return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+        
+        qty = current_qty - 1
+        if qty > 0:
+            cart[key] = qty
+        else:
+            cart.pop(key, None)
+        request.session['cart'] = cart
+        request.session.modified = True
 
     # Si es petición AJAX, devolver JSON con datos del carrito
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -291,17 +343,19 @@ def cart_remove(request, product_id):
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     size = (request.POST.get('size') or '').strip()
-    cart = request.session.get('cart', {})
-    if isinstance(cart, dict):
-        key = f"{product_id}:{size}"
-        if key in cart:
-            cart.pop(key, None)
-        else:
-            # fallback to legacy key
-            cart.pop(str(product_id), None)
+    cart = request.session.get('cart')
+    if not isinstance(cart, dict):
+        cart = {}
+    
+    key = f"{product_id}:{size}"
+    if key in cart:
+        cart.pop(key, None)
+    else:
+        # fallback to legacy key
+        cart.pop(str(product_id), None)
 
-        request.session['cart'] = cart
-        request.session.modified = True
+    request.session['cart'] = cart
+    request.session.modified = True
 
     # Si es petición AJAX, devolver JSON con datos del carrito
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -331,9 +385,10 @@ def cart_update(request):
     except Exception:
         q = 0
 
-    cart = request.session.get('cart', {})
+    cart = request.session.get('cart')
     if not isinstance(cart, dict):
         cart = {}
+        request.session['cart'] = cart
 
     key = f"{product_id}:{size}"
     # if key not present but legacy key exists, use legacy
