@@ -1,8 +1,5 @@
-from urllib import request
-from django.shortcuts import render, redirect, get_object_or_404
 import datetime
 from decimal import Decimal
-import json
 
 import stripe
 from django.conf import settings
@@ -10,20 +7,14 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.contrib import messages
-from django.http import JsonResponse
-import datetime
-
-from .models import Articulo, Escaparate, Categoria, Producto, MensajeContacto
 from django.utils.crypto import get_random_string
 from django.utils.http import url_has_allowed_host_and_scheme
-import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-
 
 from .forms import (
     ClienteEnvioForm,
@@ -32,12 +23,10 @@ from .forms import (
     SeguimientoPedidoForm,
 )
 from .models import (
-    Articulo,
-    Carrito,
+    Categoria,
     Cliente,
-    Escaparate,
-    ItemCarrito,
     ItemPedido,
+    MensajeContacto,
     Pedido,
     Producto,
 )
@@ -98,119 +87,24 @@ def calculate_remaining_stock(cart, producto, size=''):
             return max(0, producto.stock - taken)
 
 
-def index(request):
-    """Si se recibe ?q=texto, filtra por nombre, descripcion, genero, color o material."""
-    q = request.GET.get('q', '')
-    if q:
-        query = q.strip()
-        filtros = Q(nombre__icontains=query) | Q(descripcion__icontains=query) | Q(genero__icontains=query) | Q(color__icontains=query) | Q(material__icontains=query)
-        productos = Producto.objects.filter(filtros, esta_disponible=True).order_by('-es_destacado', '-fecha_creacion')
-    else:
-        productos = Producto.objects.filter(esta_disponible=True).order_by('-es_destacado', '-fecha_creacion')[:8]
-        query = ''
-
-    contexto = {'productos': productos, 'query': query}
-    return render(request, 'index.html', contexto)
-
-
-def add_to_cart(request, product_id):
-    """Añade un producto al carrito guardado en la sesión."""
-    if request.method != 'POST':
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
-        return redirect(request.META.get('HTTP_REFERER', reverse('home')))
-
-    # Allow selecting a talla (size). Expect POST param 'size'
-    size = (request.POST.get('size') or '').strip()
-    producto = get_object_or_404(Producto, pk=product_id, esta_disponible=True)
-
-    cart = request.session.get('cart', {})
-    if not isinstance(cart, dict):
-        cart = {}
-
-    # use composite key productid:size (size may be empty string)
-    key = f"{product_id}:{size}"
-    cart[key] = int(cart.get(key, 0)) + 1
-    request.session['cart'] = cart
-    request.session.modified = True
-
-    # Si es petición AJAX, devolver JSON con datos del carrito
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        # Calcular el nuevo total del carrito y obtener items
-        total_count = sum(int(qty) for qty in cart.values())
-        items = []
-        total_amount = Decimal('0.00')
-        
-        # Crear un mapa de remaining stock por producto (para productos sin tallas que no están en el carrito)
-        remaining_by_product = {}
-        
-        for composite_key, qty in cart.items():
-            try:
-                if isinstance(composite_key, str) and ':' in composite_key:
-                    pid_str, size = composite_key.split(':', 1)
-                else:
-                    pid_str = str(composite_key)
-                    size = ''
-                
-                prod = Producto.objects.filter(pk=int(pid_str)).first()
-                if not prod:
-                    continue
-                
-                cantidad = int(qty)
-                precio = prod.precio_oferta or prod.precio or Decimal('0.00')
-                subtotal = precio * cantidad
-                total_amount += subtotal
-                
-                # Obtener imagen
-                imagen_url = None
-                imagen = prod.imagenes.first()
-                if imagen:
-                    imagen_url = imagen.imagen.url
-                
-                # Calcular stock restante
-                remaining = calculate_remaining_stock(cart, prod, size)
-                
-                items.append({
-                    'producto_id': prod.id,
-                    'nombre': prod.nombre,
-                    'cantidad': cantidad,
-                    'subtotal': float(subtotal),
-                    'size': size,
-                    'imagen_url': imagen_url,
-                    'precio': float(precio),
-                    'remaining': remaining
-                })
-                
-                # Guardar remaining para productos sin tallas (para usar en productos que no están en el carrito)
-                if not size and not prod.tallas.exists():
-                    remaining_by_product[prod.id] = remaining
-            except Exception:
-                continue
-        
-        return JsonResponse({
-            'success': True,
-            'message': f'{producto.nombre} añadido al carrito',
-            'cart_count': total_count,
-            'cart_items': items,
-            'cart_total': float(total_amount),
-            'product_name': producto.nombre,
-            'remaining_by_product': remaining_by_product  # Para productos sin tallas
-        })
-
-    return redirect(request.META.get('HTTP_REFERER', reverse('home')))
-
-
-def cart_status(request):
-    """Devuelve el estado actual del carrito en formato JSON para AJAX."""
-    cart = request.session.get('cart', {})
+def _build_cart_json_response(cart, extra_data=None):
+    """
+    Helper function para construir la respuesta JSON del carrito.
+    Evita duplicación de código en las funciones de carrito.
+    
+    Args:
+        cart: Diccionario del carrito de sesión
+        extra_data: Diccionario opcional con datos adicionales para incluir en la respuesta
+    
+    Returns:
+        Dict con la estructura estándar de respuesta del carrito
+    """
     if not isinstance(cart, dict):
         cart = {}
     
     total_count = sum(int(qty) for qty in cart.values())
     items = []
     total_amount = Decimal('0.00')
-    
-    # Crear un mapa de remaining stock por producto (para productos sin tallas que no están en el carrito)
     remaining_by_product = {}
     
     for composite_key, qty in cart.items():
@@ -250,19 +144,79 @@ def cart_status(request):
                 'remaining': remaining
             })
             
-            # Guardar remaining para productos sin tallas (para usar en productos que no están en el carrito)
+            # Guardar remaining para productos sin tallas
             if not size and not prod.tallas.exists():
                 remaining_by_product[prod.id] = remaining
         except Exception:
             continue
     
-    return JsonResponse({
+    response = {
         'success': True,
         'cart_count': total_count,
         'cart_items': items,
         'cart_total': float(total_amount),
-        'remaining_by_product': remaining_by_product  # Para productos sin tallas
-    })
+        'remaining_by_product': remaining_by_product
+    }
+    
+    # Agregar datos extra si se proporcionan
+    if extra_data:
+        response.update(extra_data)
+    
+    return response
+
+
+def index(request):
+    """Si se recibe ?q=texto, filtra por nombre, descripcion, genero, color o material."""
+    q = request.GET.get('q', '')
+    if q:
+        query = q.strip()
+        filtros = Q(nombre__icontains=query) | Q(descripcion__icontains=query) | Q(genero__icontains=query) | Q(color__icontains=query) | Q(material__icontains=query)
+        productos = Producto.objects.filter(filtros, esta_disponible=True).order_by('-es_destacado', '-fecha_creacion')
+    else:
+        productos = Producto.objects.filter(esta_disponible=True).order_by('-es_destacado', '-fecha_creacion')[:8]
+        query = ''
+
+    contexto = {'productos': productos, 'query': query}
+    return render(request, 'index.html', contexto)
+
+
+def add_to_cart(request, product_id):
+    """Añade un producto al carrito guardado en la sesión."""
+    if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+        return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+
+    # Allow selecting a talla (size). Expect POST param 'size'
+    size = (request.POST.get('size') or '').strip()
+    producto = get_object_or_404(Producto, pk=product_id, esta_disponible=True)
+
+    cart = request.session.get('cart', {})
+    if not isinstance(cart, dict):
+        cart = {}
+
+    # use composite key productid:size (size may be empty string)
+    key = f"{product_id}:{size}"
+    cart[key] = int(cart.get(key, 0)) + 1
+    request.session['cart'] = cart
+    request.session.modified = True
+
+    # Si es petición AJAX, devolver JSON con datos del carrito
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        response = _build_cart_json_response(cart, {
+            'message': f'{producto.nombre} añadido al carrito',
+            'product_name': producto.nombre
+        })
+        return JsonResponse(response)
+
+    return redirect(request.META.get('HTTP_REFERER', reverse('home')))
+
+
+def cart_status(request):
+    """Devuelve el estado actual del carrito en formato JSON para AJAX."""
+    cart = request.session.get('cart', {})
+    response = _build_cart_json_response(cart)
+    return JsonResponse(response)
 
 
 def cart_view(request):
@@ -323,62 +277,8 @@ def cart_decrement(request, product_id):
 
     # Si es petición AJAX, devolver JSON con datos del carrito
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        total_count = sum(int(qty) for qty in cart.values())
-        items = []
-        total_amount = Decimal('0.00')
-        
-        # Crear un mapa de remaining stock por producto (para productos sin tallas que no están en el carrito)
-        remaining_by_product = {}
-        
-        for composite_key, qty in cart.items():
-            try:
-                if isinstance(composite_key, str) and ':' in composite_key:
-                    pid_str, size = composite_key.split(':', 1)
-                else:
-                    pid_str = str(composite_key)
-                    size = ''
-                
-                prod = Producto.objects.filter(pk=int(pid_str)).first()
-                if not prod:
-                    continue
-                
-                cantidad = int(qty)
-                precio = prod.precio_oferta or prod.precio or Decimal('0.00')
-                subtotal = precio * cantidad
-                total_amount += subtotal
-                
-                imagen_url = None
-                imagen = prod.imagenes.first()
-                if imagen:
-                    imagen_url = imagen.imagen.url
-                
-                # Calcular stock restante
-                remaining = calculate_remaining_stock(cart, prod, size)
-                
-                items.append({
-                    'producto_id': prod.id,
-                    'nombre': prod.nombre,
-                    'cantidad': cantidad,
-                    'subtotal': float(subtotal),
-                    'size': size,
-                    'imagen_url': imagen_url,
-                    'precio': float(precio),
-                    'remaining': remaining
-                })
-                
-                # Guardar remaining para productos sin tallas (para usar en productos que no están en el carrito)
-                if not size and not prod.tallas.exists():
-                    remaining_by_product[prod.id] = remaining
-            except Exception:
-                continue
-        
-        return JsonResponse({
-            'success': True,
-            'cart_count': total_count,
-            'cart_items': items,
-            'cart_total': float(total_amount),
-            'remaining_by_product': remaining_by_product  # Para productos sin tallas
-        })
+        response = _build_cart_json_response(cart)
+        return JsonResponse(response)
 
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
@@ -405,62 +305,8 @@ def cart_remove(request, product_id):
 
     # Si es petición AJAX, devolver JSON con datos del carrito
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        total_count = sum(int(qty) for qty in cart.values())
-        items = []
-        total_amount = Decimal('0.00')
-        
-        # Crear un mapa de remaining stock por producto (para productos sin tallas que no están en el carrito)
-        remaining_by_product = {}
-        
-        for composite_key, qty in cart.items():
-            try:
-                if isinstance(composite_key, str) and ':' in composite_key:
-                    pid_str, size = composite_key.split(':', 1)
-                else:
-                    pid_str = str(composite_key)
-                    size = ''
-                
-                prod = Producto.objects.filter(pk=int(pid_str)).first()
-                if not prod:
-                    continue
-                
-                cantidad = int(qty)
-                precio = prod.precio_oferta or prod.precio or Decimal('0.00')
-                subtotal = precio * cantidad
-                total_amount += subtotal
-                
-                imagen_url = None
-                imagen = prod.imagenes.first()
-                if imagen:
-                    imagen_url = imagen.imagen.url
-                
-                # Calcular stock restante
-                remaining = calculate_remaining_stock(cart, prod, size)
-                
-                items.append({
-                    'producto_id': prod.id,
-                    'nombre': prod.nombre,
-                    'cantidad': cantidad,
-                    'subtotal': float(subtotal),
-                    'size': size,
-                    'imagen_url': imagen_url,
-                    'precio': float(precio),
-                    'remaining': remaining
-                })
-                
-                # Guardar remaining para productos sin tallas (para usar en productos que no están en el carrito)
-                if not size and not prod.tallas.exists():
-                    remaining_by_product[prod.id] = remaining
-            except Exception:
-                continue
-        
-        return JsonResponse({
-            'success': True,
-            'cart_count': total_count,
-            'cart_items': items,
-            'cart_total': float(total_amount),
-            'remaining_by_product': remaining_by_product  # Para productos sin tallas
-        })
+        response = _build_cart_json_response(cart)
+        return JsonResponse(response)
 
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
@@ -504,62 +350,8 @@ def cart_update(request):
 
     # Si es petición AJAX, devolver JSON con datos del carrito
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        total_count = sum(int(qty) for qty in cart.values())
-        items = []
-        total_amount = Decimal('0.00')
-        
-        # Crear un mapa de remaining stock por producto (para productos sin tallas que no están en el carrito)
-        remaining_by_product = {}
-        
-        for composite_key, qty in cart.items():
-            try:
-                if isinstance(composite_key, str) and ':' in composite_key:
-                    pid_str, size = composite_key.split(':', 1)
-                else:
-                    pid_str = str(composite_key)
-                    size = ''
-                
-                prod = Producto.objects.filter(pk=int(pid_str)).first()
-                if not prod:
-                    continue
-                
-                cantidad = int(qty)
-                precio = prod.precio_oferta or prod.precio or Decimal('0.00')
-                subtotal = precio * cantidad
-                total_amount += subtotal
-                
-                imagen_url = None
-                imagen = prod.imagenes.first()
-                if imagen:
-                    imagen_url = imagen.imagen.url
-                
-                # Calcular stock restante
-                remaining = calculate_remaining_stock(cart, prod, size)
-                
-                items.append({
-                    'producto_id': prod.id,
-                    'nombre': prod.nombre,
-                    'cantidad': cantidad,
-                    'subtotal': float(subtotal),
-                    'size': size,
-                    'imagen_url': imagen_url,
-                    'precio': float(precio),
-                    'remaining': remaining
-                })
-                
-                # Guardar remaining para productos sin tallas (para usar en productos que no están en el carrito)
-                if not size and not prod.tallas.exists():
-                    remaining_by_product[prod.id] = remaining
-            except Exception:
-                continue
-        
-        return JsonResponse({
-            'success': True,
-            'cart_count': total_count,
-            'cart_items': items,
-            'cart_total': float(total_amount),
-            'remaining_by_product': remaining_by_product  # Para productos sin tallas
-        })
+        response = _build_cart_json_response(cart)
+        return JsonResponse(response)
 
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
@@ -773,12 +565,6 @@ def checkout_datos_cliente_envio(request):
         },
     )
 
-from decimal import Decimal
-from django.contrib import messages
-from django.shortcuts import render, redirect, get_object_or_404
-
-
-
 @login_required(login_url='register')
 def detalles_pago(request):
     cliente = getattr(request.user, "cliente", None)
@@ -852,10 +638,6 @@ def detalles_pago(request):
     )
 
 
-
-from django.utils.crypto import get_random_string
-import stripe
-stripe.api_key = settings.STRIPE_SECRET_KEY
 
 def generar_numero_pedido():
     return f"MP-{timezone.now().strftime('%Y%m%d%H%M%S')}-{get_random_string(4).upper()}"
