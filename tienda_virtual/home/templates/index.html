@@ -8,10 +8,10 @@
     <section class="hero">
         <div class="hero-inner">
             <div class="hero-copy">
-                <p class="hero-sub">Descuentos Desde 50%</p>
+                <p class="hero-sub"><i class="fas fa-tag"></i> Descuentos Desde 50%</p>
                 <h1 class="hero-title">Cariño Y Cuidado<br>Para Tu Mascota</h1>
-                <p class="hero-lead">Los mejores productos para tus mascotas. Encuentra comida, juguetes y accesorios.</p>
-                <a class="btn hero-cta" href="#catalog">Comenzar</a>
+                <p class="hero-lead">Los mejores productos para tus mascotas. Encuentra comida, juguetes y accesorios de la más alta calidad.</p>
+                <a class="btn hero-cta" href="#catalog"><i class="fas fa-arrow-right"></i> Comenzar</a>
             </div>
             <div class="hero-figure">
                 <img src="{% static 'home/hero-dog.png' %}" alt="Perro" class="hero-image">
@@ -23,9 +23,9 @@
 
     <section id="catalog" class="catalog">
         {% if query %}
-            <h2>Resultados para "{{ query }}"</h2>
+            <h2 class="section-title"><i class="fas fa-search"></i> Resultados para "{{ query }}" <i class="fas fa-search"></i></h2>
         {% else %}
-            <h2>Productos</h2>
+            <h2 class="section-title"><i class="fas fa-paw"></i> Nuestros Productos <i class="fas fa-paw"></i></h2>
         {% endif %}
         <div class="cards">
             {% if productos %}

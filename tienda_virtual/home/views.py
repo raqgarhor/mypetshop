@@ -2,6 +2,7 @@ from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 import datetime
 from decimal import Decimal
+import json
 
 import stripe
 from django.conf import settings
@@ -13,6 +14,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.contrib import messages
+from django.http import JsonResponse
 import datetime
 
 from .models import Articulo, Escaparate, Categoria, Producto, MensajeContacto
@@ -62,6 +64,8 @@ def index(request):
 def add_to_cart(request, product_id):
     """Añade un producto al carrito guardado en la sesión."""
     if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     # Allow selecting a talla (size). Expect POST param 'size'
@@ -77,6 +81,57 @@ def add_to_cart(request, product_id):
     cart[key] = int(cart.get(key, 0)) + 1
     request.session['cart'] = cart
     request.session.modified = True
+
+    # Si es petición AJAX, devolver JSON con datos del carrito
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # Calcular el nuevo total del carrito y obtener items
+        total_count = sum(int(qty) for qty in cart.values())
+        items = []
+        total_amount = Decimal('0.00')
+        
+        for composite_key, qty in cart.items():
+            try:
+                if isinstance(composite_key, str) and ':' in composite_key:
+                    pid_str, size = composite_key.split(':', 1)
+                else:
+                    pid_str = str(composite_key)
+                    size = ''
+                
+                prod = Producto.objects.filter(pk=int(pid_str)).first()
+                if not prod:
+                    continue
+                
+                cantidad = int(qty)
+                precio = prod.precio_oferta or prod.precio or Decimal('0.00')
+                subtotal = precio * cantidad
+                total_amount += subtotal
+                
+                # Obtener imagen
+                imagen_url = None
+                imagen = prod.imagenes.first()
+                if imagen:
+                    imagen_url = imagen.imagen.url
+                
+                items.append({
+                    'producto_id': prod.id,
+                    'nombre': prod.nombre,
+                    'cantidad': cantidad,
+                    'subtotal': float(subtotal),
+                    'size': size,
+                    'imagen_url': imagen_url,
+                    'precio': float(precio)
+                })
+            except Exception:
+                continue
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'{producto.nombre} añadido al carrito',
+            'cart_count': total_count,
+            'cart_items': items,
+            'cart_total': float(total_amount),
+            'product_name': producto.nombre
+        })
 
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
@@ -112,6 +167,8 @@ def cart_view(request):
 def cart_decrement(request, product_id):
     """Decrementa la cantidad de `product_id` en el carrito de sesión."""
     if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     # Expect optional 'size' param from the form so we decrement the correct item
@@ -135,12 +192,61 @@ def cart_decrement(request, product_id):
             request.session['cart'] = cart
             request.session.modified = True
 
+    # Si es petición AJAX, devolver JSON con datos del carrito
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        total_count = sum(int(qty) for qty in cart.values())
+        items = []
+        total_amount = Decimal('0.00')
+        
+        for composite_key, qty in cart.items():
+            try:
+                if isinstance(composite_key, str) and ':' in composite_key:
+                    pid_str, size = composite_key.split(':', 1)
+                else:
+                    pid_str = str(composite_key)
+                    size = ''
+                
+                prod = Producto.objects.filter(pk=int(pid_str)).first()
+                if not prod:
+                    continue
+                
+                cantidad = int(qty)
+                precio = prod.precio_oferta or prod.precio or Decimal('0.00')
+                subtotal = precio * cantidad
+                total_amount += subtotal
+                
+                imagen_url = None
+                imagen = prod.imagenes.first()
+                if imagen:
+                    imagen_url = imagen.imagen.url
+                
+                items.append({
+                    'producto_id': prod.id,
+                    'nombre': prod.nombre,
+                    'cantidad': cantidad,
+                    'subtotal': float(subtotal),
+                    'size': size,
+                    'imagen_url': imagen_url,
+                    'precio': float(precio)
+                })
+            except Exception:
+                continue
+        
+        return JsonResponse({
+            'success': True,
+            'cart_count': total_count,
+            'cart_items': items,
+            'cart_total': float(total_amount)
+        })
+
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
 
 def cart_remove(request, product_id):
     """Elimina completamente `product_id` del carrito de sesión."""
     if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     size = (request.POST.get('size') or '').strip()
@@ -156,18 +262,69 @@ def cart_remove(request, product_id):
         request.session['cart'] = cart
         request.session.modified = True
 
+    # Si es petición AJAX, devolver JSON con datos del carrito
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        total_count = sum(int(qty) for qty in cart.values())
+        items = []
+        total_amount = Decimal('0.00')
+        
+        for composite_key, qty in cart.items():
+            try:
+                if isinstance(composite_key, str) and ':' in composite_key:
+                    pid_str, size = composite_key.split(':', 1)
+                else:
+                    pid_str = str(composite_key)
+                    size = ''
+                
+                prod = Producto.objects.filter(pk=int(pid_str)).first()
+                if not prod:
+                    continue
+                
+                cantidad = int(qty)
+                precio = prod.precio_oferta or prod.precio or Decimal('0.00')
+                subtotal = precio * cantidad
+                total_amount += subtotal
+                
+                imagen_url = None
+                imagen = prod.imagenes.first()
+                if imagen:
+                    imagen_url = imagen.imagen.url
+                
+                items.append({
+                    'producto_id': prod.id,
+                    'nombre': prod.nombre,
+                    'cantidad': cantidad,
+                    'subtotal': float(subtotal),
+                    'size': size,
+                    'imagen_url': imagen_url,
+                    'precio': float(precio)
+                })
+            except Exception:
+                continue
+        
+        return JsonResponse({
+            'success': True,
+            'cart_count': total_count,
+            'cart_items': items,
+            'cart_total': float(total_amount)
+        })
+
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
 
 def cart_update(request):
     """Actualiza la cantidad de un item a un valor específico (POST)."""
     if request.method != 'POST':
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     product_id = request.POST.get('product_id')
     quantity = request.POST.get('quantity')
     size = (request.POST.get('size') or '').strip()
     if not product_id:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'error': 'Producto no especificado'}, status=400)
         return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
     try:
@@ -191,6 +348,54 @@ def cart_update(request):
 
     request.session['cart'] = cart
     request.session.modified = True
+
+    # Si es petición AJAX, devolver JSON con datos del carrito
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        total_count = sum(int(qty) for qty in cart.values())
+        items = []
+        total_amount = Decimal('0.00')
+        
+        for composite_key, qty in cart.items():
+            try:
+                if isinstance(composite_key, str) and ':' in composite_key:
+                    pid_str, size = composite_key.split(':', 1)
+                else:
+                    pid_str = str(composite_key)
+                    size = ''
+                
+                prod = Producto.objects.filter(pk=int(pid_str)).first()
+                if not prod:
+                    continue
+                
+                cantidad = int(qty)
+                precio = prod.precio_oferta or prod.precio or Decimal('0.00')
+                subtotal = precio * cantidad
+                total_amount += subtotal
+                
+                imagen_url = None
+                imagen = prod.imagenes.first()
+                if imagen:
+                    imagen_url = imagen.imagen.url
+                
+                items.append({
+                    'producto_id': prod.id,
+                    'nombre': prod.nombre,
+                    'cantidad': cantidad,
+                    'subtotal': float(subtotal),
+                    'size': size,
+                    'imagen_url': imagen_url,
+                    'precio': float(precio)
+                })
+            except Exception:
+                continue
+        
+        return JsonResponse({
+            'success': True,
+            'cart_count': total_count,
+            'cart_items': items,
+            'cart_total': float(total_amount)
+        })
+
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
 

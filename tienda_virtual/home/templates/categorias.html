@@ -4,8 +4,8 @@
 <div class="container py-5">
 
     <div class="text-center mb-4">
-        <h1 class="fw-bold">Categorías de Productos</h1>
-        <p class="text-muted">Explora las categorías disponibles en nuestra tienda.</p>
+        <h1 class="heading"><i class="fas fa-paw"></i> Categorías de Productos <i class="fas fa-paw"></i></h1>
+        <p style="font-size: 1.6rem; color: var(--gray); margin-top: 1rem;">Explora las categorías disponibles en nuestra tienda.</p>
     </div>
 
     <div class="row">
@@ -14,21 +14,22 @@
         <div class="col-md-4 mb-4">
             <a href="{% url 'categoria_detail' categoria.id %}" class="text-decoration-none text-dark">
 
-                <div class="card shadow-sm h-100">
+                <div class="card category-card" style="height: 100%;">
 
                     {% if categoria.imagen %}
-                        <img src="{{ categoria.imagen.url }}" class="card-img-top" style="height:200px; object-fit:cover;">
+                        <img src="{{ categoria.imagen.url }}" style="height:200px; object-fit:cover; border-radius: .5rem .5rem 0 0;">
                     {% else %}
-                        <img src="/static/home/default-category.jpg" class="card-img-top" style="height:200px; object-fit:cover;">
+                        <div class="placeholder" style="height:200px; border-radius: .5rem .5rem 0 0;">Sin imagen</div>
                     {% endif %}
 
-                    <div class="card-body text-center">
-                        <h5 class="card-title">{{ categoria.nombre }}</h5>
+                    <div class="card-body text-center" style="padding: 2rem;">
+                        <h5 style="font-size: 2rem; font-weight: 600; margin-bottom: 1rem;">{{ categoria.nombre }}</h5>
                         {% if categoria.descripcion %}
-                            <p class="card-text text-muted" style="font-size: 14px;">
+                            <p style="font-size: 1.4rem; color: var(--gray); margin-bottom: 1.5rem;">
                                 {{ categoria.descripcion }}
                             </p>
                         {% endif %}
+                        <a href="{% url 'categoria_detail' categoria.id %}" class="btn">Ver Productos</a>
                     </div>
 
                 </div>
