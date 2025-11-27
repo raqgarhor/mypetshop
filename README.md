@@ -1,58 +1,82 @@
-[readme_instalacion.md](https://github.com/user-attachments/files/23805932/readme_instalacion.md)
 # Guía de Instalación
 
-Aquí tienes un README sencillo y directo para que cualquier persona pueda seguir los pasos sin liarse.
+Este documento explica de forma clara los pasos necesarios para ejecutar el proyecto en entorno local con todas sus funcionalidades operativas.
 
 ## 🚀 Requisitos Previos
 - Tener **Git** instalado
-- Tener **Node.js** (versión LTS recomendada)
-- Tener **npm** o **yarn**
+- Tener **Python 3.10** o superior
 
 ## 📥 Instalación
 1. **Clona el repositorio:**
    ```bash
-   git clone https://tu-repo.git
+   git clone [url]
    ```
 
 2. **Entra en la carpeta del proyecto:**
    ```bash
-   cd nombre-del-proyecto
+   cd mypetshop
    ```
 
-3. **Instala las dependencias:**
+3. **Crear el entorno virtual Python:**
    ```bash
-   npm install
+   python –m venv .venv
    ```
-   o si usas yarn:
+
+4. **Activar el entorno virtual Python:**
    ```bash
-   yarn install
+   .\.venv\Scripts\actívate.bat
+   ```
+
+5. **Instalar Django:**
+   ```bash
+   python –m pip install Django
+   ```
+
+6. **Instalar requisitos de requirements.txt:**
+   ```bash
+   cd tienda_virtual
+   ```
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+7. **Modificar tu .env:**
+    ```bash
+   nano .env
+   ```
+   - Y poner los siquientes datos de prueba:
+       ```bash
+      STRIPE_PUBLISHABLE_KEY=pk_test_51SWd8HI0c80U4VWYIzD4P88VfqkSiOyUUFY3WZqiyDdBxVMFkfSq9ZrtRM4Zo9newkCV458NFP13shXW4KhEo4WJ00sbTmx1sq
+      STRIPE_SECRET_KEY=sk_test_51SWd8HI0c80U4VWY96OlMqS4MQnZFOW4ehQvbKk3xnoheoxu1Jb6N6JP059FbMQtaMt62Tfv1IhdtRbYLIxJiBTq00XwfdKlUA
+      SENDGRID_API_KEY=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
+      EMAIL_FROM=raqgarhor@alum.us.es
+      ```
+
+## 💾 Cargar la base de datos
+
+1. **Crear los archivos de migración:**
+   ```bash
+   cd tienda_virtual
+   ```
+   ```bash
+   python manage.py makemigrations
+   ```
+
+2. **Aplicar las migraciones:**
+   ```bash
+   python manage.py migrate
+   ```
+   
+3. **Poblar la DB con datos de prueba:**
+   ```bash
+   python manage.py seed --flush
    ```
 
 ## ▶️ Ejecutar en modo desarrollo
 ```bash
-npm run dev
+cd tienda_virtual
 ```
-o con yarn:
 ```bash
-yarn dev
+python manage.py runserver
 ```
-
-## 🏗️ Build para producción
-```bash
-npm run build
-```
-o con yarn:
-```bash
-yarn build
-```
-
-## 🐛 Problemas comunes
-- Si algo peta, prueba a borrar `node_modules` y reinstalar:
-  ```bash
-  rm -rf node_modules
-  npm install
-  ```
-
-## 📄 Licencia
-Añade aquí la licencia que uses (MIT, Apache, etc).
-
