@@ -17,10 +17,6 @@
                 <i class="fa-solid fa-dog"></i>
                 <span>My Pet Shop</span>
             </a>
-            <form class="search" action="{% url 'home' %}" method="get">
-                <input name="q" placeholder="Buscar productos, categorías o marcas..." aria-label="Buscar">
-                <button type="submit"><i class="fas fa-search"></i></button>
-            </form>
             <nav class="header-actions">
                 {% if request.user.is_authenticated %}
                     <span class="user-pill"><i class="fas fa-user"></i> {{ request.user.first_name|default:request.user.username }}</span>

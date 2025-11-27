@@ -63,5 +63,28 @@
         </tbody>
     </table>
 </div>
+
+<!-- Paginación -->
+{% if pedidos.has_other_pages %}
+<div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+    {% if pedidos.has_previous %}
+        <a href="?page=1{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">Primera</a>
+        <a href="?page={{ pedidos.previous_page_number }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">« Anterior</a>
+    {% endif %}
+    
+    <span style="padding: 8px 12px;">
+        Página {{ pedidos.number }} de {{ pedidos.paginator.num_pages }}
+    </span>
+    
+    {% if pedidos.has_next %}
+        <a href="?page={{ pedidos.next_page_number }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">Siguiente »</a>
+        <a href="?page={{ pedidos.paginator.num_pages }}{% if estado_filtro %}&estado={{ estado_filtro }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">Última</a>
+    {% endif %}
+</div>
+{% endif %}
 {% endblock %}
 

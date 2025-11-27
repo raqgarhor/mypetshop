@@ -5,8 +5,77 @@
 {% block content %}
 {% load cart_extras %}
     <section class="products-list">
+        <!-- Formulario de filtros (solo si NO es vista de categoría) -->
+        {% if not es_categoria %}
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <form method="get" style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- Filtros -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <!-- Filtro por Marca -->
+                    <div>
+                        <label for="marca" style="display: block; margin-bottom: 5px; font-weight: bold;">Marca:</label>
+                        <select name="marca" id="marca" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                            <option value="">Todas las marcas</option>
+                            {% for marca in marcas %}
+                                <option value="{{ marca.id }}" {% if marca_filtro == marca.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ marca.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Filtro por Especie -->
+                    <div>
+                        <label for="especie" style="display: block; margin-bottom: 5px; font-weight: bold;">Especie:</label>
+                        <select name="especie" id="especie" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                            <option value="">Todas las especies</option>
+                            {% for especie_val, especie_label in especies %}
+                                <option value="{{ especie_val }}" {% if especie_filtro == especie_val %}selected{% endif %}>
+                                    {{ especie_label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Filtro por Color -->
+                    <div>
+                        <label for="color" style="display: block; margin-bottom: 5px; font-weight: bold;">Color:</label>
+                        <input type="text" name="color" id="color" placeholder="Ej: rojo, azul..." value="{{ color_filtro }}" 
+                               style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                    </div>
+                    
+                    <!-- Filtro por Material -->
+                    <div>
+                        <label for="material" style="display: block; margin-bottom: 5px; font-weight: bold;">Material:</label>
+                        <input type="text" name="material" id="material" placeholder="Ej: plástico, tela..." value="{{ material_filtro }}" 
+                               style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                    </div>
+                </div>
+                
+                <!-- Botones -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="submit" class="btn" style="padding: 10px 20px; font-size: 16px;">
+                        <i class="fas fa-filter"></i> Aplicar Filtros
+                    </button>
+                    {% if marca_filtro or especie_filtro or color_filtro or material_filtro %}
+                        {% if title == 'Productos' %}
+                            <a href="{% url 'productos' %}" class="btn" style="padding: 10px 20px; font-size: 16px; background: #95a5a6; text-decoration: none; display: inline-block;">
+                        {% elif title == 'Novedades' %}
+                            <a href="{% url 'novedades' %}" class="btn" style="padding: 10px 20px; font-size: 16px; background: #95a5a6; text-decoration: none; display: inline-block;">
+                        {% elif title == 'Ofertas' %}
+                            <a href="{% url 'ofertas' %}" class="btn" style="padding: 10px 20px; font-size: 16px; background: #95a5a6; text-decoration: none; display: inline-block;">
+                        {% else %}
+                            <a href="{% url 'productos' %}" class="btn" style="padding: 10px 20px; font-size: 16px; background: #95a5a6; text-decoration: none; display: inline-block;">
+                        {% endif %}
+                            <i class="fas fa-times"></i> Limpiar Filtros
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+        {% endif %}
 
-        {% if destacados %}
+        {% if destacados and destacados.paginator.count > 0 %}
         <h2 class="section-title"><i class="fas fa-star"></i> Productos Destacados <i class="fas fa-star"></i></h2>
         <div class="cards">
             {% for p in destacados %}
@@ -62,6 +131,25 @@
                 </article>
             {% endfor %}
         </div>
+        
+        <!-- Paginación de productos destacados -->
+        {% if destacados.has_other_pages %}
+        <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+            {% if destacados.has_previous %}
+                <a href="?page_destacados=1{% if productos.number > 1 %}&page={{ productos.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Primera</a>
+                <a href="?page_destacados={{ destacados.previous_page_number }}{% if productos.number > 1 %}&page={{ productos.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">« Anterior</a>
+            {% endif %}
+            
+            <span style="padding: 8px 12px;">
+                Página {{ destacados.number }} de {{ destacados.paginator.num_pages }}
+            </span>
+            
+            {% if destacados.has_next %}
+                <a href="?page_destacados={{ destacados.next_page_number }}{% if productos.number > 1 %}&page={{ productos.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Siguiente »</a>
+                <a href="?page_destacados={{ destacados.paginator.num_pages }}{% if productos.number > 1 %}&page={{ productos.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Última</a>
+            {% endif %}
+        </div>
+        {% endif %}
         {% endif %}
 
         <h2 class="section-title"><i class="fas fa-paw"></i> {{ title|default:'Todos los Productos' }} <i class="fas fa-paw"></i></h2>
@@ -123,4 +211,23 @@
             {% endif %}
         </div>
     </section>
+
+    <!-- Paginación de productos normales -->
+    {% if productos.has_other_pages %}
+    <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 30px 0; flex-wrap: wrap;">
+        {% if productos.has_previous %}
+            <a href="?page=1{% if destacados.number > 1 %}&page_destacados={{ destacados.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Primera</a>
+            <a href="?page={{ productos.previous_page_number }}{% if destacados.number > 1 %}&page_destacados={{ destacados.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">« Anterior</a>
+        {% endif %}
+        
+        <span style="padding: 8px 12px;">
+            Página {{ productos.number }} de {{ productos.paginator.num_pages }}
+        </span>
+        
+        {% if productos.has_next %}
+            <a href="?page={{ productos.next_page_number }}{% if destacados.number > 1 %}&page_destacados={{ destacados.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Siguiente »</a>
+            <a href="?page={{ productos.paginator.num_pages }}{% if destacados.number > 1 %}&page_destacados={{ destacados.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Última</a>
+        {% endif %}
+    </div>
+    {% endif %}
 {% endblock %}

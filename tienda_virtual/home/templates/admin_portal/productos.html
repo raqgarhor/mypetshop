@@ -92,5 +92,28 @@
         </tbody>
     </table>
 </div>
+
+<!-- Paginación -->
+{% if productos.has_other_pages %}
+<div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+    {% if productos.has_previous %}
+        <a href="?page=1{% if categoria_filtro %}&categoria={{ categoria_filtro }}{% endif %}{% if disponible_filtro %}&disponible={{ disponible_filtro }}{% endif %}{% if busqueda %}&q={{ busqueda }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">Primera</a>
+        <a href="?page={{ productos.previous_page_number }}{% if categoria_filtro %}&categoria={{ categoria_filtro }}{% endif %}{% if disponible_filtro %}&disponible={{ disponible_filtro }}{% endif %}{% if busqueda %}&q={{ busqueda }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">« Anterior</a>
+    {% endif %}
+    
+    <span style="padding: 8px 12px;">
+        Página {{ productos.number }} de {{ productos.paginator.num_pages }}
+    </span>
+    
+    {% if productos.has_next %}
+        <a href="?page={{ productos.next_page_number }}{% if categoria_filtro %}&categoria={{ categoria_filtro }}{% endif %}{% if disponible_filtro %}&disponible={{ disponible_filtro }}{% endif %}{% if busqueda %}&q={{ busqueda }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">Siguiente »</a>
+        <a href="?page={{ productos.paginator.num_pages }}{% if categoria_filtro %}&categoria={{ categoria_filtro }}{% endif %}{% if disponible_filtro %}&disponible={{ disponible_filtro }}{% endif %}{% if busqueda %}&q={{ busqueda }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">Última</a>
+    {% endif %}
+</div>
+{% endif %}
 {% endblock %}
 

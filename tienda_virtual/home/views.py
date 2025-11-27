@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -26,9 +27,11 @@ from .models import (
     Categoria,
     Cliente,
     ItemPedido,
+    Marca,
     MensajeContacto,
     Pedido,
     Producto,
+    TallaProducto,
 )
 
 
@@ -166,17 +169,69 @@ def _build_cart_json_response(cart, extra_data=None):
 
 
 def index(request):
-    """Si se recibe ?q=texto, filtra por nombre, descripcion, genero, color o material."""
+    """Si se recibe ?q=texto, filtra por nombre, descripcion, genero, color o material.
+    También permite filtrar por marca, especie, color y material."""
     q = request.GET.get('q', '')
+    marca_filtro = request.GET.get('marca', '')
+    especie_filtro = request.GET.get('especie', '')
+    color_filtro = request.GET.get('color', '')
+    material_filtro = request.GET.get('material', '')
+    
+    productos_list = Producto.objects.filter(esta_disponible=True)
+    
+    # Filtro de búsqueda por texto
     if q:
         query = q.strip()
-        filtros = Q(nombre__icontains=query) | Q(descripcion__icontains=query) | Q(genero__icontains=query) | Q(color__icontains=query) | Q(material__icontains=query)
-        productos = Producto.objects.filter(filtros, esta_disponible=True).order_by('-es_destacado', '-fecha_creacion')
+        filtros_texto = Q(nombre__icontains=query) | Q(descripcion__icontains=query) | Q(genero__icontains=query) | Q(color__icontains=query) | Q(material__icontains=query)
+        productos_list = productos_list.filter(filtros_texto)
     else:
-        productos = Producto.objects.filter(esta_disponible=True).order_by('-es_destacado', '-fecha_creacion')[:8]
         query = ''
+    
+    # Filtros específicos
+    if marca_filtro:
+        productos_list = productos_list.filter(marca_id=marca_filtro)
+    
+    if especie_filtro:
+        productos_list = productos_list.filter(genero=especie_filtro)
+    
+    if color_filtro:
+        productos_list = productos_list.filter(color__icontains=color_filtro)
+    
+    if material_filtro:
+        productos_list = productos_list.filter(material__icontains=material_filtro)
+    
+    productos_list = productos_list.order_by('-es_destacado', '-fecha_creacion')
 
-    contexto = {'productos': productos, 'query': query}
+    # Paginación
+    paginator = Paginator(productos_list, 12)  # 12 productos por página
+    page = request.GET.get('page')
+    try:
+        productos = paginator.page(page)
+    except PageNotAnInteger:
+        productos = paginator.page(1)
+    except EmptyPage:
+        productos = paginator.page(paginator.num_pages)
+
+    # Obtener marcas y especies para los filtros
+    marcas = Marca.objects.all().order_by('nombre')
+    especies = Producto.Especie.choices
+    
+    # Obtener colores y materiales únicos para los filtros
+    colores = Producto.objects.filter(esta_disponible=True, color__isnull=False).exclude(color='').values_list('color', flat=True).distinct().order_by('color')
+    materiales = Producto.objects.filter(esta_disponible=True, material__isnull=False).exclude(material='').values_list('material', flat=True).distinct().order_by('material')
+
+    contexto = {
+        'productos': productos,
+        'query': query,
+        'marcas': marcas,
+        'especies': especies,
+        'colores': colores,
+        'materiales': materiales,
+        'marca_filtro': marca_filtro,
+        'especie_filtro': especie_filtro,
+        'color_filtro': color_filtro,
+        'material_filtro': material_filtro,
+    }
     return render(request, 'index.html', contexto)
 
 
@@ -437,25 +492,182 @@ def cart_clear(request):
 
 def novedades(request):
     """Muestra productos ordenados por fecha de creación (más recientes primero)."""
-    # show only products created within the last 30 days
     cutoff = timezone.now() - datetime.timedelta(days=30)
-    productos = Producto.objects.filter(esta_disponible=True, fecha_creacion__gte=cutoff).order_by('-fecha_creacion')[:24]
-    contexto = {'productos': productos, 'title': 'Novedades'}
+    productos_list = Producto.objects.filter(esta_disponible=True, fecha_creacion__gte=cutoff)
+    
+    # Aplicar filtros
+    marca_filtro = request.GET.get('marca', '')
+    especie_filtro = request.GET.get('especie', '')
+    color_filtro = request.GET.get('color', '')
+    material_filtro = request.GET.get('material', '')
+    
+    if marca_filtro:
+        productos_list = productos_list.filter(marca_id=marca_filtro)
+    if especie_filtro:
+        productos_list = productos_list.filter(genero=especie_filtro)
+    if color_filtro:
+        productos_list = productos_list.filter(color__icontains=color_filtro)
+    if material_filtro:
+        productos_list = productos_list.filter(material__icontains=material_filtro)
+    
+    productos_list = productos_list.order_by('-fecha_creacion')
+    
+    # Paginación
+    paginator = Paginator(productos_list, 12)
+    page = request.GET.get('page')
+    try:
+        productos = paginator.page(page)
+    except PageNotAnInteger:
+        productos = paginator.page(1)
+    except EmptyPage:
+        productos = paginator.page(paginator.num_pages)
+    
+    # Obtener datos para filtros
+    marcas = Marca.objects.all().order_by('nombre')
+    especies = Producto.Especie.choices
+    colores = Producto.objects.filter(esta_disponible=True, color__isnull=False).exclude(color='').values_list('color', flat=True).distinct().order_by('color')
+    materiales = Producto.objects.filter(esta_disponible=True, material__isnull=False).exclude(material='').values_list('material', flat=True).distinct().order_by('material')
+    
+    contexto = {
+        'productos': productos,
+        'title': 'Novedades',
+        'marcas': marcas,
+        'especies': especies,
+        'colores': colores,
+        'materiales': materiales,
+        'marca_filtro': marca_filtro,
+        'especie_filtro': especie_filtro,
+        'color_filtro': color_filtro,
+        'material_filtro': material_filtro,
+    }
     return render(request, 'products.html', contexto)
 
 
 def productos(request):
     """Muestra productos destacados."""
-    destacados = Producto.objects.filter(esta_disponible=True, es_destacado=True).order_by('-fecha_creacion')
-    productos = Producto.objects.filter(esta_disponible=True).exclude(es_destacado=True).order_by('-fecha_creacion')
-    contexto = {'destacados': destacados, 'productos': productos, 'title': 'Productos'}
+    # Aplicar filtros
+    marca_filtro = request.GET.get('marca', '')
+    especie_filtro = request.GET.get('especie', '')
+    color_filtro = request.GET.get('color', '')
+    material_filtro = request.GET.get('material', '')
+    
+    destacados_list = Producto.objects.filter(esta_disponible=True, es_destacado=True)
+    productos_list = Producto.objects.filter(esta_disponible=True).exclude(es_destacado=True)
+    
+    # Aplicar filtros a destacados
+    if marca_filtro:
+        destacados_list = destacados_list.filter(marca_id=marca_filtro)
+    if especie_filtro:
+        destacados_list = destacados_list.filter(genero=especie_filtro)
+    if color_filtro:
+        destacados_list = destacados_list.filter(color__icontains=color_filtro)
+    if material_filtro:
+        destacados_list = destacados_list.filter(material__icontains=material_filtro)
+    
+    # Aplicar filtros a productos normales
+    if marca_filtro:
+        productos_list = productos_list.filter(marca_id=marca_filtro)
+    if especie_filtro:
+        productos_list = productos_list.filter(genero=especie_filtro)
+    if color_filtro:
+        productos_list = productos_list.filter(color__icontains=color_filtro)
+    if material_filtro:
+        productos_list = productos_list.filter(material__icontains=material_filtro)
+    
+    destacados_list = destacados_list.order_by('-fecha_creacion')
+    productos_list = productos_list.order_by('-fecha_creacion')
+    
+    # Paginación para productos destacados
+    paginator_destacados = Paginator(destacados_list, 12)
+    page_destacados = request.GET.get('page_destacados', 1)
+    try:
+        destacados = paginator_destacados.page(page_destacados)
+    except PageNotAnInteger:
+        destacados = paginator_destacados.page(1)
+    except EmptyPage:
+        destacados = paginator_destacados.page(paginator_destacados.num_pages)
+    
+    # Paginación para productos no destacados
+    paginator = Paginator(productos_list, 12)
+    page = request.GET.get('page', 1)
+    try:
+        productos = paginator.page(page)
+    except PageNotAnInteger:
+        productos = paginator.page(1)
+    except EmptyPage:
+        productos = paginator.page(paginator.num_pages)
+    
+    # Obtener datos para filtros
+    marcas = Marca.objects.all().order_by('nombre')
+    especies = Producto.Especie.choices
+    colores = Producto.objects.filter(esta_disponible=True, color__isnull=False).exclude(color='').values_list('color', flat=True).distinct().order_by('color')
+    materiales = Producto.objects.filter(esta_disponible=True, material__isnull=False).exclude(material='').values_list('material', flat=True).distinct().order_by('material')
+    
+    contexto = {
+        'destacados': destacados,
+        'productos': productos,
+        'title': 'Productos',
+        'marcas': marcas,
+        'especies': especies,
+        'colores': colores,
+        'materiales': materiales,
+        'marca_filtro': marca_filtro,
+        'especie_filtro': especie_filtro,
+        'color_filtro': color_filtro,
+        'material_filtro': material_filtro,
+    }
     return render(request, 'products.html', contexto)
 
 
 def ofertas(request):
     """Muestra productos que tienen precio de oferta definido."""
-    productos = Producto.objects.filter(esta_disponible=True, precio_oferta__isnull=False).order_by('-fecha_creacion')
-    contexto = {'productos': productos, 'title': 'Ofertas'}
+    productos_list = Producto.objects.filter(esta_disponible=True, precio_oferta__isnull=False)
+    
+    # Aplicar filtros
+    marca_filtro = request.GET.get('marca', '')
+    especie_filtro = request.GET.get('especie', '')
+    color_filtro = request.GET.get('color', '')
+    material_filtro = request.GET.get('material', '')
+    
+    if marca_filtro:
+        productos_list = productos_list.filter(marca_id=marca_filtro)
+    if especie_filtro:
+        productos_list = productos_list.filter(genero=especie_filtro)
+    if color_filtro:
+        productos_list = productos_list.filter(color__icontains=color_filtro)
+    if material_filtro:
+        productos_list = productos_list.filter(material__icontains=material_filtro)
+    
+    productos_list = productos_list.order_by('-fecha_creacion')
+    
+    # Paginación
+    paginator = Paginator(productos_list, 12)
+    page = request.GET.get('page')
+    try:
+        productos = paginator.page(page)
+    except PageNotAnInteger:
+        productos = paginator.page(1)
+    except EmptyPage:
+        productos = paginator.page(paginator.num_pages)
+    
+    # Obtener datos para filtros
+    marcas = Marca.objects.all().order_by('nombre')
+    especies = Producto.Especie.choices
+    colores = Producto.objects.filter(esta_disponible=True, color__isnull=False).exclude(color='').values_list('color', flat=True).distinct().order_by('color')
+    materiales = Producto.objects.filter(esta_disponible=True, material__isnull=False).exclude(material='').values_list('material', flat=True).distinct().order_by('material')
+    
+    contexto = {
+        'productos': productos,
+        'title': 'Ofertas',
+        'marcas': marcas,
+        'especies': especies,
+        'colores': colores,
+        'materiales': materiales,
+        'marca_filtro': marca_filtro,
+        'especie_filtro': especie_filtro,
+        'color_filtro': color_filtro,
+        'material_filtro': material_filtro,
+    }
     return render(request, 'products.html', contexto)
 
 
@@ -497,8 +709,24 @@ def categorias(request):
 def categoria_detail(request, categoria_id):
     """Muestra los productos que pertenecen a la categoría indicada."""
     categoria = get_object_or_404(Categoria, pk=categoria_id)
-    productos = Producto.objects.filter(categoria=categoria, esta_disponible=True).order_by('-fecha_creacion')
-    contexto = {'productos': productos, 'title': categoria.nombre}
+    productos_list = Producto.objects.filter(categoria=categoria, esta_disponible=True).order_by('-fecha_creacion')
+    
+    # Paginación
+    paginator = Paginator(productos_list, 12)
+    page = request.GET.get('page')
+    try:
+        productos = paginator.page(page)
+    except PageNotAnInteger:
+        productos = paginator.page(1)
+    except EmptyPage:
+        productos = paginator.page(paginator.num_pages)
+    
+    contexto = {
+        'productos': productos,
+        'title': categoria.nombre,
+        'categoria': categoria,
+        'es_categoria': True,  # Flag para identificar que es vista de categoría
+    }
     return render(request, 'products.html', contexto)
 
 def login_view(request):
@@ -810,8 +1038,43 @@ def checkout_stripe(request):
 
 def pago_ok(request, pedido_id):
     pedido = get_object_or_404(Pedido, id_pedido=pedido_id)
-    pedido.estado = Pedido.Estados.PAGADO
-    pedido.save()
+    
+    # Solo procesar si el pedido aún no está pagado (evitar procesar dos veces)
+    if pedido.estado != Pedido.Estados.PAGADO:
+        pedido.estado = Pedido.Estados.PAGADO
+        pedido.save()
+        
+        # Restar stock de los productos comprados
+        items = pedido.items.all()
+        for item in items:
+            producto = item.producto
+            cantidad = item.cantidad
+            talla = item.talla or ''
+            
+            if talla:
+                # Si el producto tiene talla, restar del stock de la talla específica
+                try:
+                    talla_obj = TallaProducto.objects.get(producto=producto, talla=talla)
+                    if talla_obj.stock >= cantidad:
+                        talla_obj.stock -= cantidad
+                        talla_obj.save()
+                    else:
+                        # Si no hay suficiente stock, ajustar a 0 (no debería pasar si la validación es correcta)
+                        print(f"⚠ Advertencia: Stock insuficiente para {producto.nombre} talla {talla}. Stock actual: {talla_obj.stock}, solicitado: {cantidad}")
+                        talla_obj.stock = 0
+                        talla_obj.save()
+                except TallaProducto.DoesNotExist:
+                    print(f"⚠ Error: No se encontró la talla '{talla}' para el producto {producto.nombre}")
+            else:
+                # Si no tiene talla, restar del stock general del producto
+                if producto.stock >= cantidad:
+                    producto.stock -= cantidad
+                    producto.save()
+                else:
+                    # Si no hay suficiente stock, ajustar a 0
+                    print(f"⚠ Advertencia: Stock insuficiente para {producto.nombre}. Stock actual: {producto.stock}, solicitado: {cantidad}")
+                    producto.stock = 0
+                    producto.save()
 
     # --- Email de confirmación ---
 

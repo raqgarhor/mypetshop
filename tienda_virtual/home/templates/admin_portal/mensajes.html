@@ -33,5 +33,24 @@
         </tbody>
     </table>
 </div>
+
+<!-- Paginación -->
+{% if mensajes.has_other_pages %}
+<div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+    {% if mensajes.has_previous %}
+        <a href="?page=1" class="btn-admin btn-primary" style="padding: 8px 12px;">Primera</a>
+        <a href="?page={{ mensajes.previous_page_number }}" class="btn-admin btn-primary" style="padding: 8px 12px;">« Anterior</a>
+    {% endif %}
+    
+    <span style="padding: 8px 12px;">
+        Página {{ mensajes.number }} de {{ mensajes.paginator.num_pages }}
+    </span>
+    
+    {% if mensajes.has_next %}
+        <a href="?page={{ mensajes.next_page_number }}" class="btn-admin btn-primary" style="padding: 8px 12px;">Siguiente »</a>
+        <a href="?page={{ mensajes.paginator.num_pages }}" class="btn-admin btn-primary" style="padding: 8px 12px;">Última</a>
+    {% endif %}
+</div>
+{% endif %}
 {% endblock %}
 

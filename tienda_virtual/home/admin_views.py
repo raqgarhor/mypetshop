@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count, Sum, Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -64,10 +65,20 @@ def admin_pedidos(request):
     """Lista de todos los pedidos"""
     estado_filtro = request.GET.get('estado', '')
     
-    pedidos = Pedido.objects.select_related('cliente').order_by('-fecha_creacion')
+    pedidos_list = Pedido.objects.select_related('cliente').order_by('-fecha_creacion')
     
     if estado_filtro:
-        pedidos = pedidos.filter(estado=estado_filtro)
+        pedidos_list = pedidos_list.filter(estado=estado_filtro)
+    
+    # Paginación
+    paginator = Paginator(pedidos_list, 20)  # 20 pedidos por página
+    page = request.GET.get('page')
+    try:
+        pedidos = paginator.page(page)
+    except PageNotAnInteger:
+        pedidos = paginator.page(1)
+    except EmptyPage:
+        pedidos = paginator.page(paginator.num_pages)
     
     estados = Pedido.Estados.choices
     
@@ -127,7 +138,7 @@ def admin_pedido_detalle(request, pedido_id):
 @admin_required
 def admin_productos(request):
     """Gestión de productos"""
-    productos = Producto.objects.select_related('marca', 'categoria').all()
+    productos_list = Producto.objects.select_related('marca', 'categoria').all()
     
     # Filtros
     categoria_filtro = request.GET.get('categoria', '')
@@ -135,18 +146,28 @@ def admin_productos(request):
     busqueda = request.GET.get('q', '')
     
     if categoria_filtro:
-        productos = productos.filter(categoria_id=categoria_filtro)
+        productos_list = productos_list.filter(categoria_id=categoria_filtro)
     
     if disponible_filtro == 'si':
-        productos = productos.filter(esta_disponible=True)
+        productos_list = productos_list.filter(esta_disponible=True)
     elif disponible_filtro == 'no':
-        productos = productos.filter(esta_disponible=False)
+        productos_list = productos_list.filter(esta_disponible=False)
     
     if busqueda:
-        productos = productos.filter(
+        productos_list = productos_list.filter(
             Q(nombre__icontains=busqueda) |
             Q(descripcion__icontains=busqueda)
         )
+    
+    # Paginación
+    paginator = Paginator(productos_list, 20)  # 20 productos por página
+    page = request.GET.get('page')
+    try:
+        productos = paginator.page(page)
+    except PageNotAnInteger:
+        productos = paginator.page(1)
+    except EmptyPage:
+        productos = paginator.page(paginator.num_pages)
     
     categorias = Categoria.objects.all()
     
@@ -273,22 +294,32 @@ def admin_producto_eliminar(request, producto_id):
 @admin_required
 def admin_clientes(request):
     """Lista de clientes"""
-    clientes = Cliente.objects.select_related('user').all()
+    clientes_list = Cliente.objects.select_related('user').all()
     
     busqueda = request.GET.get('q', '')
     admin_filtro = request.GET.get('admin', '')
     
     if busqueda:
-        clientes = clientes.filter(
+        clientes_list = clientes_list.filter(
             Q(nombre__icontains=busqueda) |
             Q(apellidos__icontains=busqueda) |
             Q(email__icontains=busqueda)
         )
     
     if admin_filtro == 'si':
-        clientes = clientes.filter(es_admin=True)
+        clientes_list = clientes_list.filter(es_admin=True)
     elif admin_filtro == 'no':
-        clientes = clientes.filter(es_admin=False)
+        clientes_list = clientes_list.filter(es_admin=False)
+    
+    # Paginación
+    paginator = Paginator(clientes_list, 20)  # 20 clientes por página
+    page = request.GET.get('page')
+    try:
+        clientes = paginator.page(page)
+    except PageNotAnInteger:
+        clientes = paginator.page(1)
+    except EmptyPage:
+        clientes = paginator.page(paginator.num_pages)
     
     contexto = {
         'clientes': clientes,
@@ -382,8 +413,18 @@ def admin_mensajes(request):
     """Mensajes de contacto"""
     mensajes_list = MensajeContacto.objects.all().order_by('-fecha')
     
+    # Paginación
+    paginator = Paginator(mensajes_list, 20)  # 20 mensajes por página
+    page = request.GET.get('page')
+    try:
+        mensajes = paginator.page(page)
+    except PageNotAnInteger:
+        mensajes = paginator.page(1)
+    except EmptyPage:
+        mensajes = paginator.page(paginator.num_pages)
+    
     contexto = {
-        'mensajes': mensajes_list,
+        'mensajes': mensajes,
     }
     
     return render(request, 'admin_portal/mensajes.html', contexto)
