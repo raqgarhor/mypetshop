@@ -10,7 +10,7 @@
     {% if items %}
         <div class="cart-items">
             {% for it in items %}
-                <article class="cart-item-card">
+                <article class="cart-item-card" data-product-id="{{ it.producto.id }}" data-size="{{ it.size }}">
                     <div class="cart-item-media">
                         {% with ip=it.producto.imagenes.first %}
                             {% if ip %}
@@ -57,14 +57,15 @@
                         </form>
 
                         <div class="cart-qty-buttons">
-                            <form action="{% url 'cart_decrement' it.producto.id %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="size" value="{{ it.size }}">
-                                <button type="submit" class="btn btn-circle">-</button>
-                            </form>
-
                             {% with key=it.producto.id|stringformat:"s"|add:":"|add:it.size %}
                                 {% with remaining=cart_remaining_by_item|get_item:key %}
+                                    <form action="{% url 'add_to_cart' it.producto.id %}" method="post" class="cart-item-increment">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="size" value="{{ it.size }}">
+                                        <button type="submit" class="btn btn-circle"
+                                                {% if remaining <= 0 %}disabled{% endif %}>+</button>
+                                    </form>
+                                    
                                     <small class="cart-remaining">
                                         {% if remaining is not None and remaining > 0 %}
                                             Quedan {{ remaining }}
@@ -72,16 +73,16 @@
                                             Agotado
                                         {% endif %}
                                     </small>
-                                    <form action="{% url 'add_to_cart' it.producto.id %}" method="post">
+                                    
+                                    <form action="{% url 'cart_decrement' it.producto.id %}" method="post" class="cart-item-decrement">
                                         {% csrf_token %}
                                         <input type="hidden" name="size" value="{{ it.size }}">
-                                        <button type="submit" class="btn btn-circle"
-                                                {% if remaining <= 0 %}disabled{% endif %}>+</button>
+                                        <button type="submit" class="btn btn-circle">-</button>
                                     </form>
                                 {% endwith %}
                             {% endwith %}
 
-                            <form action="{% url 'cart_remove' it.producto.id %}" method="post">
+                            <form action="{% url 'cart_remove' it.producto.id %}" method="post" class="cart-item-remove" data-product-id="{{ it.producto.id }}" data-size="{{ it.size }}">
                                 {% csrf_token %}
                                 <input type="hidden" name="size" value="{{ it.size }}">
                                 <button type="submit" class="btn btn-danger">Eliminar</button>

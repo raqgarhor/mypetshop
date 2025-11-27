@@ -94,26 +94,27 @@
                         <div class="mini-cart-controls">
                             {% with key=it.producto.id|stringformat:"s"|add:":"|add:it.size %}
                                 {% with remaining=cart_remaining_by_item|get_item:key %}
-                                    <form action="{% url 'add_to_cart' it.producto.id %}" method="post" style="display:inline-block; margin-right:6px">
+                                    <form action="{% url 'cart_decrement' it.producto.id %}" method="post" style="display:inline-block; margin-right:6px">
                                         {% csrf_token %}
                                         <input type="hidden" name="size" value="{{ it.size }}">
-                                        <button type="submit" class="btn small" {% if remaining <= 0 %}disabled{% endif %}>+</button>
+                                        <button type="submit" class="btn small">-</button>
                                     </form>
-                                    <span class="mini-cart-remaining" style="margin-left:8px;font-size:12px;color:#666;vertical-align:middle;">
+
+                                    <span class="mini-cart-remaining" style="margin:0 8px;font-size:12px;color:#666;vertical-align:middle;">
                                         {% if remaining is not None and remaining > 0 %}
                                             Quedan {{ remaining }}
                                         {% else %}
                                             Agotado
                                         {% endif %}
                                     </span>
+
+                                    <form action="{% url 'add_to_cart' it.producto.id %}" method="post" style="display:inline-block; margin-left:6px">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="size" value="{{ it.size }}">
+                                        <button type="submit" class="btn small" {% if remaining <= 0 %}disabled{% endif %}>+</button>
+                                    </form>
                                 {% endwith %}
                             {% endwith %}
-
-                            <form action="{% url 'cart_decrement' it.producto.id %}" method="post" style="display:inline-block">
-                                {% csrf_token %}
-                                <input type="hidden" name="size" value="{{ it.size }}">
-                                <button type="submit" class="btn small">-</button>
-                            </form>
 
                             <div style="margin-top:6px;font-size:13px;color:#444">Cantidad: {{ it.cantidad }} — {{ it.subtotal }} €</div>
                         </div>

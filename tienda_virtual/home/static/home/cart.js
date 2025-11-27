@@ -59,6 +59,74 @@ function showNotification(message, type) {
     }, 3000);
 }
 
+// Función para actualizar la página del carrito sin recargar
+function updateCartPage(data, form) {
+    console.log('Actualizando página del carrito...');
+    
+    if (!form) return;
+    
+    const action = form.getAttribute('action') || '';
+    const isRemoveAction = action.includes('cart_remove');
+    
+    if (isRemoveAction) {
+        const productId = form.dataset.productId || form.querySelector('input[name="product_id"]')?.value;
+        const size = form.dataset.size || form.querySelector('input[name="size"]')?.value || '';
+        
+        // Buscar el elemento del carrito a eliminar
+        const cartItem = document.querySelector(`.cart-item-card[data-product-id="${productId}"][data-size="${size}"]`);
+        if (cartItem) {
+            // Animación de desvanecimiento
+            cartItem.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            cartItem.style.opacity = '0';
+            cartItem.style.transform = 'translateX(-20px)';
+            
+            setTimeout(() => {
+                cartItem.remove();
+                
+                // Verificar si quedan items
+                const remainingItems = document.querySelectorAll('.cart-item-card');
+                if (remainingItems.length === 0) {
+                    // Mostrar mensaje de carrito vacío
+                    const cartItemsContainer = document.querySelector('.cart-items');
+                    const cartSummary = document.querySelector('.cart-summary');
+                    if (cartItemsContainer) {
+                        cartItemsContainer.innerHTML = '<p>Tu carrito está vacío.</p>';
+                    }
+                    if (cartSummary) {
+                        cartSummary.remove();
+                    }
+                } else {
+                    // Actualizar el total
+                    updateCartTotal(data.cart_total);
+                }
+            }, 300);
+        }
+    } else {
+        // Para incremento, decremento o actualización, recargar la página para mostrar cambios
+        if (data.cart_items && data.cart_items.length === 0) {
+            const cartItemsContainer = document.querySelector('.cart-items');
+            const cartSummary = document.querySelector('.cart-summary');
+            if (cartItemsContainer) {
+                cartItemsContainer.innerHTML = '<p>Tu carrito está vacío.</p>';
+            }
+            if (cartSummary) {
+                cartSummary.remove();
+            }
+        } else {
+            // Recargar para mostrar los cambios correctamente (cantidades, subtotales, etc.)
+            window.location.reload();
+        }
+    }
+}
+
+// Función para actualizar el total del carrito
+function updateCartTotal(total) {
+    const totalElement = document.querySelector('.cart-total-amount');
+    if (totalElement) {
+        totalElement.textContent = `${parseFloat(total).toFixed(2)} €`;
+    }
+}
+
 // Función para actualizar el mini-carrito
 function updateMiniCart(items, total, count) {
     console.log('Actualizando mini-carrito con', items.length, 'items');
@@ -651,6 +719,9 @@ function setupCartForms() {
             e.preventDefault();
             e.stopPropagation();
             
+            // Guardar el evento para usar en updateCartPage
+            window.cartFormEvent = e;
+            
             const action = form.getAttribute('action');
             
             // Validar si se puede añadir al carrito (para productos con tallas)
@@ -691,7 +762,11 @@ function setupCartForms() {
             // Deshabilitar botón para evitar doble envío
             if (submitBtn) {
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'Añadiendo...';
+                const buttonText = action.includes('cart_remove') ? 'Eliminando...' : 
+                                  action.includes('cart_decrement') ? 'Actualizando...' :
+                                  action.includes('cart_update') ? 'Actualizando...' :
+                                  'Añadiendo...';
+                submitBtn.textContent = buttonText;
             }
             
             // Crear petición AJAX
@@ -725,6 +800,16 @@ function setupCartForms() {
                 if (data.success) {
                     // Actualizar contador
                     updateCartCount(data.cart_count);
+                    
+                    // Si estamos en la página del carrito y es una acción de eliminar o actualizar
+                    const isCartPage = window.location.pathname.includes('/cart') && !window.location.pathname.includes('/checkout');
+                    const isRemoveAction = action && action.includes('cart_remove');
+                    const isUpdateAction = action && action.includes('cart_update');
+                    const isDecrementAction = action && action.includes('cart_decrement');
+                    
+                    if (isCartPage && (isRemoveAction || isUpdateAction || isDecrementAction)) {
+                        updateCartPage(data, form);
+                    }
                     
                     // Actualizar mini-carrito si hay datos
                     if (data.cart_items !== undefined) {
@@ -768,13 +853,23 @@ function setupCartForms() {
                     const message = data.message || 'Carrito actualizado';
                     showNotification(message, 'success');
                     
-                    // Rehabilitar botón (pero validar si puede añadir)
-                    if (submitBtn) {
-                        setTimeout(() => {
-                            submitBtn.textContent = submitBtn.dataset.originalText || 'Añadir al carrito';
-                            // Actualizar el botón según la validación actual (puede estar deshabilitado si la talla está agotada)
-                            updateAddToCartButton(form);
-                        }, 1000);
+                    // Si estamos en la página del carrito y eliminamos un item, no necesitamos rehabilitar el botón
+                    const isCartPage = window.location.pathname.includes('/cart') && !window.location.pathname.includes('/checkout');
+                    const isRemoveAction = action && action.includes('cart_remove');
+                    const isUpdateAction = action && action.includes('cart_update');
+                    const isDecrementAction = action && action.includes('cart_decrement');
+                    
+                    // Solo rehabilitar el botón si no estamos en la página del carrito o si no es una acción que requiere recarga
+                    if (!isCartPage || (!isRemoveAction && !isUpdateAction && !isDecrementAction)) {
+                        // Rehabilitar botón (pero validar si puede añadir)
+                        if (submitBtn) {
+                            setTimeout(() => {
+                                submitBtn.textContent = submitBtn.dataset.originalText || 'Añadir al carrito';
+                                submitBtn.disabled = false;
+                                // Actualizar el botón según la validación actual (puede estar deshabilitado si la talla está agotada)
+                                updateAddToCartButton(form);
+                            }, 1000);
+                        }
                     }
                 } else {
                     console.error('Error en respuesta:', data.error);
