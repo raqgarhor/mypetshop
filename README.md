@@ -9,7 +9,7 @@ Este documento explica de forma clara los pasos necesarios para ejecutar el proy
 ## 📥 Instalación
 1. **Clona el repositorio:**
    ```bash
-   git clone [url]
+   git clone https://github.com/raqgarhor/mypetshop.git
    ```
 
 2. **Entra en la carpeta del proyecto:**
