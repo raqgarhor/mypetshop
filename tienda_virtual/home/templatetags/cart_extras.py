@@ -35,3 +35,13 @@ def sub(value, arg):
             return int(value) - int(arg)
         except Exception:
             return None
+
+
+@register.filter
+def total_stock_tallas(tallas_queryset):
+    """Suma el stock de todas las tallas de un producto."""
+    try:
+        total = sum(t.stock for t in tallas_queryset.all())
+        return total
+    except Exception:
+        return 0
