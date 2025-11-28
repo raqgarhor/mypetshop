@@ -20,6 +20,7 @@ from sendgrid.helpers.mail import Mail
 from .forms import (
     ClienteEnvioForm,
     EmailAuthenticationForm,
+    GuestCheckoutForm,
     RegistroForm,
     SeguimientoPedidoForm,
 )
@@ -687,6 +688,7 @@ def acerca_de(request):
     return render(request, "acerca_de.html")
 
 def contacto(request):
+    contacto_message = None
     if request.method == "POST":
         nombre = request.POST.get("nombre")
         email = request.POST.get("email")  
@@ -697,9 +699,20 @@ def contacto(request):
             email=email,
             mensaje=mensaje
         )
-        messages.success(request, "¡Gracias! Tu mensaje se ha enviado correctamente. Te responderemos pronto.")
+        contacto_message = "¡Gracias! Tu mensaje se ha enviado correctamente. Te responderemos pronto."
+        messages.success(request, contacto_message)
         return redirect('contacto')
-    return render(request, "contacto.html")
+    
+    # Obtener solo mensajes relacionados con contacto
+    from django.contrib.messages import get_messages
+    contacto_messages = []
+    storage = get_messages(request)
+    for message in storage:
+        msg_text = str(message)
+        if any(keyword in msg_text.lower() for keyword in ['mensaje', 'contacto', 'enviado', 'gracias']):
+            contacto_messages.append(message)
+    
+    return render(request, "contacto.html", {"contacto_messages": contacto_messages})
 
 def categorias(request):
     # Mostrar las categorías reales definidas en el modelo `Categoria`.
@@ -796,62 +809,172 @@ def seguimiento_pedido(request):
         },
     )
 
-@login_required(login_url='register')
 def checkout_datos_cliente_envio(request):
     cart = request.session.get("cart", {})
     if not cart:
         messages.error(request, "Tu carrito está vacío.")
         return redirect("cart")
 
-    cliente = getattr(request.user, "cliente", None)
-    email_real = (request.user.email or "").strip().lower()
-    if email_real:
-        lookup_email = email_real
+    # Si el usuario está autenticado, usar el flujo normal
+    if request.user.is_authenticated:
+        cliente = getattr(request.user, "cliente", None)
+        email_real = (request.user.email or "").strip().lower()
+        if email_real:
+            lookup_email = email_real
+        else:
+            username_slug = (request.user.username or "usuario").strip().lower()
+            lookup_email = username_slug if "@" in username_slug else f"{username_slug}@local"
+
+        if not cliente and lookup_email:
+            cliente = Cliente.objects.filter(email__iexact=lookup_email).first()
+            if cliente and cliente.user is None:
+                cliente.user = request.user
+                cliente.save(update_fields=["user"])
+
+        if not cliente:
+            nombre_base = request.user.first_name or (lookup_email.split("@")[0] if lookup_email else "")
+            cliente = Cliente.objects.create(
+                user=request.user,
+                email=lookup_email or request.user.username,
+                nombre=nombre_base or "Cliente",
+                apellidos=request.user.last_name or "",
+            )
+
+        if email_real and cliente.email != email_real:
+            cliente.email = email_real
+            cliente.save(update_fields=["email"])
+        elif not cliente.email and lookup_email:
+            cliente.email = lookup_email
+            cliente.save(update_fields=["email"])
+
+        form = ClienteEnvioForm(request.POST or None, instance=cliente)
+        if request.method == "POST" and form.is_valid():
+            form.save()
+            messages.success(request, "Datos guardados correctamente. Revisa el pago.")
+            return redirect("detalles_pago")
+
+        return render(
+            request,
+            "checkout_datos.html",
+            {
+                "form": form,
+                "cliente": cliente,
+                "email_usuario": request.user.email or lookup_email,
+            },
+        )
+    
+    # Usuario no autenticado - mostrar formularios de login/registro y checkout invitado
     else:
-        username_slug = (request.user.username or "usuario").strip().lower()
-        lookup_email = username_slug if "@" in username_slug else f"{username_slug}@local"
-
-    if not cliente and lookup_email:
-        cliente = Cliente.objects.filter(email__iexact=lookup_email).first()
-        if cliente and cliente.user is None:
-            cliente.user = request.user
-            cliente.save(update_fields=["user"])
-
-    if not cliente:
-        nombre_base = request.user.first_name or (lookup_email.split("@")[0] if lookup_email else "")
-        cliente = Cliente.objects.create(
-            user=request.user,
-            email=lookup_email or request.user.username,
-            nombre=nombre_base or "Cliente",
-            apellidos=request.user.last_name or "",
+        login_form = EmailAuthenticationForm(request, data=request.POST if request.POST.get('form_type') == 'login' else None)
+        register_form = RegistroForm(request.POST if request.POST.get('form_type') == 'register' else None)
+        guest_form = GuestCheckoutForm(request.POST if request.POST.get('form_type') == 'guest' else None)
+        
+        # Manejar login
+        if request.method == 'POST' and request.POST.get('form_type') == 'login' and login_form.is_valid():
+            user = login_form.get_user()
+            login(request, user)
+            messages.success(request, "Sesión iniciada correctamente.")
+            return redirect("checkout_datos")
+        
+        # Manejar registro
+        if request.method == 'POST' and request.POST.get('form_type') == 'register' and register_form.is_valid():
+            cliente = register_form.save()
+            login(request, cliente.user)
+            messages.success(request, "Tu cuenta se creó correctamente.")
+            return redirect("checkout_datos")
+        
+        # Manejar checkout invitado
+        if request.method == 'POST' and request.POST.get('form_type') == 'guest' and guest_form.is_valid():
+            email = guest_form.cleaned_data['email'].strip().lower()
+            
+            # Verificar si ya existe un cliente con ese email que tiene usuario
+            existing_cliente_with_user = Cliente.objects.filter(email__iexact=email, user__isnull=False).first()
+            if existing_cliente_with_user:
+                messages.error(request, f"Ya existe una cuenta con el email {email}. Por favor, inicia sesión para continuar.")
+                # Mostrar formulario de login
+                return render(
+                    request,
+                    "checkout_datos.html",
+                    {
+                        "login_form": EmailAuthenticationForm(request),
+                        "register_form": register_form,
+                        "guest_form": guest_form,
+                        "is_guest": True,
+                    },
+                )
+            
+            # Buscar si ya existe un cliente con ese email (sin usuario)
+            cliente = Cliente.objects.filter(email__iexact=email, user__isnull=True).first()
+            
+            if not cliente:
+                # Crear nuevo cliente invitado (sin usuario)
+                try:
+                    cliente = Cliente.objects.create(
+                        email=email,
+                        nombre=guest_form.cleaned_data['nombre'],
+                        apellidos=guest_form.cleaned_data.get('apellidos', ''),
+                        telefono=guest_form.cleaned_data.get('telefono', ''),
+                        direccion=guest_form.cleaned_data['direccion'],
+                        ciudad=guest_form.cleaned_data['ciudad'],
+                        codigo_postal=guest_form.cleaned_data['codigo_postal'],
+                        user=None,  # Cliente invitado sin cuenta
+                    )
+                except Exception as e:
+                    # Si falla por email duplicado u otro error
+                    messages.error(request, "Error al crear el cliente. Por favor, verifica tus datos.")
+                    return render(
+                        request,
+                        "checkout_datos.html",
+                        {
+                            "login_form": login_form,
+                            "register_form": register_form,
+                            "guest_form": guest_form,
+                            "is_guest": True,
+                        },
+                    )
+            else:
+                # Actualizar cliente existente
+                cliente.nombre = guest_form.cleaned_data['nombre']
+                cliente.apellidos = guest_form.cleaned_data.get('apellidos', '')
+                cliente.telefono = guest_form.cleaned_data.get('telefono', '')
+                cliente.direccion = guest_form.cleaned_data['direccion']
+                cliente.ciudad = guest_form.cleaned_data['ciudad']
+                cliente.codigo_postal = guest_form.cleaned_data['codigo_postal']
+                cliente.save()
+            
+            # Guardar cliente_id en sesión para usar en el checkout
+            request.session['guest_cliente_id'] = cliente.id
+            request.session.modified = True
+            
+            messages.success(request, "Datos guardados correctamente. Revisa el pago.")
+            return redirect("detalles_pago")
+        
+        return render(
+            request,
+            "checkout_datos.html",
+            {
+                "login_form": login_form,
+                "register_form": register_form,
+                "guest_form": guest_form,
+                "is_guest": True,
+            },
         )
 
-    if email_real and cliente.email != email_real:
-        cliente.email = email_real
-        cliente.save(update_fields=["email"])
-    elif not cliente.email and lookup_email:
-        cliente.email = lookup_email
-        cliente.save(update_fields=["email"])
-
-    form = ClienteEnvioForm(request.POST or None, instance=cliente)
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        messages.success(request, "Datos guardados correctamente. Revisa el pago.")
-        return redirect("detalles_pago")
-
-    return render(
-        request,
-        "checkout_datos.html",
-        {
-            "form": form,
-            "cliente": cliente,
-            "email_usuario": request.user.email or lookup_email,
-        },
-    )
-
-@login_required(login_url='register')
 def detalles_pago(request):
-    cliente = getattr(request.user, "cliente", None)
+    # Obtener cliente: autenticado o invitado
+    if request.user.is_authenticated:
+        cliente = getattr(request.user, "cliente", None)
+    else:
+        # Cliente invitado desde sesión
+        guest_cliente_id = request.session.get('guest_cliente_id')
+        if guest_cliente_id:
+            try:
+                cliente = Cliente.objects.get(pk=guest_cliente_id, user__isnull=True)
+            except Cliente.DoesNotExist:
+                cliente = None
+        else:
+            cliente = None
+    
     if not cliente:
         messages.error(request, "Primero debes completar tus datos de envío.")
         return redirect("checkout_datos")
@@ -927,7 +1050,6 @@ def generar_numero_pedido():
     return f"MP-{timezone.now().strftime('%Y%m%d%H%M%S')}-{get_random_string(4).upper()}"
 
 
-@login_required(login_url='register')
 def checkout_stripe(request):
     if request.method != "POST":
         return redirect("detalles_pago")
@@ -937,7 +1059,20 @@ def checkout_stripe(request):
         messages.error(request, "Tu carrito está vacío.")
         return redirect("cart")
 
-    cliente = getattr(request.user, "cliente", None)
+    # Obtener cliente: autenticado o invitado
+    if request.user.is_authenticated:
+        cliente = getattr(request.user, "cliente", None)
+    else:
+        # Cliente invitado desde sesión
+        guest_cliente_id = request.session.get('guest_cliente_id')
+        if guest_cliente_id:
+            try:
+                cliente = Cliente.objects.get(pk=guest_cliente_id, user__isnull=True)
+            except Cliente.DoesNotExist:
+                cliente = None
+        else:
+            cliente = None
+    
     if not cliente:
         messages.error(request, "Primero debes completar tus datos de envío.")
         return redirect("checkout_datos")

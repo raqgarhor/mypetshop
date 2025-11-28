@@ -4,8 +4,8 @@
 <section class="contact">
     <h1 class="heading"><i class="fas fa-paw"></i> Contáctanos <i class="fas fa-paw"></i></h1>
     
-    {% if messages %}
-        {% for message in messages %}
+    {% if contacto_messages %}
+        {% for message in contacto_messages %}
             <div style="max-width: 600px; margin: 2rem auto; padding: 1.5rem; background: rgba(39, 174, 96, 0.2); border: 2px solid var(--success); border-radius: .5rem; color: var(--success); text-align: center; font-weight: 600;">
                 <i class="fas fa-check-circle"></i> {{ message }}
             </div>

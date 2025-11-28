@@ -97,6 +97,58 @@ class ClienteEnvioForm(forms.ModelForm):
             self.fields[field].required = True
 
 
+class GuestCheckoutForm(forms.Form):
+    """Formulario para checkout sin cuenta (invitado)"""
+    email = forms.EmailField(
+        label="Email *",
+        widget=forms.EmailInput(attrs={"placeholder": "tu@email.com", "autofocus": True}),
+        required=True,
+    )
+    nombre = forms.CharField(
+        label="Nombre *",
+        max_length=150,
+        widget=forms.TextInput(attrs={"placeholder": "Tu nombre"}),
+        required=True,
+    )
+    apellidos = forms.CharField(
+        label="Apellidos",
+        max_length=150,
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Tus apellidos"}),
+    )
+    telefono = forms.CharField(
+        label="Teléfono",
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "123456789"}),
+    )
+    direccion = forms.CharField(
+        label="Dirección *",
+        max_length=255,
+        widget=forms.TextInput(attrs={"placeholder": "C/ Principal 123"}),
+        required=True,
+    )
+    ciudad = forms.CharField(
+        label="Ciudad *",
+        max_length=100,
+        widget=forms.TextInput(attrs={"placeholder": "Madrid"}),
+        required=True,
+    )
+    codigo_postal = forms.CharField(
+        label="Código postal *",
+        max_length=20,
+        widget=forms.TextInput(attrs={"placeholder": "28001"}),
+        required=True,
+    )
+    
+    def clean_email(self):
+        email = (self.cleaned_data.get("email") or "").strip().lower()
+        # Verificar si ya existe un cliente con usuario (cuenta registrada)
+        if Cliente.objects.filter(email__iexact=email, user__isnull=False).exists():
+            raise forms.ValidationError("Ya existe una cuenta con este email. Por favor, inicia sesión para continuar.")
+        return email
+
+
 class SeguimientoPedidoForm(forms.Form):
     numero_pedido = forms.CharField(
         label="Código de seguimiento",
