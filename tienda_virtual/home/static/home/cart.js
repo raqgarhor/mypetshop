@@ -853,12 +853,6 @@ function setupCartForms() {
                     const message = data.message || 'Carrito actualizado';
                     showNotification(message, 'success');
                     
-                    // Si estamos en la página del carrito y eliminamos un item, no necesitamos rehabilitar el botón
-                    const isCartPage = window.location.pathname.includes('/cart') && !window.location.pathname.includes('/checkout');
-                    const isRemoveAction = action && action.includes('cart_remove');
-                    const isUpdateAction = action && action.includes('cart_update');
-                    const isDecrementAction = action && action.includes('cart_decrement');
-                    
                     // Solo rehabilitar el botón si no estamos en la página del carrito o si no es una acción que requiere recarga
                     if (!isCartPage || (!isRemoveAction && !isUpdateAction && !isDecrementAction)) {
                         // Rehabilitar botón (pero validar si puede añadir)
