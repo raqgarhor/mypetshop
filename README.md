@@ -19,17 +19,17 @@ Este documento explica de forma clara los pasos necesarios para ejecutar el proy
 
 3. **Crear el entorno virtual Python:**
    ```bash
-   python –m venv .venv
+   python -m venv .venv
    ```
 
 4. **Activar el entorno virtual Python:**
    ```bash
-   .\.venv\Scripts\actívate.bat
+   .\.venv\Scripts\activate
    ```
 
 5. **Instalar Django:**
    ```bash
-   python –m pip install Django
+   python -m pip install Django
    ```
 
 6. **Instalar requisitos de requirements.txt:**
@@ -42,16 +42,23 @@ Este documento explica de forma clara los pasos necesarios para ejecutar el proy
    ```
 
 7. **Modificar tu .env:**
+   
+   Para Linux / WSL / Mac
     ```bash
    nano .env
    ```
+   Para Windows
+    ```bash
+   notepad .env
+   ```
    - Y poner los siquientes datos de prueba:
        ```bash
-      STRIPE_PUBLISHABLE_KEY=pk_test_51SWd8HI0c80U4VWYIzD4P88VfqkSiOyUUFY3WZqiyDdBxVMFkfSq9ZrtRM4Zo9newkCV458NFP13shXW4KhEo4WJ00sbTmx1sq
-      STRIPE_SECRET_KEY=sk_test_51SWd8HI0c80U4VWY96OlMqS4MQnZFOW4ehQvbKk3xnoheoxu1Jb6N6JP059FbMQtaMt62Tfv1IhdtRbYLIxJiBTq00XwfdKlUA
-      SENDGRID_API_KEY=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
-      EMAIL_FROM=raqgarhor@alum.us.es
+      STRIPE_PUBLISHABLE_KEY= PUBLISH_KEY
+      STRIPE_SECRET_KEY= SECRET_KEY 
+      SENDGRID_API_KEY=API_KEY
+      EMAIL_FROM=EMAIL
       ```
+       *Estos datos se deben solicitar al equipo*
 
 ## 💾 Cargar la base de datos
 
