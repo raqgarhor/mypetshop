@@ -1,5 +1,5 @@
 import datetime
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 import stripe
 from django.conf import settings
@@ -848,7 +848,12 @@ def checkout_datos_cliente_envio(request):
             cliente.save(update_fields=["email"])
 
         form = ClienteEnvioForm(request.POST or None, instance=cliente)
-        if request.method == "POST" and form.is_valid():
+        if request.method == "POST":
+            shipping_method = request.POST.get("shipping_method", "delivery") 
+            request.session['shipping_method'] = shipping_method
+            request.session.modified = True
+        
+        if form.is_valid():
             form.save()
             messages.success(request, "Datos guardados correctamente. Revisa el pago.")
             return redirect("detalles_pago")
@@ -860,6 +865,7 @@ def checkout_datos_cliente_envio(request):
                 "form": form,
                 "cliente": cliente,
                 "email_usuario": request.user.email or lookup_email,
+                "shipping_method": request.session.get('shipping_method', 'delivery'),
             },
         )
     
@@ -885,6 +891,10 @@ def checkout_datos_cliente_envio(request):
         
         # Manejar checkout invitado
         if request.method == 'POST' and request.POST.get('form_type') == 'guest' and guest_form.is_valid():
+            shipping_method = request.POST.get("shipping_method", "delivery")
+            request.session["shipping_method"] = shipping_method
+            request.session.modified = True
+            
             email = guest_form.cleaned_data['email'].strip().lower()
             
             # Verificar si ya existe un cliente con ese email que tiene usuario
@@ -900,6 +910,7 @@ def checkout_datos_cliente_envio(request):
                         "register_form": register_form,
                         "guest_form": guest_form,
                         "is_guest": True,
+                        "shipping_method": shipping_method,
                     },
                 )
             
@@ -930,6 +941,7 @@ def checkout_datos_cliente_envio(request):
                             "register_form": register_form,
                             "guest_form": guest_form,
                             "is_guest": True,
+                            "shipping_method": shipping_method,
                         },
                     )
             else:
@@ -957,6 +969,7 @@ def checkout_datos_cliente_envio(request):
                 "register_form": register_form,
                 "guest_form": guest_form,
                 "is_guest": True,
+                "shipping_method": request.session.get('shipping_method', 'delivery'),
             },
         )
 
@@ -1025,9 +1038,19 @@ def detalles_pago(request):
         )
         return redirect("cart")
 
-    impuestos = Decimal("0.00")
-    coste_entrega = Decimal("0.00")
+    impuestos = (subtotal * Decimal("0.10")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+    
     descuento = Decimal("0.00")
+
+    shipping_method = request.session.get('shipping_method', 'delivery')
+
+    if shipping_method == 'pickup':
+        coste_entrega = Decimal("0.00")
+        envio_gratis = True
+    else:
+        coste_entrega = Decimal("0.00") if subtotal >= Decimal("30.00") else Decimal("2.99")
+        envio_gratis = subtotal >= Decimal("30.00")
+
     total = subtotal + impuestos + coste_entrega - descuento
 
     return render(
@@ -1041,6 +1064,8 @@ def detalles_pago(request):
             "coste_entrega": coste_entrega,
             "descuento": descuento,
             "total": total,
+            "shipping_method": shipping_method,
+            "envio_gratis": envio_gratis,
         },
     )
 
@@ -1128,6 +1153,15 @@ def checkout_stripe(request):
         )
         return redirect("cart")
 
+    impuestos = (subtotal * Decimal("0.10")).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+
+    shipping_method = request.session.get('shipping_method', 'delivery')
+    
+    if shipping_method == 'pickup':
+        coste_entrega = Decimal("0.00")
+    else:
+        coste_entrega = Decimal("0.00") if subtotal >= Decimal("30.00") else Decimal("2.99")
+
     total = subtotal + impuestos + coste_entrega - descuento
 
     # Crear Pedido
@@ -1156,11 +1190,33 @@ def checkout_stripe(request):
             total=total_item,
         )
 
-    # Sesión de Stripe
+    # Enviar a Stripe un único `line_item` con el total final (incluye impuestos y envío)
+    # para que la pantalla de Checkout muestre claramente el importe total.
+    summary_line = [
+        {
+            "price_data": {
+                "currency": "eur",
+                "product_data": {"name": f"Pedido {pedido.numero_pedido} (importe total)"},
+                "unit_amount": int(total * 100),
+            },
+            "quantity": 1,
+        }
+    ]
+
+    metadata = {
+        "pedido_id": str(pedido.id_pedido),
+        "subtotal": str(subtotal),
+        "impuestos": str(impuestos),
+        "coste_entrega": str(coste_entrega),
+        "descuento": str(descuento),
+        "total": str(total),
+    }
+
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         mode="payment",
-        line_items=line_items,
+        line_items=summary_line,
+        metadata=metadata,
         success_url=request.build_absolute_uri(
             reverse("pago_ok", args=[pedido.id_pedido])
         ),

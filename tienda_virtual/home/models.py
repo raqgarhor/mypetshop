@@ -189,7 +189,7 @@ class Pedido(models.Model):
     coste_entrega = models.DecimalField(
         max_digits=12,
         decimal_places=2,
-        default=Decimal("0.00"),
+        default=Decimal("2.99"),
     )
     descuento = models.DecimalField(
         max_digits=12,
