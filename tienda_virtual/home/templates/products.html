@@ -5,12 +5,81 @@
 {% block content %}
 {% load cart_extras %}
     <section class="products-list">
+        <!-- Formulario de filtros (solo si NO es vista de categoría) -->
+        {% if not es_categoria %}
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <form method="get" style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- Filtros -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <!-- Filtro por Marca -->
+                    <div>
+                        <label for="marca" style="display: block; margin-bottom: 5px; font-weight: bold;">Marca:</label>
+                        <select name="marca" id="marca" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                            <option value="">Todas las marcas</option>
+                            {% for marca in marcas %}
+                                <option value="{{ marca.id }}" {% if marca_filtro == marca.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ marca.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Filtro por Especie -->
+                    <div>
+                        <label for="especie" style="display: block; margin-bottom: 5px; font-weight: bold;">Especie:</label>
+                        <select name="especie" id="especie" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                            <option value="">Todas las especies</option>
+                            {% for especie_val, especie_label in especies %}
+                                <option value="{{ especie_val }}" {% if especie_filtro == especie_val %}selected{% endif %}>
+                                    {{ especie_label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Filtro por Color -->
+                    <div>
+                        <label for="color" style="display: block; margin-bottom: 5px; font-weight: bold;">Color:</label>
+                        <input type="text" name="color" id="color" placeholder="Ej: rojo, azul..." value="{{ color_filtro }}" 
+                               style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                    </div>
+                    
+                    <!-- Filtro por Material -->
+                    <div>
+                        <label for="material" style="display: block; margin-bottom: 5px; font-weight: bold;">Material:</label>
+                        <input type="text" name="material" id="material" placeholder="Ej: plástico, tela..." value="{{ material_filtro }}" 
+                               style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                    </div>
+                </div>
+                
+                <!-- Botones -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="submit" class="btn" style="padding: 10px 20px; font-size: 16px;">
+                        <i class="fas fa-filter"></i> Aplicar Filtros
+                    </button>
+                    {% if marca_filtro or especie_filtro or color_filtro or material_filtro %}
+                        {% if title == 'Productos' %}
+                            <a href="{% url 'productos' %}" class="btn" style="padding: 10px 20px; font-size: 16px; background: #95a5a6; text-decoration: none; display: inline-block;">
+                        {% elif title == 'Novedades' %}
+                            <a href="{% url 'novedades' %}" class="btn" style="padding: 10px 20px; font-size: 16px; background: #95a5a6; text-decoration: none; display: inline-block;">
+                        {% elif title == 'Ofertas' %}
+                            <a href="{% url 'ofertas' %}" class="btn" style="padding: 10px 20px; font-size: 16px; background: #95a5a6; text-decoration: none; display: inline-block;">
+                        {% else %}
+                            <a href="{% url 'productos' %}" class="btn" style="padding: 10px 20px; font-size: 16px; background: #95a5a6; text-decoration: none; display: inline-block;">
+                        {% endif %}
+                            <i class="fas fa-times"></i> Limpiar Filtros
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+        {% endif %}
 
-        {% if destacados %}
-        <h2 class="section-title">Productos Destacados</h2>
+        {% if destacados and destacados.paginator.count > 0 %}
+        <h2 class="section-title"><i class="fas fa-star"></i> Productos Destacados <i class="fas fa-star"></i></h2>
         <div class="cards">
             {% for p in destacados %}
-                <article class="card">
+                <article class="card"{% if not p.tallas.exists %} data-stock="{{ p.stock }}" data-product-id="{{ p.id }}"{% endif %}>
                     {% with ip=p.imagenes.first %}
                         {% if ip %}
                             <a href="{% url 'product_detail' p.id %}"><img src="{{ ip.imagen.url }}" alt="{{ p.nombre }}"></a>
@@ -23,39 +92,40 @@
                     {% comment %}Compute remaining stock for this product taking cart contents into account{% endcomment %}
                     {% with in_cart=cart_qty_by_product|get_item:p.id|default:0 %}
                         {% if p.tallas.exists %}
-                            {% with remaining=p.available_stock|default:p.stock|sub:in_cart %}
-                                {% if remaining > 0 %}
-                                    <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
-                                        {% csrf_token %}
-                                        <label for="size-{{ p.id }}">Talla</label>
-                                        <select name="size" id="size-{{ p.id }}" required>
-                                            <option value="" disabled selected>Selecciona</option>
-                                            {% for t in p.tallas.all %}
-                                                {% with key=p.id|stringformat:"s"|add:":"|add:t.talla %}
-                                                    {% with taken=cart_qty_by_item|get_item:key %}
-                                                        {% if not taken %}{% with taken=0 %}{% endwith %}{% endif %}
-                                                        {% with rem_size=t.stock|sub:taken %}
-                                                            <option value="{{ t.talla }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (sin stock){% endif %}</option>
+                            {% with total_stock=p.tallas|total_stock_tallas %}
+                                {% with remaining=total_stock|sub:in_cart %}
+                                    {% if total_stock > 0 and remaining > 0 %}
+                                        <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
+                                            {% csrf_token %}
+                                            <label for="size-{{ p.id }}">Talla</label>
+                                            <select name="size" id="size-{{ p.id }}" required>
+                                                <option value="" disabled selected>Selecciona</option>
+                                                {% for t in p.tallas.all %}
+                                                    {% with key=p.id|stringformat:"s"|add:":"|add:t.talla %}
+                                                        {% with taken=cart_qty_by_item|get_item:key|default:0 %}
+                                                            {% with rem_size=t.stock|sub:taken %}
+                                                                <option value="{{ t.talla }}" data-stock="{{ t.stock }}" data-product-id="{{ p.id }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (agotado){% endif %}</option>
+                                                            {% endwith %}
                                                         {% endwith %}
                                                     {% endwith %}
-                                                {% endwith %}
-                                            {% endfor %}
-                                        </select>
-                                        <button type="submit" class="btn small">Añadir al carrito</button>
-                                    </form>
-                                {% else %}
-                                    <div style="color:#c62828;font-weight:700">No disponible</div>
-                                {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="btn small">Añadir al carrito</button>
+                                        </form>
+                                    {% else %}
+                                        <div class="product-no-disponible" style="color:#c62828;font-weight:700">Sin stock</div>
+                                    {% endif %}
+                                {% endwith %}
                             {% endwith %}
                         {% else %}
                             {% with remaining=p.stock|sub:in_cart %}
-                                {% if remaining > 0 %}
+                                {% if p.stock > 0 and remaining > 0 %}
                                     <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
                                         {% csrf_token %}
                                         <button type="submit" class="btn small">Añadir al carrito</button>
                                     </form>
                                 {% else %}
-                                    <div style="color:#c62828;font-weight:700">No disponible</div>
+                                    <div class="product-no-disponible" style="color:#c62828;font-weight:700">Sin stock</div>
                                 {% endif %}
                             {% endwith %}
                         {% endif %}
@@ -63,13 +133,32 @@
                 </article>
             {% endfor %}
         </div>
+        
+        <!-- Paginación de productos destacados -->
+        {% if destacados.has_other_pages %}
+        <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+            {% if destacados.has_previous %}
+                <a href="?page_destacados=1{% if productos.number > 1 %}&page={{ productos.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Primera</a>
+                <a href="?page_destacados={{ destacados.previous_page_number }}{% if productos.number > 1 %}&page={{ productos.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">« Anterior</a>
+            {% endif %}
+            
+            <span style="padding: 8px 12px;">
+                Página {{ destacados.number }} de {{ destacados.paginator.num_pages }}
+            </span>
+            
+            {% if destacados.has_next %}
+                <a href="?page_destacados={{ destacados.next_page_number }}{% if productos.number > 1 %}&page={{ productos.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Siguiente »</a>
+                <a href="?page_destacados={{ destacados.paginator.num_pages }}{% if productos.number > 1 %}&page={{ productos.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Última</a>
+            {% endif %}
+        </div>
+        {% endif %}
         {% endif %}
 
-        <h2 class="section-title">{{ title|default:'Todos los Productos' }}</h2>
+        <h2 class="section-title"><i class="fas fa-paw"></i> {{ title|default:'Todos los Productos' }} <i class="fas fa-paw"></i></h2>
         <div class="cards">
             {% if productos %}
                 {% for p in productos %}
-                    <article class="card">
+                    <article class="card"{% if not p.tallas.exists %} data-stock="{{ p.stock }}" data-product-id="{{ p.id }}"{% endif %}>
                         {% with ip=p.imagenes.first %}
                             {% if ip %}
                                 <a href="{% url 'product_detail' p.id %}"><img src="{{ ip.imagen.url }}" alt="{{ p.nombre }}"></a>
@@ -81,39 +170,40 @@
                         <p class="price">{% if p.precio_oferta %}<span class="old-price">{{ p.precio }} €</span> <span class="offer-price">{{ p.precio_oferta }} €</span>{% else %}{{ p.precio }} €{% endif %}</p>
                         {% with in_cart=cart_qty_by_product|get_item:p.id|default:0 %}
                             {% if p.tallas.exists %}
-                                {% with remaining=p.available_stock|default:p.stock|sub:in_cart %}
-                                    {% if remaining > 0 %}
-                                        <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
-                                            {% csrf_token %}
-                                            <label for="size-{{ p.id }}">Talla</label>
-                                            <select name="size" id="size-{{ p.id }}" required>
-                                                <option value="" disabled selected>Selecciona</option>
-                                                {% for t in p.tallas.all %}
-                                                    {% with key=p.id|stringformat:"s"|add:":"|add:t.talla %}
-                                                        {% with taken=cart_qty_by_item|get_item:key %}
-                                                            {% if not taken %}{% with taken=0 %}{% endwith %}{% endif %}
-                                                            {% with rem_size=t.stock|sub:taken %}
-                                                                <option value="{{ t.talla }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (sin stock){% endif %}</option>
+                                {% with total_stock=p.tallas|total_stock_tallas %}
+                                    {% with remaining=total_stock|sub:in_cart %}
+                                        {% if total_stock > 0 and remaining > 0 %}
+                                            <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
+                                                {% csrf_token %}
+                                                <label for="size-{{ p.id }}">Talla</label>
+                                                <select name="size" id="size-{{ p.id }}" required>
+                                                    <option value="" disabled selected>Selecciona</option>
+                                                    {% for t in p.tallas.all %}
+                                                        {% with key=p.id|stringformat:"s"|add:":"|add:t.talla %}
+                                                            {% with taken=cart_qty_by_item|get_item:key|default:0 %}
+                                                                {% with rem_size=t.stock|sub:taken %}
+                                                                    <option value="{{ t.talla }}" data-stock="{{ t.stock }}" data-product-id="{{ p.id }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (agotado){% endif %}</option>
+                                                                {% endwith %}
                                                             {% endwith %}
                                                         {% endwith %}
-                                                    {% endwith %}
-                                                {% endfor %}
-                                            </select>
-                                            <button type="submit" class="btn small">Añadir al carrito</button>
-                                        </form>
-                                    {% else %}
-                                        <div style="color:#c62828;font-weight:700">No disponible</div>
-                                    {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                                <button type="submit" class="btn small">Añadir al carrito</button>
+                                            </form>
+                                        {% else %}
+                                            <div class="product-no-disponible" style="color:#c62828;font-weight:700">Sin stock</div>
+                                        {% endif %}
+                                    {% endwith %}
                                 {% endwith %}
                             {% else %}
                                 {% with remaining=p.stock|sub:in_cart %}
-                                    {% if remaining > 0 %}
+                                    {% if p.stock > 0 and remaining > 0 %}
                                         <form action="{% url 'add_to_cart' p.id %}" method="post" style="display:inline">
                                             {% csrf_token %}
                                             <button type="submit" class="btn small">Añadir al carrito</button>
                                         </form>
                                     {% else %}
-                                        <div style="color:#c62828;font-weight:700">No disponible</div>
+                                        <div class="product-no-disponible" style="color:#c62828;font-weight:700">Sin stock</div>
                                     {% endif %}
                                 {% endwith %}
                             {% endif %}
@@ -125,4 +215,23 @@
             {% endif %}
         </div>
     </section>
+
+    <!-- Paginación de productos normales -->
+    {% if productos.has_other_pages %}
+    <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 30px 0; flex-wrap: wrap;">
+        {% if productos.has_previous %}
+            <a href="?page=1{% if destacados.number > 1 %}&page_destacados={{ destacados.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Primera</a>
+            <a href="?page={{ productos.previous_page_number }}{% if destacados.number > 1 %}&page_destacados={{ destacados.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">« Anterior</a>
+        {% endif %}
+        
+        <span style="padding: 8px 12px;">
+            Página {{ productos.number }} de {{ productos.paginator.num_pages }}
+        </span>
+        
+        {% if productos.has_next %}
+            <a href="?page={{ productos.next_page_number }}{% if destacados.number > 1 %}&page_destacados={{ destacados.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Siguiente »</a>
+            <a href="?page={{ productos.paginator.num_pages }}{% if destacados.number > 1 %}&page_destacados={{ destacados.number }}{% endif %}{% if not es_categoria %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}{% endif %}" class="btn" style="padding: 8px 12px;">Última</a>
+        {% endif %}
+    </div>
+    {% endif %}
 {% endblock %}

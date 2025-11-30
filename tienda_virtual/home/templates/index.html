@@ -8,10 +8,10 @@
     <section class="hero">
         <div class="hero-inner">
             <div class="hero-copy">
-                <p class="hero-sub">Descuentos Desde 50%</p>
+                <p class="hero-sub"><i class="fas fa-tag"></i> Descuentos Desde 50%</p>
                 <h1 class="hero-title">Cariño Y Cuidado<br>Para Tu Mascota</h1>
-                <p class="hero-lead">Los mejores productos para tus mascotas. Encuentra comida, juguetes y accesorios.</p>
-                <a class="btn hero-cta" href="#catalog">Comenzar</a>
+                <p class="hero-lead">Los mejores productos para tus mascotas. Encuentra comida, juguetes y accesorios de la más alta calidad.</p>
+                <a class="btn hero-cta" href="#catalog"><i class="fas fa-arrow-right"></i> Comenzar</a>
             </div>
             <div class="hero-figure">
                 <img src="{% static 'home/hero-dog.png' %}" alt="Perro" class="hero-image">
@@ -22,15 +22,82 @@
     {# Mini-cart moved to base.html so it appears on all pages. #}
 
     <section id="catalog" class="catalog">
-        {% if query %}
-            <h2>Resultados para "{{ query }}"</h2>
+        <!-- Formulario de búsqueda y filtros -->
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <form method="get" style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- Búsqueda por texto -->
+                <div>
+                    <label for="q" style="display: block; margin-bottom: 5px; font-weight: bold;">Buscar productos:</label>
+                    <input type="text" name="q" id="q" placeholder="Buscar por nombre, descripción..." value="{{ query }}" 
+                           style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                </div>
+                
+                <!-- Filtros -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <!-- Filtro por Marca -->
+                    <div>
+                        <label for="marca" style="display: block; margin-bottom: 5px; font-weight: bold;">Marca:</label>
+                        <select name="marca" id="marca" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                            <option value="">Todas las marcas</option>
+                            {% for marca in marcas %}
+                                <option value="{{ marca.id }}" {% if marca_filtro == marca.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ marca.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Filtro por Especie -->
+                    <div>
+                        <label for="especie" style="display: block; margin-bottom: 5px; font-weight: bold;">Especie:</label>
+                        <select name="especie" id="especie" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                            <option value="">Todas las especies</option>
+                            {% for especie_val, especie_label in especies %}
+                                <option value="{{ especie_val }}" {% if especie_filtro == especie_val %}selected{% endif %}>
+                                    {{ especie_label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Filtro por Color -->
+                    <div>
+                        <label for="color" style="display: block; margin-bottom: 5px; font-weight: bold;">Color:</label>
+                        <input type="text" name="color" id="color" placeholder="Ej: rojo, azul..." value="{{ color_filtro }}" 
+                               style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                    </div>
+                    
+                    <!-- Filtro por Material -->
+                    <div>
+                        <label for="material" style="display: block; margin-bottom: 5px; font-weight: bold;">Material:</label>
+                        <input type="text" name="material" id="material" placeholder="Ej: plástico, tela..." value="{{ material_filtro }}" 
+                               style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #ddd; font-size: 16px;">
+                    </div>
+                </div>
+                
+                <!-- Botones -->
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button type="submit" class="btn" style="padding: 10px 20px; font-size: 16px;">
+                        <i class="fas fa-search"></i> Buscar y Filtrar
+                    </button>
+                    {% if query or marca_filtro or especie_filtro or color_filtro or material_filtro %}
+                        <a href="{% url 'home' %}" class="btn" style="padding: 10px 20px; font-size: 16px; background: #95a5a6; text-decoration: none; display: inline-block;">
+                            <i class="fas fa-times"></i> Limpiar Filtros
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+        
+        {% if query or marca_filtro or especie_filtro or color_filtro or material_filtro %}
+            <h2 class="section-title"><i class="fas fa-search"></i> Resultados de búsqueda <i class="fas fa-search"></i></h2>
         {% else %}
-            <h2>Productos</h2>
+            <h2 class="section-title"><i class="fas fa-paw"></i> Nuestros Productos <i class="fas fa-paw"></i></h2>
         {% endif %}
         <div class="cards">
             {% if productos %}
                 {% for p in productos %}
-                    <article class="card">
+                    <article class="card"{% if not p.tallas.exists %} data-stock="{{ p.stock }}" data-product-id="{{ p.id }}"{% endif %}>
                         {% with ip=p.imagenes.first %}
                             {% if ip %}
                                 <a href="{% url 'product_detail' p.id %}"><img src="{{ ip.imagen.url }}" alt="{{ p.nombre }}"></a>
@@ -39,7 +106,7 @@
                             {% endif %}
                         {% endwith %}
                         <h3>{{ p.nombre }}</h3>
-                        <p class="price">{{ p.precio }} €</p>
+                        <p class="price">{% if p.precio_oferta %}<span class="old-price">{{ p.precio }} €</span> <span class="offer-price">{{ p.precio_oferta }} €</span>{% else %}{{ p.precio }} €{% endif %}</p>
                         {% with in_cart=cart_qty_by_product|get_item:p.id|default:0 %}
                             {% if p.tallas.exists %}
                                 {% with remaining=p.available_stock|default:p.stock|sub:in_cart %}
@@ -51,10 +118,9 @@
                                                 <option value="" disabled selected>Selecciona</option>
                                                 {% for t in p.tallas.all %}
                                                     {% with key=p.id|stringformat:"s"|add:":"|add:t.talla %}
-                                                        {% with taken=cart_qty_by_item|get_item:key %}
-                                                            {% if not taken %}{% with taken=0 %}{% endwith %}{% endif %}
+                                                        {% with taken=cart_qty_by_item|get_item:key|default:0 %}
                                                             {% with rem_size=t.stock|sub:taken %}
-                                                                <option value="{{ t.talla }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (sin stock){% endif %}</option>
+                                                                <option value="{{ t.talla }}" data-stock="{{ t.stock }}" data-product-id="{{ p.id }}" {% if rem_size <= 0 %}disabled{% endif %}>{{ t.talla }}{% if rem_size <= 0 %} (agotado){% endif %}</option>
                                                             {% endwith %}
                                                         {% endwith %}
                                                     {% endwith %}
@@ -63,7 +129,7 @@
                                             <button type="submit" class="btn small">Añadir al carrito</button>
                                         </form>
                                     {% else %}
-                                        <div style="color:#c62828;font-weight:700">No disponible</div>
+                                        <div class="product-no-disponible" style="color:#c62828;font-weight:700">No disponible</div>
                                     {% endif %}
                                 {% endwith %}
                             {% else %}
@@ -74,7 +140,7 @@
                                             <button type="submit" class="btn small">Añadir al carrito</button>
                                         </form>
                                     {% else %}
-                                        <div style="color:#c62828;font-weight:700">No disponible</div>
+                                        <div class="product-no-disponible" style="color:#c62828;font-weight:700">No disponible</div>
                                     {% endif %}
                                 {% endwith %}
                             {% endif %}
@@ -90,4 +156,27 @@
             {% endif %}
         </div>
     </section>
+
+    <!-- Paginación -->
+    {% if productos.has_other_pages %}
+    <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 30px 0; flex-wrap: wrap;">
+        {% if productos.has_previous %}
+            <a href="?page=1{% if query %}&q={{ query }}{% endif %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}" 
+               class="btn" style="padding: 8px 12px;">Primera</a>
+            <a href="?page={{ productos.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}" 
+               class="btn" style="padding: 8px 12px;">« Anterior</a>
+        {% endif %}
+        
+        <span style="padding: 8px 12px;">
+            Página {{ productos.number }} de {{ productos.paginator.num_pages }}
+        </span>
+        
+        {% if productos.has_next %}
+            <a href="?page={{ productos.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}" 
+               class="btn" style="padding: 8px 12px;">Siguiente »</a>
+            <a href="?page={{ productos.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if marca_filtro %}&marca={{ marca_filtro }}{% endif %}{% if especie_filtro %}&especie={{ especie_filtro }}{% endif %}{% if color_filtro %}&color={{ color_filtro }}{% endif %}{% if material_filtro %}&material={{ material_filtro }}{% endif %}" 
+               class="btn" style="padding: 8px 12px;">Última</a>
+        {% endif %}
+    </div>
+    {% endif %}
 {% endblock %}

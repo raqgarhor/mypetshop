@@ -1,0 +1,121 @@
+{% extends "admin_portal/base.html" %}
+
+{% block title %}Dashboard - Panel de Administración{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Dashboard</h1>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Total Clientes</h3>
+        <div class="stat-value">{{ total_clientes }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Total Productos</h3>
+        <div class="stat-value">{{ total_productos }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Total Pedidos</h3>
+        <div class="stat-value">{{ total_pedidos }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Ventas del Mes</h3>
+        <div class="stat-value">{{ ventas_mes|floatformat:2 }} €</div>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Pedidos Pendientes</h3>
+        <div class="stat-value">{{ pedidos_pendientes }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Pedidos Pagados</h3>
+        <div class="stat-value">{{ pedidos_pagados }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Pedidos Enviados</h3>
+        <div class="stat-value">{{ pedidos_enviados }}</div>
+    </div>
+</div>
+
+<div class="admin-table" style="margin-top: 30px;">
+    <h2 style="padding: 20px; margin: 0; border-bottom: 1px solid #eee;">Pedidos Recientes</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Número Pedido</th>
+                <th>Cliente</th>
+                <th>Estado</th>
+                <th>Total</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos_recientes %}
+            <tr>
+                <td>{{ pedido.numero_pedido }}</td>
+                <td>{{ pedido.cliente.nombre|default:"Sin cliente" }}</td>
+                <td>
+                    <span class="badge badge-{{ pedido.estado }}">
+                        {{ pedido.get_estado_display }}
+                    </span>
+                </td>
+                <td>{{ pedido.total }} €</td>
+                <td>{{ pedido.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                <td>
+                    <a href="{% url 'admin_panel:pedido_detalle' pedido.id_pedido %}" class="btn-admin btn-primary">Ver</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 20px;">No hay pedidos recientes</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="admin-table" style="margin-top: 30px;">
+    <h2 style="padding: 20px; margin: 0; border-bottom: 1px solid #eee;">Productos con Bajo Stock</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Stock</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in productos_bajo_stock %}
+            <tr>
+                <td>{{ producto.nombre }}</td>
+                <td>
+                    <span style="color: {% if producto.stock < 5 %}#e74c3c{% else %}#f39c12{% endif %}; font-weight: bold;">
+                        {{ producto.stock }}
+                    </span>
+                </td>
+                <td>{{ producto.categoria.nombre|default:"Sin categoría" }}</td>
+                <td>
+                    {% if producto.precio_oferta %}
+                        <span style="text-decoration: line-through; color: #999;">{{ producto.precio }} €</span>
+                        <span style="color: #e74c3c; font-weight: bold; margin-left: 5px;">{{ producto.precio_oferta }} €</span>
+                    {% else %}
+                        {{ producto.precio }} €
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 20px;">Todos los productos tienen stock adecuado</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

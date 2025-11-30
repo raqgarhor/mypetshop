@@ -249,9 +249,9 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS("Tallas insertadas correctamente"))
 
-    #==========================================
-    #CLIENTES
-    #==========================================
+        #==========================================
+        #CLIENTES
+        #==========================================
         management_dir = os.path.dirname(os.path.dirname(__file__))
         fixture_path = os.path.join(management_dir, 'fixtures', 'clientes.json')
         if not os.path.exists(fixture_path):
@@ -297,6 +297,7 @@ class Command(BaseCommand):
                 'ciudad': ciudad,
                 'codigo_postal': codigo_postal,
                 'user': user,
+                'es_admin': item.get('es_admin', False),
             }
 
             cliente, created_cliente = Cliente.objects.get_or_create(
@@ -367,7 +368,7 @@ class Command(BaseCommand):
         for item in items_pedido_data:
             try:
                 pedido_obj = Pedido.objects.get(numero_pedido=item["pedido"])
-            except Pedido.DoesNotExist or Producto.DoesNotExist:
+            except Pedido.DoesNotExist:
                 self.stdout.write(self.style.WARNING(f'Pedido no encontrado para item: {item.get("pedido")}'))
                 continue
             
@@ -428,36 +429,91 @@ class Command(BaseCommand):
         with open(fixture_path, 'r', encoding='utf-8') as f:
             item_carritos_data = json.load(f)
 
-        for item in item_carritos_data:
+        for item_data in item_carritos_data:
             try:
-                cliente_obj = Cliente.objects.get(nombre=item["carrito"])
+                cliente_obj = Cliente.objects.get(nombre=item_data["carrito"])
             except Cliente.DoesNotExist:
-                self.stdout.write(self.style.WARNING(f'Cliente no encontrado: {item.get("cliente")}'))
+                self.stdout.write(self.style.WARNING(f'Cliente no encontrado: {item_data.get("cliente")}'))
                 continue
             try:
                 carrito_obj = Carrito.objects.get(cliente=cliente_obj)
             except Carrito.DoesNotExist:
-                self.stdout.write(self.style.WARNING(f'Cliente no encontrado para carrito: {item.get("cliente")}'))
+                self.stdout.write(self.style.WARNING(f'Carrito no encontrado para cliente: {item_data.get("cliente")}'))
                 continue
             try:
-                producto_obj = Producto.objects.get(nombre=item["producto"])
+                producto_obj = Producto.objects.get(nombre=item_data["producto"])
             except Producto.DoesNotExist:
-                self.stdout.write(self.style.WARNING(f'Producto no encontrado para item de carrito: {item.get("producto")}'))
+                self.stdout.write(self.style.WARNING(f'Producto no encontrado para item de carrito: {item_data.get("producto")}'))
                 continue
 
-            item = ItemCarrito.objects.create(
+            item_carrito = ItemCarrito.objects.create(
                 carrito=carrito_obj,
                 producto=producto_obj,
-                talla=item["talla"],
-                cantidad=item["cantidad"]
+                talla=item_data.get("talla", ""),
+                cantidad=item_data.get("cantidad", 1)
             )
-            item.save()
+            item_carrito.save()
             
         self.stdout.write(self.style.SUCCESS("Items de carrito insertados correctamente"))
 
+        #==========================================
+        # CREAR CLIENTE ADMINISTRADOR
+        #==========================================
+        admin_email = 'admin@mypetshop.com'
+        admin_password = 'admin123'
+        admin_nombre = 'Admin'
+        admin_apellidos = 'Mypetshop'
+
+        # Crear o obtener usuario admin
+        admin_user, created_admin_user = User.objects.get_or_create(
+            username=admin_email,
+            defaults={
+                'email': admin_email,
+                'first_name': admin_nombre,
+                'last_name': admin_apellidos,
+            }
+        )
+        if admin_password:
+            admin_user.set_password(admin_password)
+            admin_user.save()
+
+        # Crear o actualizar cliente administrador
+        admin_cliente, created_admin_cliente = Cliente.objects.get_or_create(
+            email=admin_email,
+            defaults={
+                'nombre': admin_nombre,
+                'apellidos': admin_apellidos,
+                'telefono': '000000000',
+                'direccion': 'Dirección administrativa',
+                'ciudad': 'Ciudad',
+                'codigo_postal': '00000',
+                'fecha_creacion': timezone.now(),
+                'user': admin_user,
+                'es_admin': True,
+            }
+        )
+        
+        # Asegurarse de que el cliente sea administrador y esté vinculado al usuario
+        if not created_admin_cliente:
+            admin_cliente.es_admin = True
+            admin_cliente.user = admin_user
+            admin_cliente.nombre = admin_nombre
+            admin_cliente.apellidos = admin_apellidos
+            admin_cliente.save()
+
+        if created_admin_user or created_admin_cliente:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'✓ Cliente administrador creado/actualizado:\n'
+                    f'  Email: {admin_email}\n'
+                    f'  Contraseña: {admin_password}'
+                )
+            )
+        else:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'✓ Cliente administrador ya existe: {admin_email}'
+                )
+            )
 
         self.stdout.write('Para recrear los datos use: python manage.py seed --flush')
-
-
-
-                

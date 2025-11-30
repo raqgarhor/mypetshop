@@ -3,59 +3,198 @@
 {% block title %}Datos del cliente{% endblock %}
 
 {% block content %}
-<h2>Datos del cliente y envío</h2>
+{% if is_guest %}
+    <h2 style="text-align: center; margin-bottom: 3rem;">Completa tus datos para continuar</h2>
+    
+    <div style="display: flex; gap: 3rem; max-width: 1200px; margin: 0 auto; flex-wrap: wrap;">
+        <!-- Formulario izquierdo: Login/Register -->
+        <div style="flex: 1; min-width: 400px;">
+            <section class="auth-card" style="margin: 0;">
+                <h2>Crear una cuenta o loguearse</h2>
+                
+                <!-- Tabs para Login/Register -->
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid var(--gray-light);">
+                    <button type="button" onclick="showLoginForm()" id="login-tab" style="flex: 1; padding: 1rem; background: none; border: none; border-bottom: 3px solid var(--secondary); font-weight: 600; cursor: pointer; font-size: 1.4rem; color: var(--secondary);">
+                        Iniciar sesión
+                    </button>
+                    <button type="button" onclick="showRegisterForm()" id="register-tab" style="flex: 1; padding: 1rem; background: none; border: none; border-bottom: 3px solid transparent; font-weight: 600; cursor: pointer; font-size: 1.4rem; color: var(--gray);">
+                        Crear cuenta
+                    </button>
+                </div>
+                
+                <!-- Formulario de Login -->
+                <div id="login-form-container">
+                    <form method="post" novalidate class="auth-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="login">
+                        {% for error in login_form.non_field_errors %}
+                            <p class="form-errors">{{ error }}</p>
+                        {% endfor %}
 
-<form action="" method="post" class="checkout-form">
-    {% csrf_token %}
+                        {% for field in login_form %}
+                            <div class="form-field">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% for error in field.errors %}
+                                    <p class="field-error">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
 
-    {% if form.non_field_errors %}
-        <div class="form-errors">
-            {% for error in form.non_field_errors %}
-                <p>{{ error }}</p>
-            {% endfor %}
+                        <button type="submit" class="btn btn-primary">Acceder</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 2rem; color: var(--gray);">
+                        ¿No tienes cuenta? <a href="#" onclick="showRegisterForm(); return false;" style="color: var(--secondary); font-weight: 600;">Crear una cuenta</a>
+                    </p>
+                </div>
+                
+                <!-- Formulario de Registro -->
+                <div id="register-form-container" style="display: none;">
+                    <form method="post" novalidate class="auth-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="register">
+                        {% for error in register_form.non_field_errors %}
+                            <p class="form-errors">{{ error }}</p>
+                        {% endfor %}
+
+                        {% for field in register_form %}
+                            <div class="form-field">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% for error in field.errors %}
+                                    <p class="field-error">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                        <button type="submit" class="btn btn-primary">Crear cuenta</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 2rem; color: var(--gray);">
+                        ¿Ya tienes cuenta? <a href="#" onclick="showLoginForm(); return false;" style="color: var(--secondary); font-weight: 600;">Inicia sesión</a>
+                    </p>
+                </div>
+            </section>
         </div>
-    {% endif %}
+        
+        <!-- Formulario derecho: Checkout sin cuenta -->
+        <div style="flex: 1; min-width: 400px;">
+            <section class="auth-card" style="margin: 0;">
+                <h2>Continuar sin cuenta</h2>
+                <p style="text-align: center; margin-bottom: 2rem; color: var(--gray); font-size: 1.3rem;">
+                    Completa solo la información necesaria para procesar tu pedido
+                </p>
+                
+                <form method="post" novalidate class="auth-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="guest">
+                    
+                    {% for field in guest_form %}
+                        <div class="form-field">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% for error in field.errors %}
+                                <p class="field-error">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
 
-    <label>Email</label>
-    <input type="email" value="{{ email_usuario }}" readonly>
+                    <button type="submit" class="btn btn-primary">Continuar al pago</button>
+                </form>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        function showLoginForm() {
+            document.getElementById('login-form-container').style.display = 'block';
+            document.getElementById('register-form-container').style.display = 'none';
+            document.getElementById('login-tab').style.borderBottomColor = 'var(--secondary)';
+            document.getElementById('login-tab').style.color = 'var(--secondary)';
+            document.getElementById('register-tab').style.borderBottomColor = 'transparent';
+            document.getElementById('register-tab').style.color = 'var(--gray)';
+        }
+        
+        function showRegisterForm() {
+            document.getElementById('login-form-container').style.display = 'none';
+            document.getElementById('register-form-container').style.display = 'block';
+            document.getElementById('register-tab').style.borderBottomColor = 'var(--secondary)';
+            document.getElementById('register-tab').style.color = 'var(--secondary)';
+            document.getElementById('login-tab').style.borderBottomColor = 'transparent';
+            document.getElementById('login-tab').style.color = 'var(--gray)';
+        }
+    </script>
+    
+    <style>
+        @media (max-width: 900px) {
+            div[style*="display: flex"] {
+                flex-direction: column !important;
+            }
+        }
+    </style>
+{% else %}
+    <!-- Usuario autenticado - formulario normal -->
+    <h2>Datos del cliente y envío</h2>
 
-    <label>Nombre *</label>
-    <input type="text" name="nombre" value="{{ form.nombre.value }}" required>
-    {% for error in form.nombre.errors %}
-        <p class="field-error">{{ error }}</p>
-    {% endfor %}
+    <form action="" method="post" class="checkout-form">
+        {% csrf_token %}
 
-    <label>Apellidos</label>
-    <input type="text" name="apellidos" value="{{ form.apellidos.value|default_if_none:'' }}">
-    {% for error in form.apellidos.errors %}
-        <p class="field-error">{{ error }}</p>
-    {% endfor %}
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-    <label>Teléfono</label>
-    <input type="text" name="telefono" value="{{ form.telefono.value|default_if_none:'' }}">
-    {% for error in form.telefono.errors %}
-        <p class="field-error">{{ error }}</p>
-    {% endfor %}
+        <label>Email</label>
+        <input type="email" value="{{ email_usuario }}" readonly>
 
-    <label>Dirección *</label>
-    <input type="text" name="direccion" value="{{ form.direccion.value|default_if_none:'' }}" required>
-    {% for error in form.direccion.errors %}
-        <p class="field-error">{{ error }}</p>
-    {% endfor %}
+        <label>Nombre *</label>
+        <input type="text" name="nombre" value="{{ form.nombre.value }}" required>
+        {% for error in form.nombre.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
 
-    <label>Ciudad *</label>
-    <input type="text" name="ciudad" value="{{ form.ciudad.value|default_if_none:'' }}" required>
-    {% for error in form.ciudad.errors %}
-        <p class="field-error">{{ error }}</p>
-    {% endfor %}
+        <label>Apellidos</label>
+        <input type="text" name="apellidos" value="{{ form.apellidos.value|default_if_none:'' }}">
+        {% for error in form.apellidos.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
 
-    <label>Código postal *</label>
-    <input type="text" name="codigo_postal" value="{{ form.codigo_postal.value|default_if_none:'' }}" required>
-    {% for error in form.codigo_postal.errors %}
-        <p class="field-error">{{ error }}</p>
-    {% endfor %}
+        <label>Teléfono</label>
+        <input type="text" name="telefono" value="{{ form.telefono.value|default_if_none:'' }}">
+        {% for error in form.telefono.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
 
-    <button type="submit" class="btn btn-primary">Continuar al pago</button>
-</form>
+        <label>Dirección *</label>
+        <input type="text" name="direccion" value="{{ form.direccion.value|default_if_none:'' }}" required>
+        {% for error in form.direccion.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
 
+        <label>Ciudad *</label>
+        <input type="text" name="ciudad" value="{{ form.ciudad.value|default_if_none:'' }}" required>
+        {% for error in form.ciudad.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <label>Código postal *</label>
+        <input type="text" name="codigo_postal" value="{{ form.codigo_postal.value|default_if_none:'' }}" required>
+        {% for error in form.codigo_postal.errors %}
+            <p class="field-error">{{ error }}</p>
+        {% endfor %}
+
+        <div class="checkout-actions" style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center; justify-content: center;">
+            <button type="submit" name="shipping_method" value="delivery" class="btn btn-primary" style="flex: 1 1 0; min-width: 0;">
+                A domicilio
+            </button>
+
+            <button type="submit" name="shipping_method" value="pickup" class="btn btn-primary" style="flex: 1 1 0; min-width: 0;">
+                Recoger en tienda
+            </button>
+        </div>
+
+    </form>
+{% endif %}
 {% endblock %}

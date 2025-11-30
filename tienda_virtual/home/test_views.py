@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.messages import get_messages
+import json
 import datetime
 
 from .models import (
@@ -19,6 +20,7 @@ from .models import (
     Pedido,
     ItemPedido,
     MensajeContacto,
+    ImagenProducto,
 )
 
 User = get_user_model()
@@ -244,9 +246,29 @@ class CartViewTest(TestCase):
         self.assertEqual(response.context['total'], 0)
 
     def test_add_to_cart(self):
-        """Test que se puede añadir un producto al carrito."""
+        """Test que se puede añadir un producto al carrito (sin AJAX)."""
         response = self.client.post(reverse('add_to_cart', args=[self.producto.id]))
         self.assertEqual(response.status_code, 302)  # Redirect
+        
+        # Verificar que el producto está en la sesión
+        session = self.client.session
+        self.assertIn('cart', session)
+        key = f"{self.producto.id}:"
+        self.assertIn(key, session['cart'])
+        self.assertEqual(session['cart'][key], 1)
+
+    def test_add_to_cart_ajax(self):
+        """Test que se puede añadir un producto al carrito vía AJAX."""
+        response = self.client.post(
+            reverse('add_to_cart', args=[self.producto.id]),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)  # JSON response
+        data = json.loads(response.content)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['cart_count'], 1)
+        self.assertIn('cart_items', data)
+        self.assertIn('cart_total', data)
         
         # Verificar que el producto está en la sesión
         session = self.client.session
@@ -262,6 +284,21 @@ class CartViewTest(TestCase):
             {'size': 'M'}
         )
         self.assertEqual(response.status_code, 302)
+        
+        session = self.client.session
+        key = f"{self.producto.id}:M"
+        self.assertIn(key, session['cart'])
+
+    def test_add_to_cart_con_talla_ajax(self):
+        """Test que se puede añadir un producto con talla vía AJAX."""
+        response = self.client.post(
+            reverse('add_to_cart', args=[self.producto.id]),
+            {'size': 'M'},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(data['success'])
         
         session = self.client.session
         key = f"{self.producto.id}:M"
@@ -304,6 +341,26 @@ class CartViewTest(TestCase):
         key = f"{self.producto.id}:"
         self.assertEqual(session['cart'][key], 1)
 
+    def test_cart_decrement_ajax(self):
+        """Test que se puede decrementar la cantidad vía AJAX."""
+        # Añadir 2 productos
+        self.client.post(reverse('add_to_cart', args=[self.producto.id]))
+        self.client.post(reverse('add_to_cart', args=[self.producto.id]))
+        
+        # Decrementar vía AJAX
+        response = self.client.post(
+            reverse('cart_decrement', args=[self.producto.id]),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['cart_count'], 1)
+        
+        session = self.client.session
+        key = f"{self.producto.id}:"
+        self.assertEqual(session['cart'][key], 1)
+
     def test_cart_decrement_elimina_si_cero(self):
         """Test que decrementar a 0 elimina el producto del carrito."""
         self.client.post(reverse('add_to_cart', args=[self.producto.id]))
@@ -323,6 +380,22 @@ class CartViewTest(TestCase):
         key = f"{self.producto.id}:"
         self.assertNotIn(key, session['cart'])
 
+    def test_cart_remove_ajax(self):
+        """Test que se puede eliminar un producto del carrito vía AJAX."""
+        self.client.post(reverse('add_to_cart', args=[self.producto.id]))
+        response = self.client.post(
+            reverse('cart_remove', args=[self.producto.id]),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['cart_count'], 0)
+        
+        session = self.client.session
+        key = f"{self.producto.id}:"
+        self.assertNotIn(key, session['cart'])
+
     def test_cart_update(self):
         """Test que se puede actualizar la cantidad de un producto."""
         self.client.post(reverse('add_to_cart', args=[self.producto.id]))
@@ -332,6 +405,24 @@ class CartViewTest(TestCase):
             {'product_id': self.producto.id, 'quantity': '5', 'size': ''}
         )
         self.assertEqual(response.status_code, 302)
+        
+        session = self.client.session
+        key = f"{self.producto.id}:"
+        self.assertEqual(session['cart'][key], 5)
+
+    def test_cart_update_ajax(self):
+        """Test que se puede actualizar la cantidad vía AJAX."""
+        self.client.post(reverse('add_to_cart', args=[self.producto.id]))
+        
+        response = self.client.post(
+            reverse('cart_update'),
+            {'product_id': self.producto.id, 'quantity': '5', 'size': ''},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(data['success'])
+        self.assertEqual(data['cart_count'], 5)
         
         session = self.client.session
         key = f"{self.producto.id}:"
@@ -354,6 +445,33 @@ class CartViewTest(TestCase):
         """Test que add_to_cart solo acepta POST."""
         response = self.client.get(reverse('add_to_cart', args=[self.producto.id]))
         self.assertEqual(response.status_code, 302)  # Redirect
+
+    def test_add_to_cart_ajax_devuelve_items(self):
+        """Test que la respuesta AJAX incluye los items del carrito."""
+        # Añadir producto con imagen
+        imagen = SimpleUploadedFile(
+            name="producto.jpg",
+            content=b"fake image content",
+            content_type="image/jpeg"
+        )
+        ImagenProducto.objects.create(
+            producto=self.producto,
+            imagen=imagen,
+            es_principal=True
+        )
+        
+        response = self.client.post(
+            reverse('add_to_cart', args=[self.producto.id]),
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+        )
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
+        self.assertTrue(data['success'])
+        self.assertEqual(len(data['cart_items']), 1)
+        self.assertEqual(data['cart_items'][0]['producto_id'], self.producto.id)
+        self.assertEqual(data['cart_items'][0]['nombre'], self.producto.nombre)
+        self.assertIsNotNone(data['cart_items'][0]['imagen_url'])
+        self.assertEqual(data['cart_total'], float(self.producto.precio))
 
 
 class AuthenticationViewTest(TestCase):

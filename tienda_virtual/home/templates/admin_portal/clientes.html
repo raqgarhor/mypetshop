@@ -1,0 +1,106 @@
+{% extends "admin_portal/base.html" %}
+
+{% block title %}Clientes - Panel de Administración{% endblock %}
+
+{% block content %}
+<div class="admin-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <h1>Gestión de Clientes</h1>
+    <a href="{% url 'admin_panel:cliente_crear' %}" class="btn-admin btn-success">
+        <i class="fas fa-plus"></i> Crear Cliente
+    </a>
+</div>
+
+<div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <form method="get" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+        <input type="text" name="q" placeholder="Buscar por nombre, apellidos o email..." value="{{ busqueda }}" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd; flex: 1; min-width: 200px;">
+        
+        <select name="admin" style="padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+            <option value="">Todos</option>
+            <option value="si" {% if admin_filtro == 'si' %}selected{% endif %}>Solo administradores</option>
+            <option value="no" {% if admin_filtro == 'no' %}selected{% endif %}>Solo clientes</option>
+        </select>
+        
+        <button type="submit" class="btn-admin btn-primary">Filtrar</button>
+        {% if busqueda or admin_filtro %}
+        <a href="{% url 'admin_panel:clientes' %}" class="btn-admin" style="background: #95a5a6; color: white;">Limpiar</a>
+        {% endif %}
+    </form>
+</div>
+
+<div class="admin-table">
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Ciudad</th>
+                <th>Administrador</th>
+                <th>Fecha Registro</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.apellidos|default:"-" }}</td>
+                <td>{{ cliente.email }}</td>
+                <td>{{ cliente.telefono|default:"-" }}</td>
+                <td>{{ cliente.ciudad|default:"-" }}</td>
+                <td>
+                    {% if cliente.es_admin %}
+                        <span class="badge" style="background: #e74c3c; color: white;">Sí</span>
+                    {% else %}
+                        <span class="badge" style="background: #95a5a6; color: white;">No</span>
+                    {% endif %}
+                </td>
+                <td>{{ cliente.fecha_creacion|date:"d/m/Y" }}</td>
+                <td>
+                    <div style="display: flex; gap: 8px;">
+                        <a href="{% url 'admin_panel:cliente_editar' cliente.id %}" class="btn-admin btn-primary">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a href="{% url 'admin_panel:cliente_eliminar' cliente.id %}" 
+                           class="btn-admin" 
+                           style="background: #e74c3c; color: white;"
+                           onclick="return confirm('¿Estás seguro de que deseas eliminar el cliente \'{{ cliente.nombre }} {{ cliente.apellidos|default:"" }}\'? Esta acción no se puede deshacer.');">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 20px;">No se encontraron clientes</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Paginación -->
+{% if clientes.has_other_pages %}
+<div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+    {% if clientes.has_previous %}
+        <a href="?page=1{% if busqueda %}&q={{ busqueda }}{% endif %}{% if admin_filtro %}&admin={{ admin_filtro }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">Primera</a>
+        <a href="?page={{ clientes.previous_page_number }}{% if busqueda %}&q={{ busqueda }}{% endif %}{% if admin_filtro %}&admin={{ admin_filtro }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">« Anterior</a>
+    {% endif %}
+    
+    <span style="padding: 8px 12px;">
+        Página {{ clientes.number }} de {{ clientes.paginator.num_pages }}
+    </span>
+    
+    {% if clientes.has_next %}
+        <a href="?page={{ clientes.next_page_number }}{% if busqueda %}&q={{ busqueda }}{% endif %}{% if admin_filtro %}&admin={{ admin_filtro }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">Siguiente »</a>
+        <a href="?page={{ clientes.paginator.num_pages }}{% if busqueda %}&q={{ busqueda }}{% endif %}{% if admin_filtro %}&admin={{ admin_filtro }}{% endif %}" 
+           class="btn-admin btn-primary" style="padding: 8px 12px;">Última</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+

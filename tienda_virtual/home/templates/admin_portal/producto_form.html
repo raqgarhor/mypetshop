@@ -1,0 +1,232 @@
+{% extends "admin_portal/base.html" %}
+
+{% block title %}{{ titulo }} - Panel de Administración{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>{{ titulo }}</h1>
+</div>
+
+<div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 900px;">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div style="background: #f8d7da; color: #721c24; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div>
+                <label for="{{ form.nombre.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Nombre <span style="color: red;">*</span>
+                </label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}
+                    <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 5px;">{{ form.nombre.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.marca.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Marca <span style="color: red;">*</span>
+                </label>
+                {{ form.marca }}
+                {% if form.marca.errors %}
+                    <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 5px;">{{ form.marca.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="{{ form.descripcion.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                Descripción
+            </label>
+            {{ form.descripcion }}
+            {% if form.descripcion.errors %}
+                <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 5px;">{{ form.descripcion.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div>
+                <label for="{{ form.precio.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Precio (€) <span style="color: red;">*</span>
+                </label>
+                {{ form.precio }}
+                {% if form.precio.errors %}
+                    <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 5px;">{{ form.precio.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.precio_oferta.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Precio Oferta (€)
+                </label>
+                {{ form.precio_oferta }}
+                {% if form.precio_oferta.errors %}
+                    <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 5px;">{{ form.precio_oferta.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.stock.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Stock
+                </label>
+                {{ form.stock }}
+                {% if form.stock.errors %}
+                    <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 5px;">{{ form.stock.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div>
+                <label for="{{ form.categoria.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Categoría
+                </label>
+                {{ form.categoria }}
+                {% if form.categoria.errors %}
+                    <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 5px;">{{ form.categoria.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.genero.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Especie
+                </label>
+                {{ form.genero }}
+                {% if form.genero.errors %}
+                    <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 5px;">{{ form.genero.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="{{ form.color.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Color
+                </label>
+                {{ form.color }}
+                {% if form.color.errors %}
+                    <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 5px;">{{ form.color.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="{{ form.material.id_for_label }}" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                Material
+            </label>
+            {{ form.material }}
+            {% if form.material.errors %}
+                <div style="color: #e74c3c; font-size: 0.9rem; margin-top: 5px;">{{ form.material.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; gap: 30px; margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                {{ form.esta_disponible }}
+                <label for="{{ form.esta_disponible.id_for_label }}" style="margin: 0; font-weight: 600;">
+                    Disponible
+                </label>
+                {% if form.esta_disponible.errors %}
+                    <div style="color: #e74c3c; font-size: 0.9rem;">{{ form.esta_disponible.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px;">
+                {{ form.es_destacado }}
+                <label for="{{ form.es_destacado.id_for_label }}" style="margin: 0; font-weight: 600;">
+                    Destacado
+                </label>
+                {% if form.es_destacado.errors %}
+                    <div style="color: #e74c3c; font-size: 0.9rem;">{{ form.es_destacado.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sección de Imágenes -->
+        <div style="margin-bottom: 30px; padding-top: 20px; border-top: 2px solid #eee;">
+            <h3 style="margin-bottom: 15px; font-size: 1.2rem;">Imágenes del Producto</h3>
+            
+            <!-- Imágenes existentes (solo en edición) -->
+            {% if imagenes_existentes %}
+            <div style="margin-bottom: 20px;">
+                <h4 style="font-size: 1rem; margin-bottom: 10px;">Imágenes actuales:</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
+                    {% for img in imagenes_existentes %}
+                    <div style="position: relative; border: 2px solid {% if img.es_principal %}#27ae60{% else %}#ddd{% endif %}; border-radius: 8px; padding: 10px; background: #f8f9fa;">
+                        <img src="{{ img.imagen.url }}" alt="Imagen producto" style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px;">
+                        {% if img.es_principal %}
+                        <div style="position: absolute; top: 5px; right: 5px; background: #27ae60; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">
+                            Principal
+                        </div>
+                        {% endif %}
+                        <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="radio" name="imagen_principal" value="{{ img.id }}" {% if img.es_principal %}checked{% endif %}>
+                                Marcar como principal
+                            </label>
+                            <label style="font-size: 0.85rem; display: flex; align-items: center; gap: 5px; cursor: pointer; color: #e74c3c;">
+                                <input type="checkbox" name="eliminar_imagen" value="{{ img.id }}">
+                                Eliminar
+                            </label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Campo para subir nuevas imágenes -->
+            <div>
+                <label for="imagenes" style="display: block; margin-bottom: 5px; font-weight: 600;">
+                    Subir nuevas imágenes
+                </label>
+                <input type="file" name="imagenes" id="imagenes" multiple accept="image/*" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                <small style="color: #666; font-size: 0.85rem; display: block; margin-top: 5px;">
+                    Puedes seleccionar múltiples imágenes. La primera será marcada como principal si no hay ninguna principal.
+                </small>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 15px; justify-content: flex-end;">
+            <a href="{% url 'admin_panel:productos' %}" class="btn-admin" style="background: #95a5a6; color: white;">
+                Cancelar
+            </a>
+            <button type="submit" class="btn-admin btn-success">
+                <i class="fas fa-save"></i> {{ accion }}
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+    
+    textarea.form-control {
+        resize: vertical;
+        min-height: 100px;
+    }
+    
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+

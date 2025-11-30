@@ -29,6 +29,17 @@
             {% if pedido.cliente %}
                 <p><strong>Cliente:</strong> {{ pedido.cliente }}</p>
             {% endif %}
+            <p><strong>Método de envío:</strong>
+                {% if shipping_method == "pickup" %}
+                    Recoger en tienda
+                {% else %}
+                    A domicilio
+                {% endif %}
+            </p>
+            <p><strong>Subtotal:</strong> {{ pedido.subtotal }} €</p>
+            <p><strong>Impuestos:</strong> {{ pedido.impuestos }} €</p>
+            <p><strong>Gastos de envío:</strong> {{ pedido.coste_entrega }} €</p>
+            <p><strong>Descuento:</strong> {{ pedido.descuento }} €</p>
             <p><strong>Total:</strong> {{ pedido.total }} €</p>
 
             <h4>Artículos</h4>

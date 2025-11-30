@@ -133,6 +133,7 @@ class Cliente(models.Model):
     direccion = models.CharField(max_length=255, blank=True, null=True)
     ciudad = models.CharField(max_length=100, blank=True, null=True)
     codigo_postal = models.CharField(max_length=20, blank=True, null=True)
+    es_admin = models.BooleanField(default=False, verbose_name="Es administrador")
 
     class Meta:
         verbose_name = "Cliente"
@@ -188,7 +189,7 @@ class Pedido(models.Model):
     coste_entrega = models.DecimalField(
         max_digits=12,
         decimal_places=2,
-        default=Decimal("0.00"),
+        default=Decimal("2.99"),
     )
     descuento = models.DecimalField(
         max_digits=12,

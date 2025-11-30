@@ -1,0 +1,56 @@
+{% extends "admin_portal/base.html" %}
+
+{% block title %}Mensajes de Contacto - Panel de Administración{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Mensajes de Contacto</h1>
+</div>
+
+<div class="admin-table">
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Mensaje</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mensaje in mensajes %}
+            <tr>
+                <td>{{ mensaje.fecha|date:"d/m/Y H:i" }}</td>
+                <td>{{ mensaje.nombre }}</td>
+                <td><a href="mailto:{{ mensaje.email }}">{{ mensaje.email }}</a></td>
+                <td style="max-width: 400px; word-wrap: break-word;">{{ mensaje.mensaje|truncatewords:30 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 20px;">No hay mensajes de contacto</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Paginación -->
+{% if mensajes.has_other_pages %}
+<div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 20px 0; flex-wrap: wrap;">
+    {% if mensajes.has_previous %}
+        <a href="?page=1" class="btn-admin btn-primary" style="padding: 8px 12px;">Primera</a>
+        <a href="?page={{ mensajes.previous_page_number }}" class="btn-admin btn-primary" style="padding: 8px 12px;">« Anterior</a>
+    {% endif %}
+    
+    <span style="padding: 8px 12px;">
+        Página {{ mensajes.number }} de {{ mensajes.paginator.num_pages }}
+    </span>
+    
+    {% if mensajes.has_next %}
+        <a href="?page={{ mensajes.next_page_number }}" class="btn-admin btn-primary" style="padding: 8px 12px;">Siguiente »</a>
+        <a href="?page={{ mensajes.paginator.num_pages }}" class="btn-admin btn-primary" style="padding: 8px 12px;">Última</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Cliente
+from .models import Cliente, Producto, Marca, Categoria
 
 User = get_user_model()
 
@@ -97,6 +97,58 @@ class ClienteEnvioForm(forms.ModelForm):
             self.fields[field].required = True
 
 
+class GuestCheckoutForm(forms.Form):
+    """Formulario para checkout sin cuenta (invitado)"""
+    email = forms.EmailField(
+        label="Email *",
+        widget=forms.EmailInput(attrs={"placeholder": "tu@email.com", "autofocus": True}),
+        required=True,
+    )
+    nombre = forms.CharField(
+        label="Nombre *",
+        max_length=150,
+        widget=forms.TextInput(attrs={"placeholder": "Tu nombre"}),
+        required=True,
+    )
+    apellidos = forms.CharField(
+        label="Apellidos",
+        max_length=150,
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Tus apellidos"}),
+    )
+    telefono = forms.CharField(
+        label="Teléfono",
+        max_length=20,
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "123456789"}),
+    )
+    direccion = forms.CharField(
+        label="Dirección *",
+        max_length=255,
+        widget=forms.TextInput(attrs={"placeholder": "C/ Principal 123"}),
+        required=True,
+    )
+    ciudad = forms.CharField(
+        label="Ciudad *",
+        max_length=100,
+        widget=forms.TextInput(attrs={"placeholder": "Madrid"}),
+        required=True,
+    )
+    codigo_postal = forms.CharField(
+        label="Código postal *",
+        max_length=20,
+        widget=forms.TextInput(attrs={"placeholder": "28001"}),
+        required=True,
+    )
+    
+    def clean_email(self):
+        email = (self.cleaned_data.get("email") or "").strip().lower()
+        # Verificar si ya existe un cliente con usuario (cuenta registrada)
+        if Cliente.objects.filter(email__iexact=email, user__isnull=False).exists():
+            raise forms.ValidationError("Ya existe una cuenta con este email. Por favor, inicia sesión para continuar.")
+        return email
+
+
 class SeguimientoPedidoForm(forms.Form):
     numero_pedido = forms.CharField(
         label="Código de seguimiento",
@@ -108,3 +160,132 @@ class SeguimientoPedidoForm(forms.Form):
             }
         ),
     )
+
+
+class ClienteAdminForm(forms.ModelForm):
+    password = forms.CharField(
+        label="Contraseña",
+        required=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        help_text="Dejar en blanco si no quieres cambiar la contraseña."
+    )
+    
+    class Meta:
+        model = Cliente
+        fields = [
+            'nombre',
+            'apellidos',
+            'email',
+            'telefono',
+            'direccion',
+            'ciudad',
+            'codigo_postal',
+            'es_admin',
+        ]
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
+            'apellidos': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'required': True}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'ciudad': forms.TextInput(attrs={'class': 'form-control'}),
+            'codigo_postal': forms.TextInput(attrs={'class': 'form-control'}),
+            'es_admin': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.instance_user = None
+        if 'instance' in kwargs and kwargs['instance']:
+            if hasattr(kwargs['instance'], 'user') and kwargs['instance'].user:
+                self.instance_user = kwargs['instance'].user
+        super().__init__(*args, **kwargs)
+        self.fields['nombre'].required = True
+        self.fields['email'].required = True
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if self.instance and self.instance.pk:
+            # Si estamos editando, permitir el mismo email
+            if Cliente.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+                raise forms.ValidationError("Ya existe un cliente con este email.")
+        else:
+            # Si estamos creando, verificar que no exista
+            if Cliente.objects.filter(email=email).exists():
+                raise forms.ValidationError("Ya existe un cliente con este email.")
+        return email
+
+    def save(self, commit=True):
+        cliente = super().save(commit=False)
+        
+        if commit:
+            cliente.save()
+            
+            # Manejar usuario
+            if not cliente.user:
+                # Crear nuevo usuario
+                from django.contrib.auth import get_user_model
+                User = get_user_model()
+                password_default = 'cliente123'
+                user = User.objects.create_user(
+                    username=cliente.email,
+                    email=cliente.email,
+                    first_name=cliente.nombre,
+                    last_name=cliente.apellidos or '',
+                    password=password_default,
+                )
+                cliente.user = user
+                cliente.save()
+            else:
+                # Actualizar usuario existente
+                cliente.user.email = cliente.email
+                cliente.user.first_name = cliente.nombre
+                cliente.user.last_name = cliente.apellidos or ''
+                cliente.user.save()
+            
+            # Cambiar contraseña si se proporcionó
+            password = self.cleaned_data.get('password')
+            if password:
+                cliente.user.set_password(password)
+                cliente.user.save()
+        
+        return cliente
+
+
+class ProductoAdminForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = [
+            'nombre',
+            'descripcion',
+            'precio',
+            'precio_oferta',
+            'marca',
+            'categoria',
+            'genero',
+            'color',
+            'material',
+            'stock',
+            'esta_disponible',
+            'es_destacado',
+        ]
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'required': True}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'precio': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0'}),
+            'precio_oferta': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0'}),
+            'marca': forms.Select(attrs={'class': 'form-control', 'required': True}),
+            'categoria': forms.Select(attrs={'class': 'form-control'}),
+            'genero': forms.Select(attrs={'class': 'form-control'}),
+            'color': forms.TextInput(attrs={'class': 'form-control'}),
+            'material': forms.TextInput(attrs={'class': 'form-control'}),
+            'stock': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'esta_disponible': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'es_destacado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['marca'].queryset = Marca.objects.all().order_by('nombre')
+        self.fields['categoria'].queryset = Categoria.objects.all().order_by('nombre')
+        self.fields['marca'].required = True
+        self.fields['precio'].required = True

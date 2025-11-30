@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Panel de Administración - My Pet Shop{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'home/style.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'home/bunny2.png' %}">
+    <style>
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        .admin-sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px 0;
+        }
+        .admin-sidebar h2 {
+            padding: 0 20px;
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+        }
+        .admin-sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .admin-sidebar li {
+            margin: 0;
+        }
+        .admin-sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .admin-sidebar a:hover,
+        .admin-sidebar a.active {
+            background: #34495e;
+        }
+        .admin-content {
+            flex: 1;
+            padding: 30px;
+            background: #f5f5f5;
+        }
+        .admin-header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .admin-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .admin-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .admin-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .admin-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .admin-table tr:hover {
+            background: #f8f9fa;
+        }
+        .btn-admin {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .badge-pending {
+            background: #f39c12;
+            color: white;
+        }
+        .badge-paid {
+            background: #27ae60;
+            color: white;
+        }
+        .badge-sent {
+            background: #3498db;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <h2><i class="fas fa-shield-alt"></i> Panel Admin</h2>
+            <ul>
+                <li><a href="{% url 'admin_panel:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a></li>
+                <li><a href="{% url 'admin_panel:pedidos' %}" class="{% if 'pedido' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="fas fa-shopping-bag"></i> Pedidos
+                </a></li>
+                <li><a href="{% url 'admin_panel:productos' %}" class="{% if request.resolver_match.url_name == 'productos' %}active{% endif %}">
+                    <i class="fas fa-box"></i> Productos
+                </a></li>
+                <li><a href="{% url 'admin_panel:clientes' %}" class="{% if request.resolver_match.url_name == 'clientes' %}active{% endif %}">
+                    <i class="fas fa-users"></i> Clientes
+                </a></li>
+                <li><a href="{% url 'admin_panel:mensajes' %}" class="{% if request.resolver_match.url_name == 'mensajes' %}active{% endif %}">
+                    <i class="fas fa-envelope"></i> Mensajes
+                </a></li>
+                <li><a href="{% url 'home' %}" style="margin-top: 20px; border-top: 1px solid #34495e; padding-top: 20px;">
+                    <i class="fas fa-home"></i> Volver a la tienda
+                </a></li>
+                <li><a href="{% url 'logout' %}">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                </a></li>
+            </ul>
+        </aside>
+        <main class="admin-content">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}" style="padding: 12px; margin-bottom: 20px; border-radius: 4px; background: {% if message.tags == 'success' %}#d4edda{% elif message.tags == 'error' %}#f8d7da{% else %}#d1ecf1{% endif %}; color: {% if message.tags == 'success' %}#155724{% elif message.tags == 'error' %}#721c24{% else %}#0c5460{% endif %};">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
+

@@ -37,7 +37,22 @@
 
 <p><strong>Subtotal:</strong> {{ subtotal }} €</p>
 <p><strong>Impuestos:</strong> {{ impuestos }} €</p>
-<p><strong>Coste de entrega:</strong> {{ coste_entrega }} €</p>
+
+<p><strong>Método de envío:</strong>
+    {% if shipping_method == "pickup" %}
+        Recoger en tienda
+    {% else %}
+        A domicilio
+    {% endif %}
+</p>
+
+<p><strong>Coste de entrega:</strong>
+    {% if envio_gratis %}
+        Envío gratis
+    {% else %}
+        {{ coste_entrega }} €
+    {% endif %}
+</p>
 <p><strong>Descuento:</strong> {{ descuento }} €</p>
 
 <h3>Total final: {{ total }} €</h3>
