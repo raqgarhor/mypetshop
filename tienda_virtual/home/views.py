@@ -1500,6 +1500,37 @@ def enviar_email_contrareembolso(pedido):
     """Email de confirmación para pedidos con pago contrareembolso."""
     cliente = pedido.cliente
 
+    # Generar filas HTML con tallas para el email (similar a pago_ok)
+    items_rows = ""
+    for item in pedido.items.all():
+        try:
+            precio_unitario = getattr(item, "precio_unitario", None)
+            if precio_unitario is None:
+                precio_unitario = item.producto.precio_oferta or item.producto.precio or Decimal("0.00")
+            total_item = (precio_unitario * (getattr(item, 'cantidad', 0) or 0)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        except Exception:
+            total_item = Decimal("0.00")
+
+        talla_display = ''
+        try:
+            talla_val = getattr(item, 'talla', None)
+            if talla_val:
+                if hasattr(talla_val, 'talla'):
+                    talla_display = str(talla_val.talla)
+                else:
+                    talla_display = str(talla_val)
+        except Exception:
+            talla_display = ''
+
+        items_rows += f"""
+                    <tr>
+                        <td>{item.producto.nombre}</td>
+                        <td align=\"center\">{talla_display or '-'}</td>
+                        <td align=\"center\">{item.cantidad}</td>
+                        <td align=\"right\">{total_item:.2f} €</td>
+                    </tr>
+        """
+
     html = f"""
     <table width="100%" cellpadding="0" cellspacing="0"
            style="font-family:Arial, sans-serif; background:#f7f7f7; padding:20px;">
@@ -1537,6 +1568,19 @@ def enviar_email_contrareembolso(pedido):
                     No hemos hecho ningún cargo ahora: pagarás cuando recibas tu pedido
                     en la dirección indicada 🏠.
                 </p>
+
+                <!--- Detalles del pedido (con talla) --->
+                <h3 style="margin-top:30px;">Detalles del pedido:</h3>
+                <table width="100%" cellpadding="5" cellspacing="0"
+                        style="border-collapse:collapse; margin-top:10px;">
+                <tr style="background:#f0f0f0;">
+                    <th align="left">Producto</th>
+                    <th align="center">Talla</th>
+                    <th align="center">Cantidad</th>
+                    <th align="right">Total</th>
+                </tr>
+                {items_rows}
+                </table>
 
                 <p style="font-size:15px; margin-top:25px;">
                     Puedes comprobar el estado de tu pedido aquí:
@@ -1632,6 +1676,38 @@ def pago_ok(request, pedido_id):
                     producto.save()
 
     # --- Email de confirmación ---
+    # Generar filas HTML para cada item del pedido (evitar usar tags de template dentro de f-strings)
+    items_rows = ""
+    for item in pedido.items.all():
+        # Calcular total del item de forma robusta
+        try:
+            precio_unitario = getattr(item, "precio_unitario", None)
+            if precio_unitario is None:
+                precio_unitario = item.producto.precio_oferta or item.producto.precio or Decimal("0.00")
+            total_item = (precio_unitario * (getattr(item, 'cantidad', 0) or 0)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        except Exception:
+            total_item = Decimal("0.00")
+
+        # Obtener la talla (puede ser una cadena o una instancia de modelo)
+        talla_display = ''
+        try:
+            talla_val = getattr(item, 'talla', None)
+            if talla_val:
+                if hasattr(talla_val, 'talla'):
+                    talla_display = str(talla_val.talla)
+                else:
+                    talla_display = str(talla_val)
+        except Exception:
+            talla_display = ''
+
+        items_rows += f"""
+                    <tr>
+                        <td>{item.producto.nombre}</td>
+                        <td align="center">{talla_display or '-'}</td>
+                        <td align="center">{item.cantidad}</td>
+                        <td align="right">{total_item:.2f} €</td>
+                    </tr>
+        """
 
     mensaje = Mail(
         from_email=settings.EMAIL_FROM,
@@ -1666,6 +1742,19 @@ def pago_ok(request, pedido_id):
                     <p style="font-size:15px; line-height:22px;">
                     Te avisaremos cuando tu pedido salga de nuestro almacén 🐾
                     </p>
+
+                    <!---añadir los item del pedido, con talla si la tiene--->
+                    <h3 style="margin-top:30px;">Detalles del pedido:</h3>
+                    <table width="100%" cellpadding="5" cellspacing="0"
+                            style="border-collapse:collapse; margin-top:10px;">
+                    <tr style="background:#f0f0f0;">
+                        <th align="left">Producto</th>
+                        <th align="center">Talla</th>
+                        <th align="center">Cantidad</th>
+                        <th align="right">Total</th>
+                    </tr>
+                    {items_rows}
+                    </table>
 
                     <p style="font-size:15px; margin-top:25px;">
                     Puedes comprobar el estado de tu pedido aquí:
@@ -1704,9 +1793,6 @@ def pago_ok(request, pedido_id):
         </tr>
         </table>
         """
-
-        
-        
     )
 
     try:
