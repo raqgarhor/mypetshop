@@ -3,63 +3,122 @@
 {% block title %}Resumen del pedido{% endblock %}
 
 {% block content %}
-<h2>Resumen del pedido</h2>
+<h2 class="heading">Resumen del pedido</h2>
 
-<h3>Datos del cliente</h3>
-<p><strong>{{ cliente.nombre }} {{ cliente.apellidos }}</strong></p>
-<p>{{ cliente.email }}</p>
-<p>{{ cliente.telefono }}</p>
+<div style="display:flex; gap:3rem; max-width:1200px; margin:0 auto; flex-wrap:wrap; align-items:flex-start; margin-top:2rem;">
 
-<h3>Dirección de envío</h3>
-<p>{{ cliente.direccion }} — {{ cliente.ciudad }} ({{ cliente.codigo_postal }})</p>
+    <!-- Left: detalles del pedido -->
+    <div style="flex:1; min-width:400px;">
+    <section class="auth-card" style="padding:1.5rem; display:flex; flex-direction:column;">
+            <h3 style="margin-bottom:1rem;">Datos del cliente</h3>
+            <p><strong>{{ cliente.nombre }} {{ cliente.apellidos }}</strong></p>
+            <p>{{ cliente.email }}</p>
+            <p>{{ cliente.telefono }}</p>
 
-<h3>Productos</h3>
-<table class="cart-table">
-    <thead>
-        <tr>
-            <th>Producto</th>
-            <th>Talla</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for it in items %}
-        <tr>
-            <td>{{ it.producto.nombre }}</td>
-            <td>{{ it.talla }}</td>
-            <td>{{ it.cantidad }}</td>
-            <td>{{ it.subtotal }} €</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+            <h3 style="margin-top:1.5rem;">Dirección de envío</h3>
+            <p>{{ cliente.direccion }} — {{ cliente.ciudad }} ({{ cliente.codigo_postal }})</p>
 
-<p><strong>Subtotal:</strong> {{ subtotal }} €</p>
-<p><strong>Impuestos:</strong> {{ impuestos }} €</p>
+            <h3 style="margin-top:1.5rem;">Productos</h3>
+            <table class="cart-table" style="width:100%;margin-top:0.75rem;border-collapse:collapse;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left;padding:0.75rem 0;">Producto</th>
+                        <th style="padding:0.75rem 0;">Talla</th>
+                        <th style="padding:0.75rem 0;">Cantidad</th>
+                        <th style="text-align:right;padding:0.75rem 0;">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for it in items %}
+                    <tr>
+                        <td style="padding:0.75rem 0;">{{ it.producto.nombre }}</td>
+                        <td style="padding:0.75rem 0;text-align:center;">{{ it.talla }}</td>
+                        <td style="padding:0.75rem 0;text-align:center;">{{ it.cantidad }}</td>
+                        <td style="padding:0.75rem 0;text-align:right;">{{ it.subtotal }} €</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
 
-<p><strong>Método de envío:</strong>
-    {% if shipping_method == "pickup" %}
-        Recoger en tienda
-    {% else %}
-        A domicilio
-    {% endif %}
-</p>
+    <!-- Right: resumen y pago -->
+    <div style="flex:1; min-width:360px;">
+        <!-- misma tarjeta que la izquierda -->
+    <section class="auth-card" style="padding:1.5rem; display:flex; flex-direction:column;">
+            <h3 class="section-title" style="margin:0 0 1rem 0;font-size:2rem;">Resumen</h3>
 
-<p><strong>Coste de entrega:</strong>
-    {% if envio_gratis %}
-        Envío gratis
-    {% else %}
-        {{ coste_entrega }} €
-    {% endif %}
-</p>
-<p><strong>Descuento:</strong> {{ descuento }} €</p>
+            <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+                <span>Subtotal</span>
+                <strong>{{ subtotal }} €</strong>
+            </div>
 
-<h3>Total final: {{ total }} €</h3>
+            <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+                <span>Impuestos</span>
+                <span>{{ impuestos }} €</span>
+            </div>
 
-<form action="{% url 'checkout_stripe' %}" method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-primary">Pagar con tarjeta (Stripe)</button>
-</form>
+            <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+                <span>Método de envío</span>
+                <span>
+                    {% if shipping_method == "pickup" %}
+                        Recoger en tienda
+                    {% else %}
+                        A domicilio
+                    {% endif %}
+                </span>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+                <span>Coste de entrega</span>
+                <span>
+                    {% if envio_gratis %}
+                        Envío gratis
+                    {% else %}
+                        {{ coste_entrega }} €
+                    {% endif %}
+                </span>
+            </div>
+            {# Nota sobre envío gratis (sólo si es envío a domicilio) #}
+            {% if shipping_method != "pickup" %}
+                {% if envio_gratis %}
+                    <small style="display:block; margin-top:4px; color:#777; font-size:0.8rem; text-align:left;">
+                        * Envío gratis por superar los 30€.
+                    </small>
+                {% else %}
+                    <small style="display:block; margin-top:4px; color:#777; font-size:0.8rem; text-align:left;">
+                        * En pedidos superiores a 30€ el envío es gratis.
+                    </small>
+                {% endif %}
+            {% endif %}
+
+            <div style="display:flex;justify-content:space-between;margin-bottom:1rem;">
+                <span>Descuento</span>
+                <span>- {{ descuento }} €</span>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed rgba(0,0,0,0.06);padding-top:1rem;margin-top:0.5rem;">
+                <span style="font-weight:700;">Total</span>
+                <span style="font-size:1.4rem;font-weight:800;">{{ total }} €</span>
+            </div>
+
+            <!-- botón situado justo después del total (no empujado hacia abajo) -->
+            <form action="{% url 'checkout_stripe' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary" style="width:100%;">Pagar con tarjeta (Stripe)</button>
+            </form>
+
+            <form action="{% url 'checkout_contrareembolso' %}" method="post" style="margin-top:0.5rem;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary" style="width:100%;">
+                    Pagar contrareembolso
+                </button>
+            </form>
+
+
+        </section>
+    </div>
+
+</div>
 
 {% endblock %}

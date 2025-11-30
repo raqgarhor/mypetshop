@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Pedido completado{% endblock %}
+
+{% block content %}
+<h2 class="heading">¡Pedido completado correctamente! 🎉</h2>
+
+<div class="auth-card" style="max-width:600px;margin:2rem auto;padding:2rem;text-align:center;">
+    
+    <p style="font-size:1.1rem;">Gracias por tu compra, 
+        <strong>{{ pedido.cliente.nombre }}</strong>.
+    </p>
+
+    <p style="margin-top:1rem;">
+        <strong>Número de pedido:</strong><br>
+        <span style="font-size:1.4rem;">{{ pedido.numero_pedido }}</span>
+    </p>
+
+    <p style="margin-top:1rem;">
+        <strong>Total a pagar:</strong>
+        <span style="font-size:1.3rem;color:var(--primary);font-weight:700;">
+            {{ pedido.total }} €
+        </span>
+    </p>
+
+    {% if pedido.metodo_pago == "contrareembolso" %}
+        <p style="margin-top:1.5rem;color:#444;">
+            💶 <strong>Pago contrareembolso:</strong> deberás pagar al repartidor cuando recibas el pedido.
+        </p>
+    {% endif %}
+
+    <p style="font-size:14px; color:#777; text-align:center; margin-top:1rem;">
+            Hemos enviado un correo de confirmación a <strong>{{ pedido.cliente.email }}</strong>.
+            <br><br>
+            Por favor, revisa también tu carpeta de <strong>spam o correo no deseado.</strong>
+    </p>
+
+    <a href="{% url 'home' %}" 
+       class="btn" 
+       style="margin-top:1.8rem;display:inline-block;">
+        Volver a la tienda
+    </a>
+
+</div>
+
+{% endblock %}

@@ -699,7 +699,24 @@ def contacto(request):
             email=email,
             mensaje=mensaje
         )
-        contacto_message = "¡Gracias! Tu mensaje se ha enviado correctamente. Te responderemos pronto."
+        enviar_email_respuesta_contacto_admin(
+            nombre=nombre,
+            email_destino="mypetshop.309@gmail.com",  # o un settings.CONTACT_EMAIL
+            mensaje_usuario=f"De: {nombre} ({email})\n\n{mensaje}",
+        )
+        # 2. Enviar email de confirmación al usuario (SendGrid)
+        try:
+            enviar_email_respuesta_contacto(nombre, email, mensaje)
+            enviar_email_respuesta_contacto_admin(nombre=nombre,
+            email_destino="mypetshop.309@gmail.com",  # o un settings.CONTACT_EMAIL
+            mensaje_usuario=f"De: {nombre} ({email})\n\n{mensaje}",
+            )
+            print("✅ Email de contacto enviado correctamente a", email)
+            print("✅ Email de notificación enviado al admin")
+        except Exception as e:
+            print("❌ Error enviando email de contacto:", e)
+
+        contacto_message = "¡Gracias! Tu mensaje se ha enviado correctamente. Revisa tu correo electrónico (el mensaje enviado puede llegar a la carpeta de spam o correo no deseado). Te responderemos pronto."
         messages.success(request, contacto_message)
         return redirect('contacto')
     
@@ -713,6 +730,135 @@ def contacto(request):
             contacto_messages.append(message)
     
     return render(request, "contacto.html", {"contacto_messages": contacto_messages})
+
+
+def enviar_email_respuesta_contacto(nombre, email_destino, mensaje_usuario):
+    """Envía un correo de confirmación al usuario que ha usado el formulario de contacto."""
+    html = f"""
+    <table width="100%" cellpadding="0" cellspacing="0"
+           style="font-family:Arial, sans-serif; background:#f7f7f7; padding:20px;">
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0"
+                 style="background:#ffffff; border-radius:12px; overflow:hidden;">
+            <!-- Header -->
+            <tr>
+              <td style="background:#4a90e2; padding:20px; text-align:center; color:white;">
+                <h1 style="margin:0; font-size:26px;">🐾 My Pet Shop</h1>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding:30px; color:#333;">
+                <h2 style="margin-top:0;">
+                    ¡Hola {nombre or "amigo"}! 🐶
+                </h2>
+
+                <p style="font-size:15px; line-height:22px;">
+                    Hemos recibido tu mensaje a través del formulario de contacto.
+                </p>
+
+                <p style="font-size:15px; line-height:22px;">
+                    <strong>Esto es lo que nos has enviado:</strong>
+                </p>
+
+                <blockquote style="font-size:14px; line-height:22px; color:#555; border-left:4px solid #4a90e2; margin:15px 0; padding-left:10px;">
+                    {mensaje_usuario}
+                </blockquote>
+
+                <p style="font-size:15px; line-height:22px;">
+                    Te responderemos lo antes posible a este mismo correo: <strong>{email_destino}</strong>.
+                </p>
+
+                <hr style="border:none; border-top:1px solid #ddd; margin:30px 0;">
+
+                <p style="font-size:14px; color:#777; text-align:center;">
+                    Este es un correo automático de confirmación.
+                    <br><br>
+                    
+                </p>
+
+                <p style="font-size:14px; color:#777; text-align:center;">
+                    ❤️ Gracias por contactar con My Pet Shop
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    """
+
+    mensaje = Mail(
+        from_email=settings.EMAIL_FROM,
+        to_emails=email_destino,
+        subject="Hemos recibido tu mensaje 🐾 - My Pet Shop",
+        html_content=html,
+    )
+
+    sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+    sg.send(mensaje)
+
+
+def enviar_email_respuesta_contacto_admin(nombre, email_destino, mensaje_usuario):
+    asunto = f"Nuevo mensaje de contacto de {nombre}"
+
+    html = f"""
+    <table width="100%" cellpadding="0" cellspacing="0"
+           style="font-family:Arial, sans-serif; background:#f7f7f7; padding:20px;">
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0"
+                 style="background:#ffffff; border-radius:12px; overflow:hidden;">
+            <!-- Header -->
+            <tr>
+              <td style="background:#4a90e2; padding:20px; text-align:center; color:white;">
+                <h1 style="margin:0; font-size:24px;">🐾 My Pet Shop – Nuevo mensaje</h1>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding:24px; color:#333; font-size:15px; line-height:22px;">
+                <p style="margin-top:0;">
+                    Has recibido un nuevo mensaje desde el formulario de
+                    <strong>“Contáctanos”</strong>.
+                </p>
+
+                <p>
+                    <strong>Nombre:</strong> {nombre}<br>
+                </p>
+
+                <p style="margin-top:20px;"><strong>Mensaje:</strong></p>
+                <div style="background:#f4f4f4; padding:15px; border-radius:8px;">
+                    {mensaje_usuario.replace('\n', '<br>')}
+                </div>
+
+                <p style="font-size:13px; color:#777; margin-top:24px;">
+                    Este correo se ha enviado automáticamente desde la web de My Pet Shop.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    """
+
+    message = Mail(
+        from_email=settings.EMAIL_FROM,      # tu remitente configurado (SendGrid)
+        to_emails=settings.EMAIL_FROM,             # tu Gmail de la tienda, por ejemplo
+        subject=asunto,
+        html_content=html,
+    )
+
+   
+
+    sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+    sg.send(message)
+
+
 
 def categorias(request):
     # Mostrar las categorías reales definidas en el modelo `Categoria`.
@@ -1227,6 +1373,223 @@ def checkout_stripe(request):
 
     return redirect(session.url, code=303)
 
+def checkout_contrareembolso(request):
+    # 1) Comprobar carrito
+    cart = request.session.get("cart", {})
+    if not cart:
+        messages.error(request, "Tu carrito está vacío.")
+        return redirect("cart")
+
+    # 2) Obtener cliente: autenticado o invitado (usar guest_cliente_id usado en checkout_datos)
+    if request.user.is_authenticated:
+        cliente = getattr(request.user, "cliente", None)
+    else:
+        guest_cliente_id = request.session.get('guest_cliente_id')
+        if guest_cliente_id:
+            try:
+                cliente = Cliente.objects.get(pk=guest_cliente_id, user__isnull=True)
+            except Cliente.DoesNotExist:
+                cliente = None
+        else:
+            cliente = None
+
+    if not cliente:
+        messages.error(request, "Primero debes completar tus datos de envío.")
+        return redirect("checkout_datos")
+
+    # 3) Reconstruir items y totales igual que en detalles_pago / Stripe
+    items_lista = []
+    subtotal = Decimal("0.00")
+
+    for key, cantidad in cart.items():
+        key_str = str(key)
+        if ":" in key_str:
+            pid_str, talla = key_str.split(":", 1)
+        else:
+            pid_str = key_str
+            talla = ""
+
+        producto = get_object_or_404(Producto, pk=int(pid_str))
+        cantidad = int(cantidad)
+        precio_unitario = producto.precio_oferta or producto.precio or Decimal("0.00")
+        total_item = precio_unitario * cantidad
+
+        subtotal += total_item
+        items_lista.append((producto, talla, cantidad, precio_unitario, total_item))
+
+    impuestos = (subtotal * Decimal("0.10")).quantize(Decimal("0.01"))  # o tu regla
+    if subtotal >= Decimal("30.00"):
+        coste_entrega = Decimal("0.00")
+    else:
+        coste_entrega = Decimal("2.99")
+
+    descuento = Decimal("0.00")
+    total = subtotal + impuestos + coste_entrega - descuento
+
+    # 4) Crear Pedido en BD con método contrareembolso
+    pedido = Pedido.objects.create(
+        cliente=cliente,
+        numero_pedido=generar_numero_pedido(),
+        subtotal=subtotal,
+        impuestos=impuestos,
+        coste_entrega=coste_entrega,
+        descuento=descuento,
+        total=total,
+        estado=Pedido.Estados.PENDIENTE,
+        metodo_pago="contrareembolso",
+        direccion_envio=cliente.direccion,
+        telefono=cliente.telefono,
+    )
+
+    # 5) Crear líneas de pedido
+    for producto, talla, cantidad, precio_unitario, total_item in items_lista:
+        ItemPedido.objects.create(
+            pedido=pedido,
+            producto=producto,
+            talla=talla,
+            cantidad=cantidad,
+            precio_unitario=precio_unitario,
+            total=total_item,
+        )
+
+    # 5b) Restar stock de los productos comprados (similar a pago_ok)
+    # Es importante decrementar el stock aquí también para contrareembolso
+    # para evitar sobreventa cuando el pedido queda pendiente de pago en entrega.
+    for item in pedido.items.all():
+        producto = item.producto
+        cantidad = item.cantidad
+        talla = item.talla or ''
+
+        if talla:
+            try:
+                talla_obj = TallaProducto.objects.get(producto=producto, talla=talla)
+                if talla_obj.stock >= cantidad:
+                    talla_obj.stock -= cantidad
+                    talla_obj.save()
+                else:
+                    # Ajustar a 0 y avisar por consola (no romper el flujo)
+                    print(f"⚠ Advertencia: Stock insuficiente para {producto.nombre} talla {talla}. Stock actual: {talla_obj.stock}, solicitado: {cantidad}")
+                    talla_obj.stock = 0
+                    talla_obj.save()
+            except TallaProducto.DoesNotExist:
+                print(f"⚠ Error: No se encontró la talla '{talla}' para el producto {producto.nombre}")
+        else:
+            if producto.stock >= cantidad:
+                producto.stock -= cantidad
+                producto.save()
+            else:
+                print(f"⚠ Advertencia: Stock insuficiente para {producto.nombre}. Stock actual: {producto.stock}, solicitado: {cantidad}")
+                producto.stock = 0
+                producto.save()
+
+    # 6) Vaciar carrito
+    request.session["cart"] = {}
+    request.session.modified = True
+
+    # 7) Enviar email (tu función, tal cual)
+    try:
+        enviar_email_contrareembolso(pedido)
+    except Exception as e:
+        print("Error email:", e)
+
+    # 8) Mostrar página de OK contrareembolso
+    return render(request, "pago_contrareembolso_ok.html", {"pedido": pedido})
+
+
+def enviar_email_contrareembolso(pedido):
+    """Email de confirmación para pedidos con pago contrareembolso."""
+    cliente = pedido.cliente
+
+    html = f"""
+    <table width="100%" cellpadding="0" cellspacing="0"
+           style="font-family:Arial, sans-serif; background:#f7f7f7; padding:20px;">
+      <tr>
+        <td align="center">
+          <table width="600" cellpadding="0" cellspacing="0"
+                 style="background:#ffffff; border-radius:12px; overflow:hidden;">
+            <!-- Header -->
+            <tr>
+              <td style="background:#4a90e2; padding:20px; text-align:center; color:white;">
+                <h1 style="margin:0; font-size:26px;">🐾 My Pet Shop</h1>
+              </td>
+            </tr>
+
+            <!-- Body -->
+            <tr>
+              <td style="padding:30px; color:#333;">
+                <h2 style="margin-top:0;">
+                    ¡Gracias por tu compra, {pedido.cliente.nombre}! 🎉
+                </h2>
+
+                <p style="font-size:15px; line-height:22px;">
+                    Hemos recibido tu pedido <strong>#{pedido.numero_pedido}</strong>.
+                </p>
+
+                <p style="font-size:15px; line-height:22px;">
+                    <strong>Método de pago:</strong> Contrareembolso
+                </p>
+
+                <p style="font-size:15px; line-height:22px;">
+                    <strong>Total a pagar al repartidor:</strong> {pedido.total} €
+                </p>
+
+                <p style="font-size:15px; line-height:22px;">
+                    No hemos hecho ningún cargo ahora: pagarás cuando recibas tu pedido
+                    en la dirección indicada 🏠.
+                </p>
+
+                <p style="font-size:15px; margin-top:25px;">
+                    Puedes comprobar el estado de tu pedido aquí:
+                </p>
+
+                <!-- Botón de seguimiento -->
+                <div style="text-align:center; margin:30px 0;">
+                  <a href="https://mypetshop-6cea.onrender.com/seguimiento/"
+                     style="background:#4a90e2; padding:14px 28px; color:white;
+                            text-decoration:none; font-size:16px; border-radius:8px;
+                            display:inline-block;">
+                    Seguir mi pedido 📦
+                  </a>
+                </div>
+
+                <p style="font-size:15px; line-height:22px; color:#444; margin-top:20px;">
+                    Ten en cuenta que el repartidor no siempre lleva cambio, por lo que es recomendable tener el importe exacto preparado.
+                </p>
+      
+
+                <hr style="border:none; border-top:1px solid #ddd; margin:30px 0;">
+
+                <p style="font-size:14px; color:#777; text-align:center;">
+                        Este es un correo automático, por favor no respondas a este mensaje.
+                        <br><br>
+                        Si tienes dudas, contáctanos en 
+                        <a href="mailto:mypetshop.309@gmail.com" style="color:#4da3ff;">
+                            mypetshop.309@gmail.com
+                        </a>.
+                </p>
+                <p style="font-size:14px; color:#777; text-align:center;">
+                    ❤️ Gracias por confiar en My Pet Shop
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    """
+
+    mensaje = Mail(
+        from_email=settings.EMAIL_FROM,
+        to_emails=cliente.email,
+        subject=f"Confirmación de tu pedido #{pedido.numero_pedido} (contrareembolso)",
+        html_content=html,
+    )
+
+    sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+    sg.send(mensaje)
+    print("✔ Email contrareembolso enviado correctamente")
+
+
 
 def pago_ok(request, pedido_id):
     pedido = get_object_or_404(Pedido, id_pedido=pedido_id)
@@ -1274,14 +1637,76 @@ def pago_ok(request, pedido_id):
         from_email=settings.EMAIL_FROM,
         to_emails=pedido.cliente.email,
         subject=f"Confirmación de tu pedido #{pedido.numero_pedido}",
-        html_content=f"""
-            <h2>¡Gracias por tu compra, {pedido.cliente.nombre}!</h2>
-            <p>Tu pedido <strong>#{pedido.numero_pedido}</strong> ha sido registrado correctamente.</p>
-            <p>Total pagado: <strong>{pedido.total} €</strong></p>
-            <p>Te avisaremos cuando sea enviado.</p>
-            <hr>
-            <p>My Pet Shop 🐾</p>
+        html_content = f"""
+        <table width="100%" cellpadding="0" cellspacing="0" style="font-family:Arial, sans-serif; background:#f7f7f7; padding:20px;">
+        <tr>
+            <td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff; border-radius:12px; overflow:hidden;">
+                
+                <!-- Header -->
+                <tr>
+                <td style="background:#4a90e2; padding:20px; text-align:center; color:white;">
+                    <h1 style="margin:0; font-size:26px;">🐾 My Pet Shop</h1>
+                </td>
+                </tr>
+
+                <!-- Body -->
+                <tr>
+                <td style="padding:30px; color:#333;">
+                    <h2 style="margin-top:0;">¡Gracias por tu compra, {pedido.cliente.nombre}! 🎉</h2>
+
+                    <p style="font-size:15px; line-height:22px;">
+                    Hemos recibido tu pedido <strong>#{pedido.numero_pedido}</strong>.
+                    </p>
+
+                    <p style="font-size:15px; line-height:22px;">
+                    <strong>Total:</strong> {pedido.total} €
+                    </p>
+
+                    <p style="font-size:15px; line-height:22px;">
+                    Te avisaremos cuando tu pedido salga de nuestro almacén 🐾
+                    </p>
+
+                    <p style="font-size:15px; margin-top:25px;">
+                    Puedes comprobar el estado de tu pedido aquí:
+                    </p>
+
+                    <!-- Botón de seguimiento -->
+                    <div style="text-align:center; margin:30px 0;">
+                    <a href="https://mypetshop-6cea.onrender.com/seguimiento/"
+                        style="background:#4a90e2; padding:14px 28px; color:white;
+                                text-decoration:none; font-size:16px; border-radius:8px;
+                                display:inline-block;">
+                        Seguir mi pedido 📦
+                    </a>
+                    </div>
+
+                    <hr style="border:none; border-top:1px solid #ddd; margin:30px 0;">
+
+                    <p style="font-size:14px; color:#777; text-align:center;">
+                        Este es un correo automático, por favor no respondas a este mensaje.
+                        <br><br>
+                        Si tienes dudas, contáctanos en 
+                        <a href="mailto:mypetshop.309@gmail.com" style="color:#4da3ff;">
+                            mypetshop.309@gmail.com
+                        </a>.
+                    </p>
+
+
+                    <p style="font-size:14px; color:#777; text-align:center;">
+                    ❤️ Gracias por confiar en My Pet Shop
+                    </p>
+                </td>
+                </tr>
+
+            </table>
+            </td>
+        </tr>
+        </table>
         """
+
+        
+        
     )
 
     try:

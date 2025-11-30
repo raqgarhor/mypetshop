@@ -3,12 +3,35 @@
 {% block title %}Pago completado{% endblock %}
 
 {% block content %}
-<h2>¡Pago completado correctamente! 🎉</h2>
+<h2 class="heading" style="text-align:center;margin-bottom:2rem;">
+    ¡Pago completado correctamente! 🎉
+</h2>
 
-<p>Gracias por tu compra, {{ pedido.cliente.nombre }}.</p>
+<div style="max-width:600px;margin:0 auto;">
+    <section class="auth-card" style="padding:2rem;text-align:center;">
+        
+        <p>Gracias por tu compra, <strong>{{ pedido.cliente.nombre }}</strong>.</p>
 
-<p><strong>Número de pedido:</strong> {{ pedido.numero_pedido }}</p>
-<p><strong>Total pagado:</strong> {{ pedido.total }} €</p>
+        <p style="margin-top:1rem;">
+            <strong>Número de pedido:</strong><br>
+            <span style="font-size:1.3rem;">{{ pedido.numero_pedido }}</span>
+        </p>
 
-<a href="{% url 'home' %}" class="btn">Volver a la tienda</a>
+        <p style="margin-top:1rem;">
+            <strong>Total pagado:</strong><br>
+            <span style="font-size:1.3rem;">{{ pedido.total }} €</span>
+        </p>
+
+        <p style="font-size:14px; color:#777; text-align:center; margin-top:1rem;">
+            Hemos enviado un correo de confirmación a <strong>{{ pedido.cliente.email }}</strong>.
+            <br><br>
+            Por favor, revisa también tu carpeta de <strong>spam o correo no deseado.</strong>
+        </p>
+
+        <a href="{% url 'home' %}" class="btn" 
+           style="display:block;margin-top:2rem;width:100%;">
+           Volver a la tienda
+        </a>
+    </section>
+</div>
 {% endblock %}
