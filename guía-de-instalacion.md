@@ -46,7 +46,7 @@ Este documento explica de forma clara los pasos necesarios para ejecutar el proy
 8. **Modificar tu .env:**
    - Descarga el env.zip [aquí](https://www.dropbox.com/scl/fi/ar51a5pzjju63ajfvuws8/.env.zip?rlkey=2t6xxhjbo8zxz5e61m9j7bqrt&st=tooi0v7z&dl=0)
    - Descomprime con 7zip y pon la contraseña *mypetshop*
-   - agrega el archivo .env a la carpeta *tienda_virtual* del proyecto
+   - Agrega el archivo .env a la carpeta *tienda_virtual* del proyecto
 
 
 ## 💾 Cargar la base de datos
