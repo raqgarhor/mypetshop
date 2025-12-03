@@ -2,8 +2,10 @@
 Pruebas de integración para las vistas de la aplicación.
 Estas pruebas verifican el flujo completo de interacción entre vistas, modelos, formularios y sesiones.
 """
+import tempfile
+import shutil
 from decimal import Decimal
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from django.utils import timezone
@@ -25,8 +27,17 @@ from .models import (
 
 User = get_user_model()
 
+# Create a temporary directory for media files during tests
+TEMP_MEDIA_ROOT = tempfile.mkdtemp()
 
+
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class IndexViewTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
         imagen_marca = SimpleUploadedFile(
@@ -67,10 +78,10 @@ class IndexViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('productos', response.context)
         productos = response.context['productos']
-        # Debe mostrar solo productos disponibles
+        # Debe mostrar solo productos disponibles (paginado, 12 por página)
         self.assertTrue(all(p.esta_disponible for p in productos))
-        # No debe mostrar más de 8 productos
-        self.assertLessEqual(len(productos), 8)
+        # No debe mostrar más de 12 productos por página
+        self.assertLessEqual(len(productos), 12)
 
     def test_index_con_busqueda(self):
         """Test que la búsqueda filtra productos correctamente."""
@@ -97,7 +108,13 @@ class IndexViewTest(TestCase):
         self.assertNotIn(self.producto_no_disponible, productos)
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class ProductosViewTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
         imagen_marca = SimpleUploadedFile(
@@ -175,7 +192,13 @@ class ProductosViewTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class CategoriaViewTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
         imagen_marca = SimpleUploadedFile(
@@ -219,7 +242,13 @@ class CategoriaViewTest(TestCase):
         self.assertIn(self.producto, productos)
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class CartViewTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
         imagen_marca = SimpleUploadedFile(
@@ -250,10 +279,10 @@ class CartViewTest(TestCase):
         response = self.client.post(reverse('add_to_cart', args=[self.producto.id]))
         self.assertEqual(response.status_code, 302)  # Redirect
         
-        # Verificar que el producto está en la sesión
+        # Verificar que el producto está en la sesión con composite key
         session = self.client.session
         self.assertIn('cart', session)
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format: product_id:size
         self.assertIn(key, session['cart'])
         self.assertEqual(session['cart'][key], 1)
 
@@ -270,10 +299,10 @@ class CartViewTest(TestCase):
         self.assertIn('cart_items', data)
         self.assertIn('cart_total', data)
         
-        # Verificar que el producto está en la sesión
+        # Verificar que el producto está en la sesión con composite key
         session = self.client.session
         self.assertIn('cart', session)
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format
         self.assertIn(key, session['cart'])
         self.assertEqual(session['cart'][key], 1)
 
@@ -310,7 +339,7 @@ class CartViewTest(TestCase):
         self.client.post(reverse('add_to_cart', args=[self.producto.id]))
         
         session = self.client.session
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format
         self.assertEqual(session['cart'][key], 2)
 
     def test_cart_view_con_productos(self):
@@ -338,7 +367,7 @@ class CartViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         
         session = self.client.session
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format
         self.assertEqual(session['cart'][key], 1)
 
     def test_cart_decrement_ajax(self):
@@ -358,7 +387,7 @@ class CartViewTest(TestCase):
         self.assertEqual(data['cart_count'], 1)
         
         session = self.client.session
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format
         self.assertEqual(session['cart'][key], 1)
 
     def test_cart_decrement_elimina_si_cero(self):
@@ -367,7 +396,7 @@ class CartViewTest(TestCase):
         self.client.post(reverse('cart_decrement', args=[self.producto.id]))
         
         session = self.client.session
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format
         self.assertNotIn(key, session['cart'])
 
     def test_cart_remove(self):
@@ -377,7 +406,7 @@ class CartViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         
         session = self.client.session
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format
         self.assertNotIn(key, session['cart'])
 
     def test_cart_remove_ajax(self):
@@ -393,7 +422,7 @@ class CartViewTest(TestCase):
         self.assertEqual(data['cart_count'], 0)
         
         session = self.client.session
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format
         self.assertNotIn(key, session['cart'])
 
     def test_cart_update(self):
@@ -407,7 +436,7 @@ class CartViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         
         session = self.client.session
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format
         self.assertEqual(session['cart'][key], 5)
 
     def test_cart_update_ajax(self):
@@ -425,7 +454,7 @@ class CartViewTest(TestCase):
         self.assertEqual(data['cart_count'], 5)
         
         session = self.client.session
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format
         self.assertEqual(session['cart'][key], 5)
 
     def test_cart_update_elimina_si_cero(self):
@@ -438,7 +467,7 @@ class CartViewTest(TestCase):
         )
         
         session = self.client.session
-        key = f"{self.producto.id}:"
+        key = f"{self.producto.id}:"  # Composite key format
         self.assertNotIn(key, session['cart'])
 
     def test_add_to_cart_solo_post(self):
@@ -474,7 +503,13 @@ class CartViewTest(TestCase):
         self.assertEqual(data['cart_total'], float(self.producto.precio))
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class AuthenticationViewTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(
@@ -548,6 +583,8 @@ class AuthenticationViewTest(TestCase):
             }
         )
         self.assertEqual(response.status_code, 302)  # Redirect
+        # Verificar que redirige a checkout_datos (puede ser redirect anidado si no hay carrito)
+        self.assertEqual(response.url, reverse('checkout_datos'))
         
         # Verificar que se creó el usuario
         self.assertTrue(User.objects.filter(email='nuevo@example.com').exists())
@@ -577,7 +614,13 @@ class AuthenticationViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class ContactoViewTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
 
@@ -606,7 +649,13 @@ class ContactoViewTest(TestCase):
         self.assertTrue(any('correctamente' in str(m) for m in messages))
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class CheckoutViewTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
         imagen_marca = SimpleUploadedFile(
@@ -717,7 +766,12 @@ class CheckoutViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn('items', response.context)
         self.assertIn('total', response.context)
-        self.assertEqual(response.context['total'], Decimal("20.00"))
+        # Total includes subtotal (20.00) + taxes (10% = 2.00) + shipping (2.99) = 24.99
+        # Since subtotal < 30.00, shipping is 2.99
+        self.assertEqual(response.context['total'], Decimal("24.99"))
+        self.assertEqual(response.context['subtotal'], Decimal("20.00"))
+        self.assertEqual(response.context['impuestos'], Decimal("2.00"))
+        self.assertEqual(response.context['coste_entrega'], Decimal("2.99"))
 
     def test_detalles_pago_con_oferta(self):
         """Test que detalles_pago usa precio_oferta cuando existe."""
@@ -729,12 +783,18 @@ class CheckoutViewTest(TestCase):
         
         response = self.client.get(reverse('detalles_pago'))
         self.assertEqual(response.status_code, 200)
-        # El total debe usar precio_oferta
+        # El subtotal debe usar precio_oferta
         items = response.context['items']
         self.assertEqual(items[0]['subtotal'], Decimal("8.00"))
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class SeguimientoPedidoViewTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
         self.cliente = Cliente.objects.create(
@@ -785,7 +845,13 @@ class SeguimientoPedidoViewTest(TestCase):
         self.assertIsNotNone(response.context['pedido'])
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class PagoViewsTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
         imagen_marca = SimpleUploadedFile(
@@ -842,7 +908,13 @@ class PagoViewsTest(TestCase):
         self.assertEqual(self.pedido.estado, Pedido.Estados.CANCELADO)
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class AcercaDeViewTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.client = Client()
 
