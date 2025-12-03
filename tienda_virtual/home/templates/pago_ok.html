@@ -1,14 +1,46 @@
 {% extends "base.html" %}
 
-{% block title %}Pago completado{% endblock %}
+{% block title %}Pedido completado{% endblock %}
 
 {% block content %}
-<h2>¡Pago completado correctamente! 🎉</h2>
+<h2 class="heading">¡Pedido completado correctamente! 🎉</h2>
 
-<p>Gracias por tu compra, {{ pedido.cliente.nombre }}.</p>
+<div class="auth-card" style="max-width:600px;margin:2rem auto;padding:2rem;text-align:center;">
 
-<p><strong>Número de pedido:</strong> {{ pedido.numero_pedido }}</p>
-<p><strong>Total pagado:</strong> {{ pedido.total }} €</p>
+    <!-- Gracias -->
+    <p style="font-size:1.1rem;">
+        Gracias por tu compra, <strong>{{ pedido.cliente.nombre }}</strong>.
+    </p>
 
-<a href="{% url 'home' %}" class="btn">Volver a la tienda</a>
+    <!-- Número de pedido -->
+    <p style="margin-top:1rem;">
+        <strong>Número de pedido:</strong><br>
+        <span style="font-size:1.4rem;">{{ pedido.numero_pedido }}</span>
+    </p>
+
+    <!-- Total -->
+    <p style="margin-top:1rem;">
+        <strong>Total:</strong>
+        <span style="font-size:1.3rem;color:var(--primary);font-weight:700;">
+            {{ pedido.total }} €
+        </span>
+    </p>
+
+ 
+
+    <p style="font-size:14px; color:#777; text-align:center; margin-top:1.5rem;">
+        Hemos enviado un correo con los detalles de tu pedido a  
+        <strong>{{ pedido.cliente.email }}</strong>.<br><br>
+        Si no lo ves, revisa la carpeta de <strong>spam</strong>.
+    </p>
+
+    <!-- Volver a la tienda -->
+    <a href="{% url 'home' %}" 
+       class="btn" 
+       style="margin-top:1.8rem;display:inline-block;">
+        Volver a la tienda
+    </a>
+
+</div>
+
 {% endblock %}

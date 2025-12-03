@@ -98,7 +98,16 @@
                         </div>
                     {% endfor %}
 
-                    <button type="submit" class="btn btn-primary">Continuar al pago</button>
+                    <div class="checkout-actions" style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center; justify-content: center;">
+                        <button type="submit" name="shipping_method" value="delivery" class="btn btn-primary" style="flex: 1 1 0; min-width: 0;">
+                            A domicilio
+                        </button>
+
+                        <button type="submit" name="shipping_method" value="pickup" class="btn btn-primary" style="flex: 1 1 0; min-width: 0;">
+                            Recoger en tienda
+                        </button>
+                    </div>
+                    
                 </form>
             </section>
         </div>

@@ -41,6 +41,7 @@ urlpatterns = [
     path("checkout/datos/", home_views.checkout_datos_cliente_envio, name="checkout_datos"),
     path("checkout/pago/", home_views.detalles_pago, name="detalles_pago"),
     path("checkout/stripe/", home_views.checkout_stripe, name="checkout_stripe"),
+    path("checkout/contrareembolso/", home_views.checkout_contrareembolso, name="checkout_contrareembolso"),
     path("pago/ok/<int:pedido_id>/", home_views.pago_ok, name="pago_ok"),
     path("pago/cancelado/<int:pedido_id>/", home_views.pago_cancelado, name="pago_cancelado"),    
     path("cuenta/registro/", home_views.register, name="register"),
