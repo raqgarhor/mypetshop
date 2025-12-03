@@ -1426,6 +1426,7 @@ def checkout_contrareembolso(request):
     descuento = Decimal("0.00")
     total = subtotal + impuestos + coste_entrega - descuento
 
+    shipping_method = request.session.get("shipping_method", "delivery")
     # 4) Crear Pedido en BD con método contrareembolso
     pedido = Pedido.objects.create(
         cliente=cliente,
@@ -1486,49 +1487,45 @@ def checkout_contrareembolso(request):
     request.session["cart"] = {}
     request.session.modified = True
 
-    # 7) Enviar email (tu función, tal cual)
+    # 7) Enviar email
     try:
-        enviar_email_contrareembolso(pedido)
+        enviar_email_contrareembolso(pedido, shipping_method)
     except Exception as e:
         print("Error email:", e)
 
     # 8) Mostrar página de OK contrareembolso
-    return render(request, "pago_contrareembolso_ok.html", {"pedido": pedido})
+    return render(request, "pago_ok.html", {"pedido": pedido})
 
+def enviar_email_contrareembolso(pedido, shipping_method):
+    """Email de confirmación para pedidos contrareembolso."""
 
-def enviar_email_contrareembolso(pedido):
-    """Email de confirmación para pedidos con pago contrareembolso."""
     cliente = pedido.cliente
 
-    # Generar filas HTML con tallas para el email (similar a pago_ok)
+    # Determinar texto según método de envío
+    if shipping_method == "pickup":
+        metodo_envio = "Recoger en tienda 🏪"
+        texto_pago = (
+            "Pagarás el importe del pedido directamente en la tienda cuando vengas a recogerlo."
+        )
+    else:
+        metodo_envio = "Envío a domicilio 📦"
+        texto_pago = (
+            "Pagarás el importe del pedido al repartidor cuando lo recibas en tu casa."
+        )
+
+    # Generar filas HTML con tallas igual que antes
     items_rows = ""
     for item in pedido.items.all():
-        try:
-            precio_unitario = getattr(item, "precio_unitario", None)
-            if precio_unitario is None:
-                precio_unitario = item.producto.precio_oferta or item.producto.precio or Decimal("0.00")
-            total_item = (precio_unitario * (getattr(item, 'cantidad', 0) or 0)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-        except Exception:
-            total_item = Decimal("0.00")
-
-        talla_display = ''
-        try:
-            talla_val = getattr(item, 'talla', None)
-            if talla_val:
-                if hasattr(talla_val, 'talla'):
-                    talla_display = str(talla_val.talla)
-                else:
-                    talla_display = str(talla_val)
-        except Exception:
-            talla_display = ''
-
+        precio_unit = item.precio_unitario
+        total_item = item.total
+        talla = item.talla or "-"
         items_rows += f"""
-                    <tr>
-                        <td>{item.producto.nombre}</td>
-                        <td align=\"center\">{talla_display or '-'}</td>
-                        <td align=\"center\">{item.cantidad}</td>
-                        <td align=\"right\">{total_item:.2f} €</td>
-                    </tr>
+        <tr>
+            <td>{item.producto.nombre}</td>
+            <td align="center">{talla}</td>
+            <td align="center">{item.cantidad}</td>
+            <td align="right">{total_item:.2f} €</td>
+        </tr>
         """
 
     html = f"""
@@ -1538,79 +1535,58 @@ def enviar_email_contrareembolso(pedido):
         <td align="center">
           <table width="600" cellpadding="0" cellspacing="0"
                  style="background:#ffffff; border-radius:12px; overflow:hidden;">
-            <!-- Header -->
             <tr>
               <td style="background:#4a90e2; padding:20px; text-align:center; color:white;">
-                <h1 style="margin:0; font-size:26px;">🐾 My Pet Shop</h1>
+                <h1>🐾 My Pet Shop</h1>
               </td>
             </tr>
 
-            <!-- Body -->
             <tr>
               <td style="padding:30px; color:#333;">
-                <h2 style="margin-top:0;">
-                    ¡Gracias por tu compra, {pedido.cliente.nombre}! 🎉
-                </h2>
+                <h2>¡Gracias por tu compra, {cliente.nombre}! 🎉</h2>
 
-                <p style="font-size:15px; line-height:22px;">
-                    Hemos recibido tu pedido <strong>#{pedido.numero_pedido}</strong>.
+                <p>Hemos recibido tu pedido <strong>#{pedido.numero_pedido}</strong>.</p>
+
+                <p><strong>Método de entrega:</strong> {metodo_envio}</p>
+                <p><strong>Total a pagar:</strong> {pedido.total} €</p>
+
+                <p style="line-height:22px;">
+                    {texto_pago}
                 </p>
 
-                <p style="font-size:15px; line-height:22px;">
-                    <strong>Método de pago:</strong> Contrareembolso
-                </p>
-
-                <p style="font-size:15px; line-height:22px;">
-                    <strong>Total a pagar al repartidor:</strong> {pedido.total} €
-                </p>
-
-                <p style="font-size:15px; line-height:22px;">
-                    No hemos hecho ningún cargo ahora: pagarás cuando recibas tu pedido
-                    en la dirección indicada 🏠.
-                </p>
-
-                <!--- Detalles del pedido (con talla) --->
-                <h3 style="margin-top:30px;">Detalles del pedido:</h3>
+                <h3>Detalles del pedido:</h3>
                 <table width="100%" cellpadding="5" cellspacing="0"
-                        style="border-collapse:collapse; margin-top:10px;">
-                <tr style="background:#f0f0f0;">
-                    <th align="left">Producto</th>
-                    <th align="center">Talla</th>
-                    <th align="center">Cantidad</th>
-                    <th align="right">Total</th>
-                </tr>
-                {items_rows}
+                       style="border-collapse:collapse; margin-top:10px;">
+                    <tr style="background:#f0f0f0;">
+                        <th align="left">Producto</th>
+                        <th align="center">Talla</th>
+                        <th align="center">Cant.</th>
+                        <th align="right">Total</th>
+                    </tr>
+                    {items_rows}
                 </table>
 
-                <p style="font-size:15px; margin-top:25px;">
-                    Puedes comprobar el estado de tu pedido aquí:
+                <p style="margin-top:25px; text-align:center;">
+                  Puedes ver tu pedido aquí:
                 </p>
 
-                <!-- Botón de seguimiento -->
-                <div style="text-align:center; margin:30px 0;">
+                <div style="text-align:center; margin:20px 0;">
                   <a href="https://mypetshop-6cea.onrender.com/seguimiento/"
                      style="background:#4a90e2; padding:14px 28px; color:white;
-                            text-decoration:none; font-size:16px; border-radius:8px;
-                            display:inline-block;">
+                            text-decoration:none; font-size:16px; border-radius:8px;">
                     Seguir mi pedido 📦
                   </a>
                 </div>
 
-                <p style="font-size:15px; line-height:22px; color:#444; margin-top:20px;">
-                    Ten en cuenta que el repartidor no siempre lleva cambio, por lo que es recomendable tener el importe exacto preparado.
-                </p>
-      
-
-                <hr style="border:none; border-top:1px solid #ddd; margin:30px 0;">
+                <hr>
 
                 <p style="font-size:14px; color:#777; text-align:center;">
-                        Este es un correo automático, por favor no respondas a este mensaje.
-                        <br><br>
-                        Si tienes dudas, contáctanos en 
-                        <a href="mailto:mypetshop.309@gmail.com" style="color:#4da3ff;">
-                            mypetshop.309@gmail.com
-                        </a>.
+                    Este es un correo automático. Si tienes dudas, escríbenos a
+                    <a href="mailto:mypetshop.309@gmail.com" style="color:#4a90e2;">
+                        mypetshop.309@gmail.com
+                    </a>.
                 </p>
+
                 <p style="font-size:14px; color:#777; text-align:center;">
                     ❤️ Gracias por confiar en My Pet Shop
                 </p>
@@ -1625,13 +1601,12 @@ def enviar_email_contrareembolso(pedido):
     mensaje = Mail(
         from_email=settings.EMAIL_FROM,
         to_emails=cliente.email,
-        subject=f"Confirmación de tu pedido #{pedido.numero_pedido} (contrareembolso)",
+        subject=f"Confirmación del pedido #{pedido.numero_pedido}",
         html_content=html,
     )
 
     sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
     sg.send(mensaje)
-    print("✔ Email contrareembolso enviado correctamente")
 
 
 
@@ -1674,6 +1649,20 @@ def pago_ok(request, pedido_id):
                     print(f"⚠ Advertencia: Stock insuficiente para {producto.nombre}. Stock actual: {producto.stock}, solicitado: {cantidad}")
                     producto.stock = 0
                     producto.save()
+    shipping_method = request.session.get("shipping_method", "delivery")
+
+    if shipping_method == "pickup":
+        tipo_envio_texto = "Recogida en tienda 🛍️"
+        mensaje_envio_extra = """
+            Puedes venir a recoger tu pedido cuando recibas el aviso de que está listo en tienda.
+            <br>Dirección: C/My Pet Shop, Sevilla.
+        """
+    else:
+        tipo_envio_texto = "Envío a domicilio 🚚"
+        mensaje_envio_extra = """
+            Te avisaremos cuando tu pedido salga de nuestro almacén 🐾
+        """
+
 
     # --- Email de confirmación ---
     # Generar filas HTML para cada item del pedido (evitar usar tags de template dentro de f-strings)
@@ -1738,10 +1727,16 @@ def pago_ok(request, pedido_id):
                     <p style="font-size:15px; line-height:22px;">
                     <strong>Total:</strong> {pedido.total} €
                     </p>
+                    <p style="font-size:15px; line-height:22px;">
+                        <strong>Método de envío:</strong> {tipo_envio_texto}
+                    </p>
 
                     <p style="font-size:15px; line-height:22px;">
-                    Te avisaremos cuando tu pedido salga de nuestro almacén 🐾
+                        {mensaje_envio_extra}
                     </p>
+
+
+                    
 
                     <!---añadir los item del pedido, con talla si la tiene--->
                     <h3 style="margin-top:30px;">Detalles del pedido:</h3>
