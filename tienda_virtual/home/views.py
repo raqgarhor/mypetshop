@@ -803,6 +803,9 @@ def enviar_email_respuesta_contacto(nombre, email_destino, mensaje_usuario):
 
 def enviar_email_respuesta_contacto_admin(nombre, email_destino, mensaje_usuario):
     asunto = f"Nuevo mensaje de contacto de {nombre}"
+    
+    # Replace newlines with <br> tags for HTML display
+    mensaje_formateado = mensaje_usuario.replace('\n', '<br>')
 
     html = f"""
     <table width="100%" cellpadding="0" cellspacing="0"
@@ -832,7 +835,7 @@ def enviar_email_respuesta_contacto_admin(nombre, email_destino, mensaje_usuario
 
                 <p style="margin-top:20px;"><strong>Mensaje:</strong></p>
                 <div style="background:#f4f4f4; padding:15px; border-radius:8px;">
-                    {mensaje_usuario.replace('\n', '<br>')}
+                    {mensaje_formateado}
                 </div>
 
                 <p style="font-size:13px; color:#777; margin-top:24px;">
@@ -843,9 +846,7 @@ def enviar_email_respuesta_contacto_admin(nombre, email_destino, mensaje_usuario
           </table>
         </td>
       </tr>
-    </table>
-    """
-
+    </table>"""
     message = Mail(
         from_email=settings.EMAIL_FROM,      # tu remitente configurado (SendGrid)
         to_emails=settings.EMAIL_FROM,             # tu Gmail de la tienda, por ejemplo

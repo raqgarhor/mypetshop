@@ -1,5 +1,7 @@
+import tempfile
+import shutil
 from decimal import Decimal
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -23,6 +25,9 @@ from .models import (
 )
 
 User = get_user_model()
+
+# Create a temporary directory for media files during tests
+TEMP_MEDIA_ROOT = tempfile.mkdtemp()
 
 
 class ArticuloModelTest(TestCase):
@@ -55,7 +60,14 @@ class EscaparateModelTest(TestCase):
         self.assertFalse(Escaparate.objects.filter(id=escaparate.id).exists())
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class MarcaModelTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        # Clean up temporary media directory after all tests
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.imagen = SimpleUploadedFile(
             name="test.jpg",
@@ -82,7 +94,13 @@ class MarcaModelTest(TestCase):
             Marca.objects.create(nombre="Royal Canin", imagen=imagen2)
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class CategoriaModelTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.imagen = SimpleUploadedFile(
             name="test.jpg",
@@ -117,7 +135,13 @@ class CategoriaModelTest(TestCase):
             )
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class ProductoModelTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         imagen_marca = SimpleUploadedFile(
             name="marca.jpg",
@@ -281,7 +305,13 @@ class ProductoModelTest(TestCase):
             self.categoria.delete()
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class TallaProductoModelTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         imagen_marca = SimpleUploadedFile(
             name="marca.jpg",
@@ -327,7 +357,13 @@ class TallaProductoModelTest(TestCase):
         self.assertIsNone(talla.producto)
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class ImagenProductoModelTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         imagen_marca = SimpleUploadedFile(
             name="marca.jpg",
@@ -477,7 +513,13 @@ class ClienteModelTest(TestCase):
             )
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class PedidoModelTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.cliente = Cliente.objects.create(
             nombre="Juan",
@@ -522,7 +564,7 @@ class PedidoModelTest(TestCase):
         self.assertEqual(pedido.estado, Pedido.Estados.PENDIENTE)
         self.assertEqual(pedido.subtotal, Decimal("0.00"))
         self.assertEqual(pedido.impuestos, Decimal("0.00"))
-        self.assertEqual(pedido.coste_entrega, Decimal("0.00"))
+        self.assertEqual(pedido.coste_entrega, Decimal("2.99"))  # Default is 2.99, not 0.00
         self.assertEqual(pedido.descuento, Decimal("0.00"))
 
     def test_pedido_total_calculo_nuevo(self):
@@ -621,7 +663,13 @@ class PedidoModelTest(TestCase):
             self.cliente.delete()
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class ItemPedidoModelTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.cliente = Cliente.objects.create(
             nombre="Juan",
@@ -713,7 +761,13 @@ class ItemPedidoModelTest(TestCase):
             self.producto.delete()
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class CarritoModelTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.cliente = Cliente.objects.create(
             nombre="Juan",
@@ -878,7 +932,13 @@ class CarritoModelTest(TestCase):
         self.assertFalse(Carrito.objects.filter(id=carrito_id).exists())
 
 
+@override_settings(MEDIA_ROOT=TEMP_MEDIA_ROOT)
 class ItemCarritoModelTest(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        super().tearDownClass()
+
     def setUp(self):
         self.cliente = Cliente.objects.create(
             nombre="Juan",
