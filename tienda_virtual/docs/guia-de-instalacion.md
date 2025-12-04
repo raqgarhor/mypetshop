@@ -3,16 +3,11 @@
 Este documento explica de forma clara los pasos necesarios para ejecutar el proyecto en entorno local con todas sus funcionalidades operativas.
 
 ## 🚀 Requisitos Previos
-- Tener **Git** instalado
 - Tener **Python 3.10** o superior
 - Tener **7zip**
 
 ## 📥 Instalación
-1. **Clona el repositorio o descomprime el archivo:**
-   - Para clonar:
-   ```bash
-   git clone https://github.com/raqgarhor/mypetshop.git
-   ```
+1. **Descomprime el archivo:**
 
 3. **Entra en la carpeta del proyecto:**
    ```bash
