@@ -1,8 +1,50 @@
 # Documentación de Tests - My Pet Shop
 
-Esta documentación describe todos los tests implementados en la aplicación, organizados por categoría.
+Este documento forma parte de los **elementos configurables** del proyecto según el *Plan de Gestión de la Configuración* y recoge:
 
-## Resumen
+- Los **casos de prueba** implementados  
+- Su estado de ejecución  
+- El alcance cubierto (modelos, vistas y funcionalidades clave)  
+- Las evidencias de validación de las funcionalidades  
+
+Cumple además con la *Lista de Control de Calidad*, que exige comprobar la ejecución de pruebas unitarias e integración antes de la aceptación del entregable.
+
+---
+
+## 1. Alcance del Documento
+
+El objetivo de este documento es describir todas las pruebas implementadas en el sistema **My Pet Shop**, incluyendo:
+
+- Pruebas unitarias de modelos  
+- Pruebas de lógica interna (carrito, totales, validaciones, etc.)  
+- Pruebas de vistas  
+- Pruebas de flujo del proceso de compra (checkout)  
+
+Asimismo, este documento demuestra el cumplimiento de:
+
+- El *Plan de Gestión de la Calidad*: ejecución de pruebas unitarias e integración  
+- El *Plan de Gestión de la Configuración*: elemento configurable **Plan de Pruebas**, con casos de prueba y criterios de validación
+
+---
+
+## 2. Criterios Generales de Aceptación de las Pruebas
+
+Una prueba se considera **superada (✓)** cuando:
+
+1. La funcionalidad ejecuta el comportamiento especificado sin errores.
+2. La salida coincide exactamente con el **resultado esperado**.
+3. Los modelos validan correctamente los datos según sus métodos `clean()` y restricciones.
+4. Las vistas devuelven:
+   - el código HTTP adecuado,
+   - el contexto esperado,
+   - la plantilla o redirección correspondiente.
+5. Las operaciones en BD respetan las reglas de integridad (`CASCADE`, `PROTECT`, etc.).
+6. Las respuestas AJAX incluyen el JSON esperado.
+7. Al finalizar la prueba, el estado del sistema es consistente.
+
+---
+
+## 3. Resumen General de Pruebas Ejecutadas
 
 - **Total de Tests**: 131
 - **Tests de Modelos**: 65
@@ -10,7 +52,7 @@ Esta documentación describe todos los tests implementados en la aplicación, or
 
 ---
 
-## Tests de Modelos (`tests.py`)
+## 4. Tests de Modelos (`tests.py`)
 
 ### ArticuloModelTest
 
@@ -154,7 +196,7 @@ Esta documentación describe todos los tests implementados en la aplicación, or
 
 ---
 
-## Tests de Vistas (`test_views.py`)
+## 5. Tests de Vistas (`test_views.py`)
 
 ### IndexViewTest
 
@@ -264,7 +306,7 @@ Esta documentación describe todos los tests implementados en la aplicación, or
 
 ---
 
-## Notas Técnicas
+## 6. Notas Técnicas
 
 ### Configuración de Tests
 
@@ -279,7 +321,7 @@ Esta documentación describe todos los tests implementados en la aplicación, or
 - **Carrito**: Se prueban tanto las operaciones normales como las operaciones AJAX
 - **Checkout**: Se verifica el flujo completo desde el carrito hasta el pago
 
-### Ejecución
+## 8. Ejecución de las Pruebas
 
 Para ejecutar todos los tests:
 
